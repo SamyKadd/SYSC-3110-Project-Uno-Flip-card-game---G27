@@ -1,36 +1,36 @@
 public class Card {
-    private String color;
-    private String value;
-    // Variable for cards that are +4, +2, etc...
-    private boolean isActionCard;
+   public enum Color {RED, BLUE, YELLOW, GREEN};
+   public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_TWO, REVERSE, WILD, WILD_DRAW_FOUR };
+   private Color color;
+   private Value value;
 
-    public Card(String color, String value) {
+
+   public Card(Color color, Value value) {
         this.color = color;
         this.value = value;
-        this.isActionCard = checkIfActionCard(value);
-    }
+   }
 
     // Need to add the function that will check if it is an Action Card here
     // This is just a mock implementation, have to adjust this based on how we assign
     // action cards.
-    // private boolean checkIfActionCard(String value) {
-    //     return value.equals("Skip") || value.equals("Draw Two");
-    // }
+    private boolean checkIfActionCard(Value value) {
+        return value.equals(Value.SKIP) || value.equals(Value.DRAW_TWO);
+    }
 
-    public String getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public String getValue() {
+    public Value getValue() {
         return value;
     }
 
     public boolean isActionCard() {
-        return isActionCard;
+        return checkIfActionCard(value);
     }
 
     @Override
     public String toString() {
-        return color + " " + value;
+        return getColor() + " " + getValue();
     }
 }
