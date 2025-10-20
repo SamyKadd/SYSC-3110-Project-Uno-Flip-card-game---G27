@@ -12,12 +12,20 @@ public class Hand {
         cards.add(card);
     }
 
-    // public Card removeCard(int index) {
-    // }
+    public Card removeCard(int index) {
+        if (index >= 0 && index < cards.size()) {
+            return cards.remove(index);
+        }
+        return null;
+    }
 
     // Will have identical logic to remove, but obviously just getting instead of removing
-    // public Card getCard(int index) {
-    // }
+    public Card getCard(int index) {
+        if (index >= 0 && index < cards.size()) {
+            return cards.get(index);
+        }
+        return null;
+    }
 
     public int getSize() {
         return cards.size();
