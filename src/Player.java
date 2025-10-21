@@ -17,6 +17,7 @@ public class Player {
 
     public void displayHand(){
         //System.out.println(hand.toString());
+        System.out.println(hand.getCards());;
     }
 
 }
