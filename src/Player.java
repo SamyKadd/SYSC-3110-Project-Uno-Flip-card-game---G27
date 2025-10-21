@@ -5,7 +5,7 @@ public class Player {
 
     public Player(String name) {
         this.name = name;
-        hand = new Hand();
+        this.hand = new Hand();
     }
     public String getName() {
         return name;
