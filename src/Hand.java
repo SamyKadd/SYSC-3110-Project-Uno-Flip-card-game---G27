@@ -31,11 +31,16 @@ public class Hand {
         return cards.size();
     }
 
-    public List<Card> getCards() {
-        return cards;
+    public String getCards() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < getSize(); i++) {
+            sb.append(cards.get(i).toString()).append("\n");
+        }
+        return sb.toString();
     }
 
-    // @Override
-    // public String toString() {
-    // }
+    @Override
+    public String toString() {
+        return " " + getCards();
+    }
 }
