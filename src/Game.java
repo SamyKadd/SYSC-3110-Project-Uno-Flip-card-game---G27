@@ -6,6 +6,7 @@ public class Game {
 
     public Game() {
         players = new ArrayList<>();
+        deck = new ArrayList<>();
     }
 
     public void addPlayer(Player p){
