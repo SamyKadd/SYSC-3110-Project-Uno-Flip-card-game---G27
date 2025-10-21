@@ -8,11 +8,54 @@ public class Game {
         players = new ArrayList<>();
         deck = new ArrayList<>();
         // Initialize deck with cards
-        // initializeDeck();
+        initializeDeck();
     }
 
-    // private void initializeDeck() {
-    // }
+    // Not 100% sure if this is correct/works, have to test this later
+    private void initializeDeck() {
+        // Adding numbered cards (0-9)
+        for (Card.Color color : Card.Color.values()) {
+            // According to the UNO website, there is only one 0 card per color
+            deck.add(new Card(color, Card.Value.ZERO));
+            
+            // Every other number has two per color
+            deck.add(new Card(color, Card.Value.ONE));
+            deck.add(new Card(color, Card.Value.ONE));
+            deck.add(new Card(color, Card.Value.TWO));
+            deck.add(new Card(color, Card.Value.TWO));
+            deck.add(new Card(color, Card.Value.THREE));
+            deck.add(new Card(color, Card.Value.THREE));
+            deck.add(new Card(color, Card.Value.FOUR));
+            deck.add(new Card(color, Card.Value.FOUR));
+            deck.add(new Card(color, Card.Value.FIVE));
+            deck.add(new Card(color, Card.Value.FIVE));
+            deck.add(new Card(color, Card.Value.SIX));
+            deck.add(new Card(color, Card.Value.SIX));
+            deck.add(new Card(color, Card.Value.SEVEN));
+            deck.add(new Card(color, Card.Value.SEVEN));
+            deck.add(new Card(color, Card.Value.EIGHT));
+            deck.add(new Card(color, Card.Value.EIGHT));
+            deck.add(new Card(color, Card.Value.NINE));
+            deck.add(new Card(color, Card.Value.NINE));
+            
+            // Adding two of each action card per color
+            deck.add(new Card(color, Card.Value.SKIP));
+            deck.add(new Card(color, Card.Value.SKIP));
+            deck.add(new Card(color, Card.Value.DRAW_ONE));
+            deck.add(new Card(color, Card.Value.DRAW_ONE));
+            deck.add(new Card(color, Card.Value.REVERSE));
+            deck.add(new Card(color, Card.Value.REVERSE));
+        }
+        
+        // Wild cards (4 of each type, no color)
+        for (int i = 0; i < 4; i++) {
+            deck.add(new Card(null, Card.Value.WILD));
+            deck.add(new Card(null, Card.Value.WILD_DRAW_TWO));
+        }
+        
+        // Shuffle the deck
+        Collections.shuffle(deck);
+    }
 
     public void addPlayer(Player p){
         
