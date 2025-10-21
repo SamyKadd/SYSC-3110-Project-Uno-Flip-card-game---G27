@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Game {
     private List<Player> players;
+    private ArrayList<Card>deck;
 
     public Game() {
         players = new ArrayList<>();
