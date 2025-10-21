@@ -27,6 +27,13 @@ public class Hand {
         return null;
     }
 
+    public void StartCards(ArrayList<Card>deck){ //to start with 7 cards (initializes)
+        for (int i = 0; i<7; i++){
+            this.addCard(deck.remove(0));
+        }
+    }
+
+
     public int getSize() {
         return cards.size();
     }
