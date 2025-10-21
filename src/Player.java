@@ -15,6 +15,10 @@ public class Player {
         this.score = score;
     }
 
+    public Hand getHand(){
+        return hand;
+    }
+
     public void displayHand(){
         //System.out.println(hand.toString());
         System.out.println(hand.getCards());;
