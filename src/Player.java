@@ -17,6 +17,12 @@ public class Player {
         this.score = score;
     }
 
+    public void StartCards(ArrayList<Card>deck){
+        for (int i = 0; i<7; i++){
+            hand.addCard(deck.remove(0));
+        }
+    }
+
     public void displayHand(){
         //System.out.println(hand.toString());
     }
