@@ -18,4 +18,14 @@ public class Game {
     public Player getPlayer(int index){
         return players.get(index);
     }
+
+    public void startGame(){
+        for (Player player: players){
+            player.getHand().StartCards(deck);
+            System.out.println(player.getName() + " hand:");
+            player.displayHand();
+
+        }
+    }
+
 }
