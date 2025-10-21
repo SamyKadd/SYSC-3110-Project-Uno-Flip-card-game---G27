@@ -1,6 +1,6 @@
 public class Card {
    public enum Color {RED, BLUE, YELLOW, GREEN};
-   public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_TWO, REVERSE, WILD, WILD_DRAW_FOUR };
+   public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_ONE, REVERSE, WILD, WILD_DRAW_TWO};
    private Color color;
    private Value value;
 
@@ -14,7 +14,7 @@ public class Card {
     // This is just a mock implementation, have to adjust this based on how we assign
     // action cards.
     private boolean checkIfActionCard(Value value) {
-        return value.equals(Value.SKIP) || value.equals(Value.DRAW_TWO);
+        return value.equals(Value.SKIP) || value.equals(Value.DRAW_ONE) ||  value.equals(Value.REVERSE) || value.equals(Value.WILD) || value.equals(Value.WILD_DRAW_TWO);
     }
 
     public Color getColor() {
