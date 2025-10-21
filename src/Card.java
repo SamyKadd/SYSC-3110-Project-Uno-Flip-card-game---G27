@@ -1,6 +1,6 @@
 public class Card {
    public enum Color {RED, BLUE, YELLOW, GREEN};
-   public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_TWO, REVERSE, WILD, WILD_DRAW_FOUR};
+   public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_TWO, REVERSE, WILD, WILD_DRAW_FOUR };
    private Color color;
    private Value value;
 
