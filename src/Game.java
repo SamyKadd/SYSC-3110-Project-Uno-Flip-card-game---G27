@@ -3,6 +3,7 @@ import java.util.*;
 public class Game {
     private List<Player> players;
     private ArrayList<Card>deck;
+    private int currentPlayerIndex;
 
     public Game() {
         players = new ArrayList<>();
