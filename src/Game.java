@@ -96,8 +96,8 @@ public class Game {
         if(card.isActionCard()) {
             switch (card.getValue()) {
                 case SKIP:
-                    System.out.println("Skipping player");
                     currentPlayerIndex = (currentPlayerIndex + 2) % players.size();
+                    System.out.println("Skipping player. Next Turn: " + players.get(currentPlayerIndex).getName());
                     break;
                 case WILD:
 
