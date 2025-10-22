@@ -8,6 +8,7 @@ public class Game {
     public Game() {
         players = new ArrayList<>();
         deck = new ArrayList<>();
+        currentPlayerIndex = 0;
         // Initialize deck with cards
         initializeDeck();
     }
@@ -95,7 +96,8 @@ public class Game {
         if(card.isActionCard()) {
             switch (card.getValue()) {
                 case SKIP:
-
+                    System.out.println("Skipping player");
+                    currentPlayerIndex = (currentPlayerIndex + 2) % players.size();
                     break;
                 case WILD:
 
