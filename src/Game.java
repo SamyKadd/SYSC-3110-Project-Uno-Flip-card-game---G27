@@ -1,10 +1,16 @@
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.Scanner;
 
 public class Game {
     private List<Player> players;
     private ArrayList<Card>deck;
     private int currentPlayerIndex;
-    private boolean clockwise;
+    private int direction = +1; //+1 forward and -1 reverse order
+    private int current = 0; //Index of the player whose turn it is
+    private Card top; //The card thats on the top of the discard pile
+    private Card.Color topWild = null; //If the top card on discard pile is wild card
 
     public Game() {
         players = new ArrayList<>();
@@ -101,23 +107,74 @@ public class Game {
                     currentPlayerIndex = (currentPlayerIndex + 2) % players.size();
                     System.out.println("Skipping player. Next Turn: " + players.get(currentPlayerIndex).getName());
                     break;
+
                 case WILD:
-
+                    topWild = askColorSwitch();
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                    System.out.println("Wild has been played, color is set to " + topWild + ". Next Turn: "  + players.get(currentPlayerIndex).getName());
                     break;
+
                 case WILD_DRAW_TWO:
+                    topWild = askColorSwitch();
+                    drawCards(nextPlayer(currentPlayerIndex), 2);
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                    System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 card, it is now their turn.");
+                    break;
 
-                    break;
                 case DRAW_ONE:
-                    int nextPlayer = (currentPlayerIndex + 1) % players.size();
-                    players.get(nextPlayer).getHand().addCard(deck.remove(0));
-                    System.out.println(players.get(nextPlayer).getName() + " draws one card.");
+                    drawCards(nextPlayer(currentPlayerIndex), 1);
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                    System.out.println(players.get(currentPlayerIndex).getName() + " Drew 1 card, it is now their turn.");
                     break;
+
                 case REVERSE:
-                    clockwise = !clockwise;
-                    System.out.println("Direction reversed!");
+                    direction = -direction;
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                    System.out.println("Reversing direction. Next Turn: " + players.get(currentPlayerIndex).getName());
                     break;
             }
         }
     }
+
+   //This class is desgined to return the next player
+    private int nextPlayer(int index){
+        return Math.floorMod(index + direction, players.size());
+    }
+   //Taking a card from the top of the deck and returning it
+    private Card drawCard(){
+        if (deck.isEmpty()) {
+            System.out.println("Deck is empty! (TODO: reshuffle from discard if you add one)");
+            return null;
+        }
+        // draw from top of list; if you prefer, use remove(deck.size()-1)
+        return deck.remove(0);
+    }
+    //Drawing a Card from deck and putting it in players hands
+    private void drawCards(int index, int count) {
+        for (int i = 0; i < count; i++) {
+            Card card = drawCard();
+            if (card != null) {
+                players.get(index).getHand().addCard(card);
+            }
+        }
+    }
+    //Getting user to pick next color
+    private Card.Color askColorSwitch(){
+        while (true){
+            System.out.print("Choose a color (R/G/Y/B:   ");
+            Scanner scanner = new Scanner(System.in);
+            String colorChose = scanner.nextLine();
+            switch (colorChose){
+                case "R": return Card.Color.RED;
+                case "G": return Card.Color.GREEN;
+                case "Y": return Card.Color.YELLOW;
+                case "B": return Card.Color.BLUE;
+                default:;
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+
+
 
 }
