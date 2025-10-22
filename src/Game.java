@@ -16,6 +16,7 @@ public class Game {
         players = new ArrayList<>();
         deck = new ArrayList<>();
         currentPlayerIndex = 0;
+        clockwise = true;
         // Initialize deck with cards
         initializeDeck();
     }
