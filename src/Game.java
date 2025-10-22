@@ -4,11 +4,13 @@ public class Game {
     private List<Player> players;
     private ArrayList<Card>deck;
     private int currentPlayerIndex;
+    private boolean clockwise;
 
     public Game() {
         players = new ArrayList<>();
         deck = new ArrayList<>();
         currentPlayerIndex = 0;
+        clockwise = true;
         // Initialize deck with cards
         initializeDeck();
     }
@@ -106,10 +108,13 @@ public class Game {
 
                     break;
                 case DRAW_ONE:
-
+                    int nextPlayer = (currentPlayerIndex + 1) % players.size();
+                    players.get(nextPlayer).getHand().addCard(deck.remove(0));
+                    System.out.println(players.get(nextPlayer).getName() + " draws one card.");
                     break;
                 case REVERSE:
-
+                    clockwise = !clockwise;
+                    System.out.println("Direction reversed!");
                     break;
             }
         }
