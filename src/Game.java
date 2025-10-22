@@ -7,8 +7,7 @@ public class Game {
     private List<Player> players;
     private ArrayList<Card>deck;
     private int currentPlayerIndex;
-    private int direction = +1; //+1 forward and -1 reverse order
-    private int current = 0; //Index of the player whose turn it is
+    private boolean clockwise; //+1 forward and -1 reverse order
     private Card top; //The card thats on the top of the discard pile
     private Card.Color topWild = null; //If the top card on discard pile is wild card
 
@@ -128,7 +127,7 @@ public class Game {
                     break;
 
                 case REVERSE:
-                    direction = -direction;
+                    clockwise = !clockwise;
                     currentPlayerIndex = nextPlayer(currentPlayerIndex);
                     System.out.println("Reversing direction. Next Turn: " + players.get(currentPlayerIndex).getName());
                     break;
@@ -138,7 +137,11 @@ public class Game {
 
    //This class is desgined to return the next player
     private int nextPlayer(int index){
-        return Math.floorMod(index + direction, players.size());
+        if (clockwise) {
+            return (index + 1) % players.size();
+        } else {
+            return (index - 1 + players.size()) % players.size();
+        }
     }
    //Taking a card from the top of the deck and returning it
     private Card drawCard(){
