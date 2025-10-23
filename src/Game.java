@@ -103,7 +103,7 @@ public class Game {
         if(card.isActionCard()) {
             switch (card.getValue()) {
                 case SKIP:
-                    currentPlayerIndex = (currentPlayerIndex + 2) % players.size();
+                    currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
                     System.out.println("Skipping player. Next Turn: " + players.get(currentPlayerIndex).getName());
                     break;
 
@@ -135,7 +135,7 @@ public class Game {
         }
     }
 
-   //This class is desgined to return the next player
+    //This class is desgined to return the next player
     private int nextPlayer(int index){
         if (clockwise) {
             return (index + 1) % players.size();
@@ -143,7 +143,7 @@ public class Game {
             return (index - 1 + players.size()) % players.size();
         }
     }
-   //Taking a card from the top of the deck and returning it
+    //Taking a card from the top of the deck and returning it
     private Card drawCard(){
         if (deck.isEmpty()) {
             System.out.println("Deck is empty! (TODO: reshuffle from discard if you add one)");
