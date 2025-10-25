@@ -98,6 +98,33 @@ public class Game {
             player.displayHand();
 
         }
+
+        //
+        top = deck.remove(0);
+        System.out.println("Starting card: " + top);
+        System.out.println("\nGame starting!\n");
+
+        playGame();
+    }
+
+    private void playGame() {
+        while (true) {
+            Player currentPlayer = players.get(currentPlayerIndex);
+            
+            // Display game state
+            System.out.println("===========================================");
+            System.out.println(currentPlayer.getName() + "'s turn");
+            System.out.println("Top card on discard pile: " + (topWild != null ? topWild : top));
+            System.out.println("-------------------------------------------");
+            
+            // Show current player's hand with numbers
+            System.out.println("Your cards:");
+            Hand hand = currentPlayer.getHand();
+            for (int i = 0; i < hand.getSize(); i++) {
+                System.out.println(i + ": " + hand.getCard(i));
+            }
+
+            // More remaining
     }
 
     public boolean isValidPlay(Card cardToPlay) {
