@@ -99,6 +99,24 @@ public class Game {
 
         }
     }
+
+    public boolean isValidPlay(Card cardToPlay) {
+
+        if (cardToPlay.getValue() == Card.Value.WILD || cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
+            return true;
+        }
+        
+        if (topWild != null) {
+            return cardToPlay.getColor() == topWild;
+        }
+        
+        if (top != null) {
+            return cardToPlay.getColor() == top.getColor() || cardToPlay.getValue() == top.getValue();
+        }
+        
+        return true;
+    }
+
     public void handleActionCard(Card card){
         if(card.isActionCard()) {
             switch (card.getValue()) {
