@@ -149,7 +149,14 @@ public class Game {
 
         }
 
-        top = deck.remove(0);
+        do {
+            top = deck.remove(0);
+            if (top.isActionCard()) {
+                // Put action card back at the bottom of the deck
+                deck.add(top);
+            }
+        } while (top.isActionCard());
+
         discardedPile.add(top);
         System.out.println("Starting card: " + top);
         System.out.println("\nGame starting!\n");
