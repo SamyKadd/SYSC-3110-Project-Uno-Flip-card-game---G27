@@ -34,16 +34,47 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 ### Milestone 1
 
 **Joodi Al-Asaad**
-- 
+- Refactored Card class to use enums (Color and Value)
+- Implemented action card detection logic (checkIfActionCard)
+- Updated Card class for UNO Flip compatibility
+- Added Player attributes (name, score, hand) with getters/setters
+- Implemented Skip card logic and handleActionCard() method
+- Added currentPlayerIndex tracking and turn flow logic
+- Implemented Scanner for player input and card selection
+- Added toString() to Player and uncommented addScore()
+-Finalized Card, Hand, and Game classes for M1
+- Created all test files (CardTest, HandTest, PlayerTest, GameTest)
+- Implemented 6 HandTest unit tests
+- Implemented 6 PlayerTest unit tests
+- Added card play validation and turn advancement logic
 
 **Mahdi Bouakline**
-- 
+- Implemented initial Card.java and Hand.java skeleton code
+- Implemented deck initialization with 108 cards and shuffling
+- Implemented complete game logic and game loop in Game.java
+- Implemented isValidPlay() method for card validation
+- Added JavaDoc documentation to all classes (Card, Hand, Player, Game)
+- Fixed wild card toString() to handle null color properly
+- Implemented do-while loop to prevent starting with action cards
+- Created initial README.md and project documentation
 
 **Samy Kaddour**
-- 
+- Implemented WILD card functionality with color selection
+- Implemented WILD_DRAW_TWO card logic
+- Implemented DRAW_ONE card functionality
+- Implemented REVERSE card logic
+- Added helper functions for action card processing
+- Completed CardTest with 5 comprehensive unit tests
 
 **Seham Khalifa**
-- 
+- Implemented startCards() method in Hand class (deal 7 cards)
+- Added ArrayList import to Hand class
+- Created startGame() method to initialize game and display starting hands
+- Implemented getHand() method in Player class
+- Added displayHand() functionality
+- Initialized deck ArrayList in Game class
+- Created 5 PlayerTest unit tests including toString() test
+- Added BeforeAll and setUp methods to PlayerTest
 
 ---
 
