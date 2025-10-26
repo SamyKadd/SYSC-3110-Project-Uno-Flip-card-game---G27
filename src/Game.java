@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.Scanner;
@@ -150,7 +149,7 @@ public class Game {
         }
 
         //
-        top = deck.remove(0);
+        top = deck.removeFirst();
         System.out.println("Starting card: " + top);
         System.out.println("\nGame starting!\n");
 
@@ -185,6 +184,7 @@ public class Game {
             // update this
             System.out.println("\nEnter card number to play, or 'D' to draw a card:");
             String s = input.nextLine().trim();
+            Card playCard = null;
 
             if (s.equalsIgnoreCase("D")) {
                 Card drawnCard = drawCard();
@@ -198,7 +198,10 @@ public class Game {
 
             try {
                 // Missing some logic here
-
+                int cardIndex = Integer.parseInt(s);
+                if (cardIndex >= 0 && cardIndex < hand.getSize()) {
+                    playCard = hand.getCard(cardIndex);
+                }
                 // Check if player won
                 if (hand.getSize() == 0) {
                     System.out.println("\n===========================================");
