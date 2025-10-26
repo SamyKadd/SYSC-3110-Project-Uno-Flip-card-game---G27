@@ -179,6 +179,43 @@ public class Game {
                 System.out.println(i + ": " + hand.getCard(i));
             }
 
+            // I can't open the example so I'm just guessing the input, I'll have to 
+            // update this
+            System.out.println("\nEnter card number to play, or 'D' to draw a card:");
+            String input = scanner.nextLine().trim();
+            
+            if (input.equalsIgnoreCase("D")) {
+                Card drawnCard = drawCard();
+                if (drawnCard != null) {
+                    hand.addCard(drawnCard);
+                    System.out.println("You drew: " + drawnCard);
+                }
+                currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                continue;
+            }
+
+            try {
+                // Missing some logic here
+                
+                // Check if player won
+                if (hand.getSize() == 0) {
+                    System.out.println("\n===========================================");
+                    System.out.println(currentPlayer.getName() + " wins!");
+                    System.out.println("===========================================");
+                    break;
+                }
+                
+                // Handle action cards
+                if (playedCard.isActionCard()) {
+                    handleActionCard(playedCard);
+                } else {
+                    // Normal card - just advance to next player
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                }
+                
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Enter a number or 'D'.");
+            }
             // More remaining
     }
 
