@@ -70,6 +70,10 @@ public class Card {
      */
     @Override
     public String toString() {
+        if (color == null) {
+            // Wild cards have no color
+            return getValue().toString();
+        }
         return getColor() + " " + getValue();
     }
 }
