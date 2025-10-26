@@ -4,8 +4,8 @@ import java.util.List;
 /**
  * Represents a player's hand in the UNO game.
  * A hand contains a collection of cards that can be added, removed, and viewed.
- * 
- * @author 
+ *
+ * @author
  * @version 1.0
  */
 public class Hand {
@@ -22,7 +22,7 @@ public class Hand {
     /**
      * Adds a card to this hand.
      * The card is added to the end of the hand.
-     * 
+     *
      * @param card the card to add to the hand
      */
     public void addCard(Card card) {
@@ -31,7 +31,7 @@ public class Hand {
 
     /**
      * Removes and returns a card at the specified index from this hand.
-     * 
+     *
      * @param index the position of the card to remove (0-based)
      * @return the card that was removed, or null if the index is invalid
      */
@@ -45,7 +45,7 @@ public class Hand {
     // Will have identical logic to remove, but obviously just getting instead of removing
     /**
      * Retrieves a card at the specified index without removing it from the hand.
-     * 
+     *
      * @param index the position of the card to retrieve (0-based)
      * @return the card at the specified index, or null if the index is invalid
      */
@@ -61,10 +61,10 @@ public class Hand {
      * Initializes the hand with 7 cards from the top of the deck.
      * This method is typically called at the start of the game.
      * Cards are removed from the beginning of the deck and added to this hand.
-     * 
+     *
      * @param deck the deck of cards to draw from (cards will be removed from index 0)
      */
-    public void StartCards(ArrayList<Card>deck){ 
+    public void startCards(ArrayList<Card>deck){
         for (int i = 0; i<7; i++){
             this.addCard(deck.remove(0));
         }
@@ -72,7 +72,7 @@ public class Hand {
 
     /**
      * Gets the number of cards currently in this hand.
-     * 
+     *
      * @return the size of the hand
      */
     public int getSize() {
@@ -82,7 +82,7 @@ public class Hand {
     /**
      * Gets a formatted string listing all cards in this hand.
      * Each card is displayed on a separate line.
-     * 
+     *
      * @return a multi-line string representation of all cards in the hand
      */
     public String getCards() {
@@ -95,7 +95,7 @@ public class Hand {
 
     /**
      * Returns a string representation of this hand.
-     * 
+     *
      * @return a formatted string showing all cards in the hand
      */
     @Override
