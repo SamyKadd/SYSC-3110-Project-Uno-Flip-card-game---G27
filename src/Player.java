@@ -73,7 +73,7 @@ public class Player {
      * Prints each card on a separate line to the console.
      */
     public void displayHand(){
-        System.out.println(hand.toString());
+        System.out.println(hand.getCards());
     }
 
     /**
