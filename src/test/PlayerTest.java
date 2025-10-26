@@ -41,8 +41,12 @@ public class PlayerTest{
         Hand second = player.getHand();
         assertSame(first, second);  //ensures player keeps one consistent hand throughout the game
     }
-    //@Test
-
+    @Test
+    void testToString(){
+        Player player = new Player("Alice");
+        String result = player.toString();
+        assertEquals("Player Alice (Score: 0, Cards: 0)", result);
+    }
 
     //@Test
 }
