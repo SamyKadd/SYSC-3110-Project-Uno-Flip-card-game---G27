@@ -9,4 +9,13 @@ public class HandTest {
         Hand hand = new Hand();
         assertEquals(0, hand.getSize());
     }
+
+    @Test
+    public void testAddCard() {
+        Hand hand = new Hand();
+        Card card = new Card(Card.Color.GREEN, Card.Value.EIGHT);
+        hand.addCard(card);
+        assertEquals(1, hand.getSize());
+    }
+
 }
