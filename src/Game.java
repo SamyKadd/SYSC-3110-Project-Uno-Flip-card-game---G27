@@ -28,10 +28,10 @@ public class Game {
     public Game() {
         players = new ArrayList<>();
         deck = new ArrayList<>();
+        discardedPile = new ArrayList<>();
         currentPlayerIndex = 0;
         clockwise = true;
         input = new Scanner(System.in);
-        // Initialize deck with cards
         initializeDeck();
     }
 
@@ -149,15 +149,14 @@ public class Game {
 
         }
 
-        //
         top = deck.remove(0);
+        discardedPile.add(top);
         System.out.println("Starting card: " + top);
         System.out.println("\nGame starting!\n");
 
         playGame();
     }
 
-    // NOT COMPLETE
     /**
      * Main game loop that handles player turns.
      * Displays game state, shows current player's hand,
@@ -185,7 +184,6 @@ public class Game {
             // update this
             System.out.println("\nEnter card number to play, or 'D' to draw a card:");
             String s = input.nextLine().trim();
-            Card playedCard = null;
 
             if (s.equalsIgnoreCase("D")) {
                 Card drawnCard = drawCard();
@@ -198,27 +196,27 @@ public class Game {
             }
 
             try {
-                // Missing some logic here
                 int cardIndex = Integer.parseInt(s);
-                if (cardIndex >= 0 && cardIndex < hand.getSize()) {
-                    playedCard = hand.getCard(cardIndex);
-                }
-                if(playedCard == null){
-                    System.out.println("Invalid card number!");
+
+                if (cardIndex < 0 || cardIndex >= hand.getSize()) {
+                    System.out.println("Invalid card number! Try again.");
                     continue;
                 }
-                boolean validCard = isValidPlay(playedCard);
-                if (!validCard) {
-                    System.out.println("You cannot play this card! Try again.");
+                
+                Card playedCard = hand.getCard(cardIndex);
+
+                if (!isValidPlay(playedCard)) {
+                    System.out.println("You cannot play this card! Card must match colour or value. Try again.");
                     continue;
                 }
-                top = playedCard;
+
                 hand.removeCard(cardIndex);
-                if(playedCard.isActionCard()){
-                    handleActionCard(playedCard);
-                } else {
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                }
+                top = playedCard;
+                discardedPile.add(playedCard);
+                topWild = null; // Reset wild color unless a wild is played
+
+                System.out.println("You played: " + playedCard);
+
                 // Check if player won
                 if (hand.getSize() == 0) {
                     System.out.println("\n===========================================");
@@ -227,11 +225,15 @@ public class Game {
                     break;
                 }
 
+                if(playedCard.isActionCard()){
+                    handleActionCard(playedCard);
+                } else {
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                }
 
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input! Enter a number or 'D'.");
             }
-            // More remaining
         }
     }
 
