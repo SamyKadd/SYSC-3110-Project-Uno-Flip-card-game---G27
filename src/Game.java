@@ -7,8 +7,8 @@ import java.util.Scanner;
  * Represents the main UNO game logic and state.
  * This class manages players, the deck, turns, and game rules.
  * Supports 2-4 players and handles all UNO card actions.
- * 
- * @author 
+ *
+ * @author
  * @version 1.0
  */
 public class Game {
@@ -18,6 +18,7 @@ public class Game {
     private boolean clockwise; //+1 forward and -1 reverse order
     private Card top; //The card thats on the top of the discard pile
     private Card.Color topWild = null; //If the top card on discard pile is wild card
+    private Scanner input;
 
     /**
      * Constructs a new Game instance.
@@ -29,6 +30,7 @@ public class Game {
         deck = new ArrayList<>();
         currentPlayerIndex = 0;
         clockwise = true;
+        input = new Scanner(System.in);
         // Initialize deck with cards
         initializeDeck();
     }
@@ -93,7 +95,7 @@ public class Game {
     /**
      * Adds a player to the game.
      * Maximum of 4 players allowed.
-     * 
+     *
      * @param p the player to add
      */
     public void addPlayer(Player p){
@@ -106,7 +108,7 @@ public class Game {
 
     /**
      * Removes a player from the game.
-     * 
+     *
      * @param p the player to remove
      */
     public void removePlayer(Player p){
@@ -115,7 +117,7 @@ public class Game {
 
     /**
      * Gets a player at the specified index.
-     * 
+     *
      * @param index the position of the player in the players list
      * @return the player at the given index
      */
@@ -165,13 +167,13 @@ public class Game {
     private void playGame() {
         while (true) {
             Player currentPlayer = players.get(currentPlayerIndex);
-            
+
             // Display game state
             System.out.println("===========================================");
             System.out.println(currentPlayer.getName() + "'s turn");
             System.out.println("Top card on discard pile: " + (topWild != null ? topWild : top));
             System.out.println("-------------------------------------------");
-            
+
             // Show current player's hand with numbers
             System.out.println("Your cards:");
             Hand hand = currentPlayer.getHand();
@@ -182,9 +184,9 @@ public class Game {
             // I can't open the example so I'm just guessing the input, I'll have to 
             // update this
             System.out.println("\nEnter card number to play, or 'D' to draw a card:");
-            String input = scanner.nextLine().trim();
-            
-            if (input.equalsIgnoreCase("D")) {
+            String s = input.nextLine().trim();
+
+            if (s.equalsIgnoreCase("D")) {
                 Card drawnCard = drawCard();
                 if (drawnCard != null) {
                     hand.addCard(drawnCard);
@@ -196,7 +198,7 @@ public class Game {
 
             try {
                 // Missing some logic here
-                
+
                 // Check if player won
                 if (hand.getSize() == 0) {
                     System.out.println("\n===========================================");
@@ -204,7 +206,7 @@ public class Game {
                     System.out.println("===========================================");
                     break;
                 }
-                
+
                 // Handle action cards
                 if (playedCard.isActionCard()) {
                     handleActionCard(playedCard);
@@ -212,153 +214,153 @@ public class Game {
                     // Normal card - just advance to next player
                     currentPlayerIndex = nextPlayer(currentPlayerIndex);
                 }
-                
+
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input! Enter a number or 'D'.");
             }
             // More remaining
+        }
     }
 
-    /**
-     * Checks if a card can be legally played on the current top card.
-     * A card is valid if:
-     * - It's a wild card (can always be played)
-     * - Its color matches the wild color (if a wild was played)
-     * - Its color or value matches the top card
-     * 
-     * @param cardToPlay the card being checked for validity
-     * @return true if the card can be played, false otherwise
-     */
-    public boolean isValidPlay(Card cardToPlay) {
+        /**
+         * Checks if a card can be legally played on the current top card.
+         * A card is valid if:
+         * - It's a wild card (can always be played)
+         * - Its color matches the wild color (if a wild was played)
+         * - Its color or value matches the top card
+         *
+         * @param cardToPlay the card being checked for validity
+         * @return true if the card can be played, false otherwise
+         */
+        public boolean isValidPlay(Card cardToPlay) {
 
-        if (cardToPlay.getValue() == Card.Value.WILD || cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
+            if (cardToPlay.getValue() == Card.Value.WILD || cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
+                return true;
+            }
+
+            if (topWild != null) {
+                return cardToPlay.getColor() == topWild;
+            }
+
+            if (top != null) {
+                return cardToPlay.getColor() == top.getColor() || cardToPlay.getValue() == top.getValue();
+            }
+
             return true;
         }
-        
-        if (topWild != null) {
-            return cardToPlay.getColor() == topWild;
+
+        /**
+         * Executes the special action associated with an action card.
+         * Handles: SKIP, WILD, WILD_DRAW_TWO, DRAW_ONE, and REVERSE cards.
+         * Updates game state and advances to the next player as appropriate.
+         *
+         * @param card the action card whose effect should be applied
+         */
+        public void handleActionCard(Card card){
+            if(card.isActionCard()) {
+                switch (card.getValue()) {
+                    case SKIP:
+                        currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
+                        System.out.println("Skipping player. Next Turn: " + players.get(currentPlayerIndex).getName());
+                        break;
+
+                    case WILD:
+                        topWild = askColorSwitch();
+                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                        System.out.println("Wild has been played, color is set to " + topWild + ". Next Turn: "  + players.get(currentPlayerIndex).getName());
+                        break;
+
+                    case WILD_DRAW_TWO:
+                        topWild = askColorSwitch();
+                        drawCards(nextPlayer(currentPlayerIndex), 2);
+                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 card, it is now their turn.");
+                        break;
+
+                    case DRAW_ONE:
+                        drawCards(nextPlayer(currentPlayerIndex), 1);
+                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                        System.out.println(players.get(currentPlayerIndex).getName() + " Drew 1 card, it is now their turn.");
+                        break;
+
+                    case REVERSE:
+                        clockwise = !clockwise;
+                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                        System.out.println("Reversing direction. Next Turn: " + players.get(currentPlayerIndex).getName());
+                        break;
+                }
+            }
         }
-        
-        if (top != null) {
-            return cardToPlay.getColor() == top.getColor() || cardToPlay.getValue() == top.getValue();
+
+        //This class is desgined to return the next player
+        /**
+         * Calculates the index of the next player based on current direction.
+         * Handles wrapping around the player list in both clockwise and
+         * counter-clockwise directions.
+         *
+         * @param index the current player index
+         * @return the index of the next player
+         */
+        private int nextPlayer(int index){
+            if (clockwise) {
+                return (index + 1) % players.size();
+            } else {
+                return (index - 1 + players.size()) % players.size();
+            }
         }
-        
-        return true;
-    }
 
-    /**
-     * Executes the special action associated with an action card.
-     * Handles: SKIP, WILD, WILD_DRAW_TWO, DRAW_ONE, and REVERSE cards.
-     * Updates game state and advances to the next player as appropriate.
-     * 
-     * @param card the action card whose effect should be applied
-     */
-    public void handleActionCard(Card card){
-        if(card.isActionCard()) {
-            switch (card.getValue()) {
-                case SKIP:
-                    currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
-                    System.out.println("Skipping player. Next Turn: " + players.get(currentPlayerIndex).getName());
-                    break;
+        //Taking a card from the top of the deck and returning it
+        /**
+         * Draws a single card from the top of the deck.
+         *
+         * @return the card drawn from the deck, or null if deck is empty
+         */
+        private Card drawCard(){
+            if (deck.isEmpty()) {
+                System.out.println("Deck is empty! (TODO: reshuffle from discard if you add one)");
+                return null;
+            }
+            // draw from top of list; if you prefer, use remove(deck.size()-1)
+            return deck.remove(0);
+        }
 
-                case WILD:
-                    topWild = askColorSwitch();
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                    System.out.println("Wild has been played, color is set to " + topWild + ". Next Turn: "  + players.get(currentPlayerIndex).getName());
-                    break;
+        //Drawing a Card from deck and putting it in players hands
+        /**
+         * Makes a player draw multiple cards from the deck.
+         * Cards are added directly to the specified player's hand.
+         *
+         * @param index the index of the player who will draw cards
+         * @param count the number of cards to draw
+         */
+        private void drawCards(int index, int count) {
+            for (int i = 0; i < count; i++) {
+                Card card = drawCard();
+                if (card != null) {
+                    players.get(index).getHand().addCard(card);
+                }
+            }
+        }
 
-                case WILD_DRAW_TWO:
-                    topWild = askColorSwitch();
-                    drawCards(nextPlayer(currentPlayerIndex), 2);
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                    System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 card, it is now their turn.");
-                    break;
-
-                case DRAW_ONE:
-                    drawCards(nextPlayer(currentPlayerIndex), 1);
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                    System.out.println(players.get(currentPlayerIndex).getName() + " Drew 1 card, it is now their turn.");
-                    break;
-
-                case REVERSE:
-                    clockwise = !clockwise;
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                    System.out.println("Reversing direction. Next Turn: " + players.get(currentPlayerIndex).getName());
-                    break;
+        //Getting user to pick next color
+        /**
+         * Prompts the current player to choose a color for a wild card.
+         * Continues prompting until a valid color is entered.
+         * Valid inputs: R (Red), G (Green), Y (Yellow), B (Blue)
+         *
+         * @return the color chosen by the player
+         */
+        private Card.Color askColorSwitch(){
+            while (true){
+                System.out.print("Choose a color (R/G/Y/B:   ");
+                String colorChose = input.nextLine();
+                switch (colorChose){
+                    case "R": return Card.Color.RED;
+                    case "G": return Card.Color.GREEN;
+                    case "Y": return Card.Color.YELLOW;
+                    case "B": return Card.Color.BLUE;
+                    default:;
+                        System.out.println("Invalid option");
+                }
             }
         }
     }
-
-    //This class is desgined to return the next player
-    /**
-     * Calculates the index of the next player based on current direction.
-     * Handles wrapping around the player list in both clockwise and 
-     * counter-clockwise directions.
-     * 
-     * @param index the current player index
-     * @return the index of the next player
-     */
-    private int nextPlayer(int index){
-        if (clockwise) {
-            return (index + 1) % players.size();
-        } else {
-            return (index - 1 + players.size()) % players.size();
-        }
-    }
-    
-    //Taking a card from the top of the deck and returning it
-    /**
-     * Draws a single card from the top of the deck.
-     * 
-     * @return the card drawn from the deck, or null if deck is empty
-     */
-    private Card drawCard(){
-        if (deck.isEmpty()) {
-            System.out.println("Deck is empty! (TODO: reshuffle from discard if you add one)");
-            return null;
-        }
-        // draw from top of list; if you prefer, use remove(deck.size()-1)
-        return deck.remove(0);
-    }
-    
-    //Drawing a Card from deck and putting it in players hands
-    /**
-     * Makes a player draw multiple cards from the deck.
-     * Cards are added directly to the specified player's hand.
-     * 
-     * @param index the index of the player who will draw cards
-     * @param count the number of cards to draw
-     */
-    private void drawCards(int index, int count) {
-        for (int i = 0; i < count; i++) {
-            Card card = drawCard();
-            if (card != null) {
-                players.get(index).getHand().addCard(card);
-            }
-        }
-    }
-
-    //Getting user to pick next color
-    /**
-     * Prompts the current player to choose a color for a wild card.
-     * Continues prompting until a valid color is entered.
-     * Valid inputs: R (Red), G (Green), Y (Yellow), B (Blue)
-     * 
-     * @return the color chosen by the player
-     */
-    private Card.Color askColorSwitch(){
-        while (true){
-            System.out.print("Choose a color (R/G/Y/B:   ");
-            Scanner scanner = new Scanner(System.in);
-            String colorChose = scanner.nextLine();
-            switch (colorChose){
-                case "R": return Card.Color.RED;
-                case "G": return Card.Color.GREEN;
-                case "Y": return Card.Color.YELLOW;
-                case "B": return Card.Color.BLUE;
-                default:;
-                    System.out.println("Invalid option");
-            }
-        }
-    }
-}
