@@ -17,5 +17,12 @@ public class HandTest {
         hand.addCard(card);
         assertEquals(1, hand.getSize());
     }
+    @Test
+    public void testAddCards() {
+        Hand hand = new Hand();
+        Card card = new Card(Card.Color.GREEN, Card.Value.EIGHT);
+        hand.addCard(card);
+        assertEquals(card, hand.getCard(0));
+    }
 
 }
