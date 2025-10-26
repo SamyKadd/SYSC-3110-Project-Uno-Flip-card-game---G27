@@ -78,7 +78,7 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 
 ---
 
-## How to Run
+### How to Run
 
 To run, build the Main class, and the game will begin.
 
