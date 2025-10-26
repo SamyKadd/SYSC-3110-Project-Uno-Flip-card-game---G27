@@ -18,6 +18,7 @@ public class Game {
     private Card top; //The card thats on the top of the discard pile
     private Card.Color topWild = null; //If the top card on discard pile is wild card
     private Scanner input;
+    List<Card> discardedPile =  new ArrayList<>();
 
     /**
      * Constructs a new Game instance.
