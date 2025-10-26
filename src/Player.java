@@ -73,8 +73,17 @@ public class Player {
      * Prints each card on a separate line to the console.
      */
     public void displayHand(){
-        //System.out.println(hand.toString());
-        System.out.println(hand.getCards());;
+        System.out.println(hand.toString());
+    }
+
+    /**
+     * Returns a string representation of this player,
+     * including their name, current score, and number of cards in hand.
+     * @return a formatted String summarizing the player's state
+     */
+    @Override
+    public String toString() {
+        return "Player " + getName() + " (Score: " + getScore() + ", Cards: " + hand.getSize() + ")";
     }
 
 }
