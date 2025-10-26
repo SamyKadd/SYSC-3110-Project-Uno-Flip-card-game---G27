@@ -8,6 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PlayerTest{
     private Player player;
 
+    @BeforeAll
+    static void beforeAll() {
+    }
+
     @BeforeEach
     void setUp(){
         player = new Player("Alice");
