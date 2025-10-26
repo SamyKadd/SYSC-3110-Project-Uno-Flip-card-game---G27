@@ -1,1 +1,95 @@
-Just creating this since we'll need it later.
+# UNO Card Game - Milestone 1
+
+## Project Overview
+A text-based implementation of UNO card game in Java supporting 2-4 players with all standard action cards.
+
+---
+
+## Deliverables
+
+### Source Code
+- `Card.java` - Card representation with color and value
+- `Hand.java` - Manages player's hand of cards  
+- `Player.java` - Player with name, score, and hand
+- `Game.java` - Main game logic and controller
+- `Main.java` - Entry point
+
+### Test Files
+- `CardTest.java` - 5 unit tests for Card class
+- `HandTest.java` - 6 unit tests for Hand class
+- `PlayerTest.java` - 6 unit tests for Player class
+- `GameTest.java` - Unit tests for Game class
+
+### Documentation
+- `README.md` - This file
+- JavaDoc comments in all source files
+- UML Class Diagram (`diagrams/UML_diagram`) WE HAVE TO MAKE THIS 
+- Sequence Diagrams (`diagrams/sequence_DIAGRAM`) WE HAVE TO MAKE THIS
+- Data Structures Explanation Document
+
+---
+
+## Team Contributions
+
+### Milestone 1
+
+**Joodi Al-Asaad**
+- 
+
+**Mahdi Bouakline**
+- 
+
+**Samy Kaddour**
+- 
+
+**Seham Khalifa**
+- 
+
+---
+
+## How to Run
+
+To run, build the Main class, and the game will begin.
+
+
+### Run Tests:
+Run test files through your IDE or JUnit test runner.
+
+---
+
+## How to Play
+
+1. Enter card number (0, 1, 2...) to play that card
+2. Enter 'D' to draw a card and pass your turn
+3. For WILD cards, enter R/G/Y/B to choose color
+4. Match color OR value of top card to play
+5. First player with 0 cards wins
+
+---
+
+## Known Issues
+
+1. **Deck Exhaustion**: If deck runs empty, players cannot draw cards. Future versions will reshuffle discard pile.
+
+2. **Single Round Only**: Game ends after one round. Multiple round scoring not yet implemented.
+
+3. **No AI Players**: All players must be human.
+
+4. **Initial Hand Display**: Starting hands are displayed to all players.
+
+---
+
+## Data Structures Used
+
+- **ArrayList<Card> deck** - For drawing cards and shuffling
+- **List<Player> players** - For turn order and indexed access
+- **List<Card> cards (in Hand)** - For displaying numbered cards to players
+- **List<Card> discardedPile** - Tracks all played cards
+
+See data structures document for detailed explanation.
+
+---
+
+**Course**: SYSC 3110  
+**Milestone**: 1  
+**Date**: 2025-10-27
