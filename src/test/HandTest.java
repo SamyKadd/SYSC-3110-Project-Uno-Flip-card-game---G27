@@ -25,4 +25,15 @@ public class HandTest {
         assertEquals(card, hand.getCard(0));
     }
 
+    @Test
+    public void testRemoveCard() {
+        Hand hand = new Hand();
+        Card card = new Card(Card.Color.GREEN, Card.Value.EIGHT);
+        hand.addCard(card);
+        Card card2 = new Card(Card.Color.GREEN, Card.Value.SEVEN);
+        hand.addCard(card2);
+        hand.removeCard(0);
+        assertEquals(1, hand.getSize());
+    }
+
 }
