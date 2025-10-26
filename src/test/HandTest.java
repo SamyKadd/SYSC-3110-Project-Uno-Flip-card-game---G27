@@ -7,6 +7,6 @@ public class HandTest {
     @Test
     public void testHand() {
         Hand hand = new Hand();
-        assertTrue(hand.getSize() == 0);
+        assertEquals(0, hand.getSize());
     }
 }
