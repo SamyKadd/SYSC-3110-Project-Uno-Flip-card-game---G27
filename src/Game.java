@@ -143,7 +143,7 @@ public class Game {
         }
 
         for (Player player: players){
-            player.getHand().StartCards(deck);
+            player.getHand().startCards(deck);
             System.out.println(player.getName() + " hand:");
             player.displayHand();
 
