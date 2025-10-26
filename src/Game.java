@@ -207,6 +207,16 @@ public class Game {
                     continue;
                 }
                 boolean validCard = isValidPlay(playedCard);
+                if (!validCard) {
+                    System.out.println("You cannot play this card! Try again.");
+                    continue;
+                }
+                top = playedCard;
+                hand.removeCard(cardIndex);
+                if(playedCard.isActionCard()){
+                    handleActionCard(playedCard);
+                }
+                currentPlayerIndex = nextPlayer(currentPlayerIndex);
 
                 // Check if player won
                 if (hand.getSize() == 0) {
