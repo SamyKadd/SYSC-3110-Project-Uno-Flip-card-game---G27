@@ -149,7 +149,7 @@ public class Game {
         }
 
         //
-        top = deck.removeFirst();
+        top = deck.remove(0);
         System.out.println("Starting card: " + top);
         System.out.println("\nGame starting!\n");
 
@@ -184,7 +184,7 @@ public class Game {
             // update this
             System.out.println("\nEnter card number to play, or 'D' to draw a card:");
             String s = input.nextLine().trim();
-            Card playCard = null;
+            Card playedCard = null;
 
             if (s.equalsIgnoreCase("D")) {
                 Card drawnCard = drawCard();
@@ -200,8 +200,14 @@ public class Game {
                 // Missing some logic here
                 int cardIndex = Integer.parseInt(s);
                 if (cardIndex >= 0 && cardIndex < hand.getSize()) {
-                    playCard = hand.getCard(cardIndex);
+                    playedCard = hand.getCard(cardIndex);
                 }
+                if(playedCard == null){
+                    System.out.println("Invalid card number!");
+                    continue;
+                }
+                boolean validCard = isValidPlay(playedCard);
+
                 // Check if player won
                 if (hand.getSize() == 0) {
                     System.out.println("\n===========================================");
