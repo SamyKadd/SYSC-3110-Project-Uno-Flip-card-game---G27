@@ -215,9 +215,9 @@ public class Game {
                 hand.removeCard(cardIndex);
                 if(playedCard.isActionCard()){
                     handleActionCard(playedCard);
+                } else {
+                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
                 }
-                currentPlayerIndex = nextPlayer(currentPlayerIndex);
-
                 // Check if player won
                 if (hand.getSize() == 0) {
                     System.out.println("\n===========================================");
@@ -226,13 +226,6 @@ public class Game {
                     break;
                 }
 
-                // Handle action cards
-                if (playedCard.isActionCard()) {
-                    handleActionCard(playedCard);
-                } else {
-                    // Normal card - just advance to next player
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                }
 
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input! Enter a number or 'D'.");
