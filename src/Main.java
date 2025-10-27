@@ -2,7 +2,22 @@ import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+/**
+ * Entry point for the UNO card game application.
+ * Prompts users for number of players and their names,
+ * then starts the game.
+ *
+ * @author 
+ * @version 1.0
+ */
 public class Main {
+    /**
+     * Main method to start the UNO game.
+     * Prompts for player count (2-4) and player names,
+     * then initializes and starts the game.
+     *
+     * @param args command line arguments (not used)
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Game game = new Game();
