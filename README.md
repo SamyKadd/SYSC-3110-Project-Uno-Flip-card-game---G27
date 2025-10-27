@@ -67,6 +67,8 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 - Implemented REVERSE card logic
 - Added helper functions for action card processing
 - Completed CardTest with 5 comprehensive unit tests
+- Completed GameTest with 11 comprehensive unit tests
+- Completed Sequence Diagram UML
 
 **Seham Khalifa**
 - Implemented startCards() method in Hand class (deal 7 cards)
