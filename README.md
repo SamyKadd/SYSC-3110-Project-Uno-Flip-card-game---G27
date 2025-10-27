@@ -23,8 +23,8 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 ### Documentation
 - `README.md` - This file
 - JavaDoc comments in all source files
-- UML Class Diagram (`diagrams/UML_diagram`) WE HAVE TO MAKE THIS 
-- Sequence Diagrams (`diagrams/sequence_DIAGRAM`) WE HAVE TO MAKE THIS
+- UML Class Diagram (`diagrams/UML_diagram`)
+- Sequence Diagrams (`diagrams/sequence_DIAGRAM`)
 - Data Structures Explanation Document
 
 ---
@@ -57,6 +57,7 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 - Fixed wild card toString() to handle null color properly
 - Implemented do-while loop to prevent starting with action cards
 - Created initial README.md and project documentation
+- Created the data structures file
 
 **Samy Kaddour**
 - Implemented WILD card functionality with color selection
