@@ -53,11 +53,12 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 - Implemented deck initialization with 108 cards and shuffling
 - Implemented complete game logic and game loop in Game.java
 - Implemented isValidPlay() method for card validation
-- Added JavaDoc documentation to all classes (Card, Hand, Player, Game)
+- Added JavaDoc documentation to all classes
 - Fixed wild card toString() to handle null color properly
 - Implemented do-while loop to prevent starting with action cards
 - Created initial README.md and project documentation
 - Created the data structures file
+- Implemented three test cases in GameTest
 
 **Samy Kaddour**
 - Implemented WILD card functionality with color selection
