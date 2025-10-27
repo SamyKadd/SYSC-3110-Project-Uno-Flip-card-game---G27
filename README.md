@@ -36,16 +36,16 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 **Joodi Al-Asaad**
 - Refactored Card class to use enums (Color and Value)
 - Implemented action card detection logic (checkIfActionCard)
-- Updated Card class for UNO Flip compatibility
 - Added Player attributes (name, score, hand) with getters/setters
 - Implemented Skip card logic and handleActionCard() method
 - Added currentPlayerIndex tracking and turn flow logic
+- Implemented isValidPlay() and card play validation logic
 - Implemented Scanner for player input and card selection
+- Added validation for invalid card indexes and safe user retry
 - Added toString() to Player and uncommented addScore()
--Finalized Card, Hand, and Game classes for M1
+- Finalized Card, Hand, and Game classes for M1
 - Created all test files (CardTest, HandTest, PlayerTest, GameTest)
 - Implemented 6 HandTest unit tests
-- Implemented 6 PlayerTest unit tests
 - Added card play validation and turn advancement logic
 
 **Mahdi Bouakline**
