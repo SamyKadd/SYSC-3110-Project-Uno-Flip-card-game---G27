@@ -2,7 +2,7 @@
  * Represents a card in the UNO game.
  * Each card has a color and a value, which can be either a number or an action.
  *
- * @author
+ * @author G27
  * @version 1.0
  */
 

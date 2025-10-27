@@ -7,7 +7,7 @@ import java.util.Scanner;
  * This class manages players, the deck, turns, and game rules.
  * Supports 2-4 players and handles all UNO card actions.
  *
- * @author
+ * @author G27
  * @version 1.0
  */
 public class Game {

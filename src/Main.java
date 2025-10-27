@@ -7,7 +7,7 @@ import java.util.Scanner;
  * Prompts users for number of players and their names,
  * then starts the game.
  *
- * @author 
+ * @author G27
  * @version 1.0
  */
 public class Main {
