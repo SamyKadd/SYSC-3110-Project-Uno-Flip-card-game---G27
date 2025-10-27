@@ -47,6 +47,7 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 - Created all test files (CardTest, HandTest, PlayerTest, GameTest)
 - Implemented 6 HandTest unit tests
 - Added card play validation and turn advancement logic
+- Completed UML class diagrams 
 
 **Mahdi Bouakline**
 - Implemented initial Card.java and Hand.java skeleton code
