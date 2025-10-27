@@ -102,6 +102,8 @@ Run test files through your IDE or JUnit test runner.
 
 ## Known Issues
 
+These will all be resolved according to the instructions in the upcoming Milestones.
+
 1. **Deck Exhaustion**: If deck runs empty, players cannot draw cards. Future versions will reshuffle discard pile.
 
 2. **Single Round Only**: Game ends after one round. Multiple round scoring not yet implemented.
