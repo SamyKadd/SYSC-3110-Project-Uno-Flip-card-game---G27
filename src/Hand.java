@@ -42,7 +42,6 @@ public class Hand {
         return null;
     }
 
-    // Will have identical logic to remove, but obviously just getting instead of removing
     /**
      * Retrieves a card at the specified index without removing it from the hand.
      *

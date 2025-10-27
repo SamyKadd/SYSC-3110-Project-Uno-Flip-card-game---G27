@@ -24,9 +24,6 @@ public class Card {
         this.value = value;
     }
 
-    // Need to add the function that will check if it is an Action Card here
-    // This is just a mock implementation, have to adjust this based on how we assign
-    // action cards.
     /**
      * Checks if the given value represents an action card.
      * Action cards include SKIP, DRAW_ONE, REVERSE, WILD, and WILD_DRAW_TWO.

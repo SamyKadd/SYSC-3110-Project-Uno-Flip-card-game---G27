@@ -35,7 +35,6 @@ public class Game {
         initializeDeck();
     }
 
-    // Not 100% sure if this is correct/works, have to test this later
     /**
      * Initializes the UNO deck with all standard cards.
      * Creates:
@@ -187,8 +186,6 @@ public class Game {
                 System.out.println(i + ": " + hand.getCard(i));
             }
 
-            // I can't open the example so I'm just guessing the input, I'll have to 
-            // update this
             System.out.println("\nEnter card number to play, or 'D' to draw a card:");
             String s = input.nextLine().trim();
 
@@ -296,7 +293,7 @@ public class Game {
                         topWild = askColorSwitch();
                         drawCards(nextPlayer(currentPlayerIndex), 2);
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 card, it is now their turn.");
+                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 cards, it is now their turn.");
                         break;
 
                     case DRAW_ONE:
@@ -339,7 +336,8 @@ public class Game {
          */
         private Card drawCard(){
             if (deck.isEmpty()) {
-                System.out.println("Deck is empty! (TODO: reshuffle from discard if you add one)");
+                // (TODO: reshuffle from discard if you add one)
+                System.out.println("Deck is empty!");
                 return null;
             }
             // draw from top of list; if you prefer, use remove(deck.size()-1)
