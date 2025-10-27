@@ -293,13 +293,13 @@ public class Game {
                         topWild = askColorSwitch();
                         drawCards(nextPlayer(currentPlayerIndex), 2);
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 cards, it is now their turn.");
+                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " drew 2 cards, it is now their turn.");
                         break;
 
                     case DRAW_ONE:
                         drawCards(nextPlayer(currentPlayerIndex), 1);
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println(players.get(currentPlayerIndex).getName() + " Drew 1 card, it is now their turn.");
+                        System.out.println(players.get(currentPlayerIndex).getName() + " drew 1 card, it is now their turn.");
                         break;
 
                     case REVERSE:
@@ -336,7 +336,7 @@ public class Game {
          */
         private Card drawCard(){
             if (deck.isEmpty()) {
-                // (TODO: reshuffle from discard if you add one)
+                // (TODO in Milestone 2: reshuffle from discard if you add one)
                 System.out.println("Deck is empty!");
                 return null;
             }
