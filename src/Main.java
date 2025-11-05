@@ -17,25 +17,20 @@ public class Main {
      * @param args command line arguments (not used)
      */
     public static void main(String[] args) {
+        
+        // Using GUI dialog for player selection
+        int numPlayers = PlayerSelectionDialog.showDialog(null);
+        
+        if (numPlayers == -1) {
+            System.out.println("Game cancelled.");
+            System.exit(0);
+        }
+
         Scanner scanner = new Scanner(System.in);
         Game game = new Game();
         
         System.out.println("Welcome to UNO!");
         System.out.println("================");
-        
-        // Ask for number of players
-        int numPlayers = 0;
-        while (numPlayers < 2 || numPlayers > 4) {
-            System.out.print("How many players? (2-4): ");
-            try {
-                numPlayers = Integer.parseInt(scanner.nextLine().trim());
-                if (numPlayers < 2 || numPlayers > 4) {
-                    System.out.println("Please enter a number between 2 and 4.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
 
         // Get player names
         for (int i = 1; i <= numPlayers; i++) {
