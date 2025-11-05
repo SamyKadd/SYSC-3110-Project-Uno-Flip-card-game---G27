@@ -28,7 +28,7 @@ public class PlayerSelectionDialog extends JDialog {
         
         initializeComponents();
         
-        setSize(400, 180);
+        setSize(450, 200);
         setLocationRelativeTo(parent);
         setResizable(false);
     }
@@ -64,7 +64,7 @@ public class PlayerSelectionDialog extends JDialog {
         // ComboBox panel
         JPanel comboPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         playerCountComboBox = new JComboBox<>(new Integer[]{2, 3, 4});
-        playerCountComboBox.setPreferredSize(new Dimension(200, 30));
+        playerCountComboBox.setPreferredSize(new Dimension(300, 35));
         playerCountComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         comboPanel.add(playerCountComboBox);
         
@@ -77,7 +77,23 @@ public class PlayerSelectionDialog extends JDialog {
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         
-        // Have to decide if we should implement Actionlistener here or use lambda or a different file 
+        JButton okButton = new JButton("OK");
+        okButton.setPreferredSize(new Dimension(100, 30));
+        okButton.addActionListener(e -> {
+            numberOfPlayers = (Integer) playerCountComboBox.getSelectedItem();
+            confirmed = true;
+            dispose();
+        });
+        
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setPreferredSize(new Dimension(100, 30));
+        cancelButton.addActionListener(e -> {
+            confirmed = false;
+            dispose();
+        });
+        
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
         
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -98,5 +114,21 @@ public class PlayerSelectionDialog extends JDialog {
      */
     public boolean isConfirmed() {
         return confirmed;
+    }
+    
+    /**
+     * Shows the dialog and returns the selected number of players.
+     *
+     * @param parent the parent frame
+     * @return number of players, or -1 if cancelled
+     */
+    public static int showDialog(JFrame parent) {
+        PlayerSelectionDialog dialog = new PlayerSelectionDialog(parent);
+        dialog.setVisible(true);
+        
+        if (dialog.isConfirmed()) {
+            return dialog.getNumberOfPlayers();
+        }
+        return -1;
     }
 }
