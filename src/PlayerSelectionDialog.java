@@ -7,7 +7,7 @@ import java.awt.*;
  * Allows selection of 2-4 players.
  *
  * @author G27
- * @version 1.0
+ * @version 2.0
  */
 public class PlayerSelectionDialog extends JDialog {
     
