@@ -327,4 +327,47 @@ public class GameView extends JFrame {
     public ArrayList<JButton> getCardButtons() {
         return cardButtons;
     }
+
+    /**
+     * Displays an error message dialog.
+     *
+     * @param message the error message
+     */
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    /**
+     * Displays an information message dialog.
+     *
+     * @param message the information message
+     */
+    public void showMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    /**
+     * Prompts the user to select a color for a wild card.
+     *
+     * @return the selected color
+     */
+    public Card.Color promptForWildColor() {
+        Object[] options = {"Red", "Blue", "Green", "Yellow"};
+        int choice = JOptionPane.showOptionDialog(this,
+                "Choose a color for the wild card:",
+                "Wild Card",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        
+        switch (choice) {
+            case 0: return Card.Color.RED;
+            case 1: return Card.Color.BLUE;
+            case 2: return Card.Color.GREEN;
+            case 3: return Card.Color.YELLOW;
+            default: return Card.Color.RED;
+        }
+    }
 }
