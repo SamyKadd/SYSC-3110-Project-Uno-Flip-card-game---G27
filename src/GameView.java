@@ -53,5 +53,71 @@ public class GameView extends JFrame {
     /**
      * Initializes all GUI components and adds them to the frame.
      */
-    private void initializeComponents() {}
+    private void initializeComponents() {
+        // Top panel - shows the top card
+        JPanel topPanel = createTopPanel();
+        add(topPanel, BorderLayout.NORTH);
+        
+        // Center panel - shows player's hand
+        handPanel = createHandPanel();
+        add(handPanel, BorderLayout.CENTER);
+        
+        // Bottom panel - shows controls and scoreboard
+        JPanel bottomPanel = createBottomPanel();
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Creates the top panel displaying the current top card.
+     *
+     * @return JPanel containing top card display
+     */
+    private JPanel createTopPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Title label
+        JLabel titleLabel = new JLabel("Top Card");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        panel.add(titleLabel, BorderLayout.WEST);
+        
+        // Top card display
+        topCardPanel = new JPanel();
+        topCardPanel.setPreferredSize(new Dimension(150, 100));
+        topCardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        topCardPanel.setBackground(Color.WHITE);
+        
+        topCardLabel = new JLabel("", SwingConstants.CENTER);
+        topCardLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        topCardPanel.add(topCardLabel);
+        
+        panel.add(topCardPanel, BorderLayout.CENTER);
+        
+        // Status section
+        JPanel statusPanel = new JPanel(new GridLayout(2, 1));
+        currentPlayerLabel = new JLabel("Current Player: ");
+        currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        statusMessageLabel = new JLabel("Status Message: ");
+        statusMessageLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        
+        statusPanel.add(currentPlayerLabel);
+        statusPanel.add(statusMessageLabel);
+        
+        panel.add(statusPanel, BorderLayout.SOUTH);
+        
+        return panel;
+    }
+
+    /**
+     * Creates the center panel for displaying player's cards.
+     *
+     * @return JPanel for the player's hand
+     */
+    private JPanel createHandPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
+        panel.setBorder(BorderFactory.createTitledBorder("Your Hand"));
+        panel.setBackground(new Color(200, 220, 240));
+        return panel;
+    }
 }
