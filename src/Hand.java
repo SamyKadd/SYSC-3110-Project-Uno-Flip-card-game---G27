@@ -56,6 +56,11 @@ public class Hand {
         return null;
     }
 
+    /** Returns the list of Card objects in this hand */
+    public List<Card> getCardsList() {
+        return cards;
+    }
+    
     /**
      * Initializes the hand with 7 cards from the top of the deck.
      * This method is typically called at the start of the game.
