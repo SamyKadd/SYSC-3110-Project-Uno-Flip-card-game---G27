@@ -153,4 +153,47 @@ public class GameView extends JFrame {
         
         return panel;
     }
+
+    /**
+     * Updates the display of the top card.
+     *
+     * @param card the card to display
+     */
+    public void updateTopCard(Card card) {
+        if (card != null) {
+            topCardLabel.setText(formatCardText(card));
+            topCardPanel.setBackground(getColorForCard(card));
+        }
+    }
+    
+    /**
+     * Updates the top card display with a wild card color.
+     *
+     * @param color the color chosen for the wild card
+     */
+    public void updateTopCardWild(Card.Color color) {
+        topCardLabel.setText(color.toString());
+        topCardPanel.setBackground(getColorForCardColor(color));
+    }
+
+    /**
+     * Displays the cards in the player's hand.
+     *
+     * @param hand the Hand object containing the player's cards
+     */
+    public void displayHand(Hand hand) {
+        handPanel.removeAll();
+        cardButtons.clear();
+        
+        for (int i = 0; i < hand.getSize(); i++) {
+            Card card = hand.getCard(i);
+            JButton cardButton = createCardButton(card, i);
+            cardButtons.add(cardButton);
+            handPanel.add(cardButton);
+        }
+
+        // Will have to implement these        
+        handPanel.revalidate();
+        handPanel.repaint();
+    }
 }
