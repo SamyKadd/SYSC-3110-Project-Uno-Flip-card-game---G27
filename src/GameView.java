@@ -196,4 +196,52 @@ public class GameView extends JFrame {
         handPanel.revalidate();
         handPanel.repaint();
     }
+
+    /**
+     * Creates a button representing a card in the player's hand.
+     *
+     * @param card the card to represent
+     * @param index the position of the card in the hand
+     * @return JButton styled as a card
+     */
+    private JButton createCardButton(Card card, int index) {
+        JButton button = new JButton("<html><center>" + formatCardText(card) + "</center></html>");
+        button.setPreferredSize(new Dimension(120, 160));
+        button.setBackground(getColorForCard(card));
+        button.setFont(new Font("Arial", Font.BOLD, 11));
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        button.setFocusPainted(false);
+        
+        // Store the index in the button's action command
+        button.setActionCommand(String.valueOf(index));
+        
+        return button;
+    }
+    
+    /**
+     * Formats card text for display.
+     *
+     * @param card the card to format
+     * @return formatted string representation
+     */
+    private String formatCardText(Card card) {
+        if (card.getColor() == null) {
+            return card.getValue().toString().replace("_", " ");
+        }
+        return card.getColor().toString() + "<br>" + 
+               card.getValue().toString().replace("_", " ");
+    }
+    
+    /**
+     * Gets the background color for a card.
+     *
+     * @param card the card
+     * @return Color object for the card's background
+     */
+    private Color getColorForCard(Card card) {
+        if (card.getColor() == null) {
+            return Color.BLACK;
+        }
+        return getColorForCardColor(card.getColor());
+    }
 }
