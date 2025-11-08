@@ -12,7 +12,8 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onPlayCard(int handIndex){
-
+        attemptPlayCard(handIndex);
+        push();
     }
 
     /**
@@ -21,7 +22,8 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onDraw(){
-
+        attemptDrawCard();
+        push();
     }
 
     /**
@@ -30,7 +32,8 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onNext(){
-
+        advanceTurn();
+        push();
     }
 
     /**
@@ -41,6 +44,8 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onChooseWildCardCol(Card.Color color){
+        applyWildColor(color);
+        push();
     }
 
     /**
@@ -50,7 +55,9 @@ public class GameController implements GameUIListener {
      * @param view the game view responsible for the GUI
      */
     public GameController(Game model, GameView view){
-
+        this.model = model;
+        this.view = view;
+        this.view.setListener(this);
     }
 
     /**
@@ -58,7 +65,16 @@ public class GameController implements GameUIListener {
      * Creates a GameState snapshot and sends it to the view for rendering.
      */
     private void push(){
-
+        GameState state = new GameState();
+        Player current = model.getPlayer(0);
+        state.curPlayerName = current.getName();
+        state.curHand = getHandCards(current);
+        state.topCard = null;
+        state.statusMessage = getStatusMessage();
+        state.canDraw = true;
+        state.canPlay = true;
+        state.canNext = true;
+        view.render(state);
     }
 
     /**
@@ -68,7 +84,7 @@ public class GameController implements GameUIListener {
      * @return a list of Card objects representing the player's hand
      */
     private List<Card> getHandCards(Player player){
-        return null;
+        return player.getHand().getCards();
     }
 
     /**
@@ -77,8 +93,10 @@ public class GameController implements GameUIListener {
      * @return the current game status message or an empty string if none
      */
     private String getStatusMessage(){
-        return null;
+        return "";
     }
+
+
     /**
      * Attempts to play a card from the player's hand
      * Calls the appropriate method in the Game model
@@ -87,7 +105,15 @@ public class GameController implements GameUIListener {
      * @return true if the play was successful; false otherwise
      */
     private boolean attemptPlayCard(int index){
-        return false;
+        Player current = model.getPlayer(0);
+        Card card = current.getHand().getCard(index);
+        if(!model.isValidPlay(card)){
+            view.showError("Invalid card play");
+            return false;
+        }
+        current.getHand().removeCard(index);
+        setStatus("Played"+ card);
+        return true;
     }
 
     /**
@@ -97,7 +123,8 @@ public class GameController implements GameUIListener {
      * @return true if the draw was successful; false otherwise
      */
     private boolean attemptDrawCard(){
-        return false;
+        setStatus("You drew a card.");
+        return true;
     }
 
     /**
@@ -105,6 +132,7 @@ public class GameController implements GameUIListener {
      * Delegates turn progression to the model
      */
     private void advanceTurn(){
+        setStatus("Next player's turn!");
 
     }
 
@@ -115,7 +143,7 @@ public class GameController implements GameUIListener {
      * @param color the color selected by the player
      */
     private void applyWildColor(Card.Color color){
-
+        setStatus("The Wild card color chosen is:" + color);
     }
 
     /**
@@ -124,7 +152,7 @@ public class GameController implements GameUIListener {
      * @param message the message to display in the game's status area
      */
     private void setStatus(String message){
-
+        view.updateStatusMessage(message);
     }
 
     /**
@@ -134,6 +162,6 @@ public class GameController implements GameUIListener {
      * @return true if the card is a wild card; false otherwise
      */
     private boolean isWild(Card card){
-        return false;
+        return card.getValue() == Card.Value.WILD || card.getValue() == Card.Value.WILD_DRAW_TWO;
     }
 }

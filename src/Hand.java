@@ -84,7 +84,7 @@ public class Hand {
      *
      * @return a multi-line string representation of all cards in the hand
      */
-    public String getCards() {
+    public List<Card> getCards() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getSize(); i++) {
             sb.append(cards.get(i).toString()).append("\n");
