@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
 
 /**
  * The View component of the MVC pattern for the UNO game.
@@ -32,6 +34,8 @@ public class GameView extends JFrame {
     
     // Scoreboard
     private JLabel scoreboardLabel;
+
+    private GameUIListener uiListener;
     
     /**
      * Constructs the GameView window.
@@ -140,7 +144,10 @@ public class GameView extends JFrame {
         drawCardButton = new JButton("DRAW CARD");
         drawCardButton.setFont(new Font("Arial", Font.BOLD, 12));
         drawCardButton.setPreferredSize(new Dimension(150, 40));
-        
+
+        nextPlayerButton.addActionListener(e-> {if (uiListener !=null) uiListener.onNext();});
+        drawCardButton.addActionListener(e->{if (uiListener !=null ) uiListener.onDraw();});
+
         controlPanel.add(nextPlayerButton);
         controlPanel.add(drawCardButton);
         
@@ -214,7 +221,12 @@ public class GameView extends JFrame {
         
         // Store the index in the button's action command
         button.setActionCommand(String.valueOf(index));
-        
+        button.addActionListener(e -> {
+            if (uiListener != null){
+                uiListener.onPlayCard((Integer.parseInt((e.getActionCommand()))));
+            }
+        });
+
         return button;
     }
     
@@ -300,6 +312,42 @@ public class GameView extends JFrame {
         }
         scoreboardLabel.setText(sb.toString());
     }
+
+    /**
+     * Render the view
+     *
+     * @param s is the current games state
+     */
+    public void render(GameState s){
+        if (s.topCard != null) {
+            updateTopCard(s.topCard);
+        }
+        if (s.curPlayerName != null) {
+            updateCurrentPlayer(s.curPlayerName);
+        }
+        updateStatusMessage(s.statusMessage == null ? "" : s.statusMessage);
+
+        drawCardButton.setEnabled(s.canDraw);
+        nextPlayerButton.setEnabled(s.canNext);
+
+        handPanel.removeAll();
+        cardButtons.clear();
+        List<Card> hand = s.curHand == null ? java.util.Collections.emptyList() : s.curHand;
+        for (int i = 0; i < hand.size(); i++) {
+            JButton cardBtn = createCardButton(hand.get(i), i);
+            cardButtons.add(cardBtn);
+            handPanel.add(cardBtn);
+        }
+        handPanel.revalidate();
+        handPanel.repaint();
+
+        if (s.needsWildColor) {
+            Card.Color chosen = promptForWildColor();
+            if (uiListener != null && chosen != null) {
+                uiListener.onChooseWildCardCol(chosen);
+            }
+        }
+    }
     
     /**
      * Gets the next player button.
@@ -326,6 +374,15 @@ public class GameView extends JFrame {
      */
     public ArrayList<JButton> getCardButtons() {
         return cardButtons;
+    }
+
+    /**
+     * Setting the listener
+     *
+     * @param listener the listener to set
+     */
+    public void setListener(GameUIListener listener){
+        this.uiListener = listener;
     }
 
     /**
