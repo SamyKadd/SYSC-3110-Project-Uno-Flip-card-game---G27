@@ -283,4 +283,48 @@ public class GameView extends JFrame {
     public void updateStatusMessage(String message) {
         statusMessageLabel.setText("Status Message: " + message);
     }
+
+    /**
+     * Updates the scoreboard display.
+     *
+     * @param players list of players with their scores
+     */
+    public void updateScoreboard(java.util.List<Player> players) {
+        StringBuilder sb = new StringBuilder("Scoreboard: ");
+        for (int i = 0; i < players.size(); i++) {
+            Player p = players.get(i);
+            sb.append(p.getName()).append(": ").append(p.getScore());
+            if (i < players.size() - 1) {
+                sb.append(" | ");
+            }
+        }
+        scoreboardLabel.setText(sb.toString());
+    }
+    
+    /**
+     * Gets the next player button.
+     *
+     * @return the next player button
+     */
+    public JButton getNextPlayerButton() {
+        return nextPlayerButton;
+    }
+    
+    /**
+     * Gets the draw card button.
+     *
+     * @return the draw card button
+     */
+    public JButton getDrawCardButton() {
+        return drawCardButton;
+    }
+    
+    /**
+     * Gets the list of card buttons.
+     *
+     * @return ArrayList of card buttons
+     */
+    public ArrayList<JButton> getCardButtons() {
+        return cardButtons;
+    }
 }
