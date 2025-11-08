@@ -332,7 +332,7 @@ public class GameView extends JFrame {
 
         handPanel.removeAll();
         cardButtons.clear();
-        List<Card> hand = s.curHand == null ? java.util.Collections.emptyList() : s.curHand;
+        List<Card> hand = s.curHand == null ? Collections.emptyList() : s.curHand;
         for (int i = 0; i < hand.size(); i++) {
             JButton cardBtn = createCardButton(hand.get(i), i);
             cardButtons.add(cardBtn);
