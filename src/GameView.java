@@ -244,4 +244,43 @@ public class GameView extends JFrame {
         }
         return getColorForCardColor(card.getColor());
     }
+
+    /**
+     * Converts Card.Color enum to java.awt.Color.
+     *
+     * @param color the Card.Color
+     * @return corresponding java.awt.Color
+     */
+    private Color getColorForCardColor(Card.Color color) {
+        switch (color) {
+            case RED:
+                return new Color(255, 80, 80);
+            case BLUE:
+                return new Color(80, 150, 255);
+            case GREEN:
+                return new Color(80, 200, 120);
+            case YELLOW:
+                return new Color(255, 220, 80);
+            default:
+                return Color.WHITE;
+        }
+    }
+    
+    /**
+     * Updates the current player display.
+     *
+     * @param playerName name of the current player
+     */
+    public void updateCurrentPlayer(String playerName) {
+        currentPlayerLabel.setText("Current Player: " + playerName);
+    }
+    
+    /**
+     * Updates the status message.
+     *
+     * @param message the status message to display
+     */
+    public void updateStatusMessage(String message) {
+        statusMessageLabel.setText("Status Message: " + message);
+    }
 }
