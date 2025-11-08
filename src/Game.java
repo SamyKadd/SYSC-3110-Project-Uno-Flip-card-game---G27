@@ -7,7 +7,7 @@ import java.util.Scanner;
  * This class manages players, the deck, turns, and game rules.
  * Supports 2-4 players and handles all UNO card actions.
  *
- * @author
+ * @author G27
  * @version 1.0
  */
 public class Game {
@@ -35,7 +35,6 @@ public class Game {
         initializeDeck();
     }
 
-    // Not 100% sure if this is correct/works, have to test this later
     /**
      * Initializes the UNO deck with all standard cards.
      * Creates:
@@ -187,8 +186,6 @@ public class Game {
                 System.out.println(i + ": " + hand.getCard(i));
             }
 
-            // I can't open the example so I'm just guessing the input, I'll have to 
-            // update this
             System.out.println("\nEnter card number to play, or 'D' to draw a card:");
             String s = input.nextLine().trim();
 
@@ -296,13 +293,13 @@ public class Game {
                         topWild = askColorSwitch();
                         drawCards(nextPlayer(currentPlayerIndex), 2);
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " Drew 2 card, it is now their turn.");
+                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " drew 2 cards, it is now their turn.");
                         break;
 
                     case DRAW_ONE:
                         drawCards(nextPlayer(currentPlayerIndex), 1);
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println(players.get(currentPlayerIndex).getName() + " Drew 1 card, it is now their turn.");
+                        System.out.println(players.get(currentPlayerIndex).getName() + " drew 1 card, it is now their turn.");
                         break;
 
                     case REVERSE:
@@ -339,7 +336,8 @@ public class Game {
          */
         private Card drawCard(){
             if (deck.isEmpty()) {
-                System.out.println("Deck is empty! (TODO: reshuffle from discard if you add one)");
+                // (TODO in Milestone 2: reshuffle from discard if you add one)
+                System.out.println("Deck is empty!");
                 return null;
             }
             // draw from top of list; if you prefer, use remove(deck.size()-1)

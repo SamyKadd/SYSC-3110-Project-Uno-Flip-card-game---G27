@@ -5,7 +5,7 @@ import java.util.List;
  * Represents a player's hand in the UNO game.
  * A hand contains a collection of cards that can be added, removed, and viewed.
  *
- * @author
+ * @author G27
  * @version 1.0
  */
 public class Hand {
@@ -42,7 +42,6 @@ public class Hand {
         return null;
     }
 
-    // Will have identical logic to remove, but obviously just getting instead of removing
     /**
      * Retrieves a card at the specified index without removing it from the hand.
      *

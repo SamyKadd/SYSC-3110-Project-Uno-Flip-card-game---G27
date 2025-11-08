@@ -2,7 +2,7 @@
  * Represents a player in the UNO game.
  * Each player has a name, score, and hand of cards.
  *
- * @author
+ * @author G27
  * @version 1.0
  */
 public class Player {

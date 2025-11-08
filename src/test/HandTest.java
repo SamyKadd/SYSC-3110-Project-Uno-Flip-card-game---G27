@@ -7,13 +7,30 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for Hand.
+ * Tests hand initialization, adding and removing cards,
+ * and dealing initial cards from the deck.
+ *
+ * @author G27
+ * @version 1.0
+ */
 public class HandTest {
+
+    /**
+     * Tests hand initialization.
+     * Verifies that a new hand starts with zero cards.
+     */
     @Test
     public void testHand() {
         Hand hand = new Hand();
         assertEquals(0, hand.getSize());
     }
 
+    /**
+     * Tests adding a card to the hand.
+     * Verifies that the hand size increases correctly.
+     */
     @Test
     public void testAddCard() {
         Hand hand = new Hand();
@@ -21,6 +38,11 @@ public class HandTest {
         hand.addCard(card);
         assertEquals(1, hand.getSize());
     }
+
+    /**
+     * Tests that added cards can be retrieved.
+     * Verifies that the correct card is returned at the given index.
+     */
     @Test
     public void testAddCards() {
         Hand hand = new Hand();
@@ -29,6 +51,10 @@ public class HandTest {
         assertEquals(card, hand.getCard(0));
     }
 
+    /**
+     * Tests removing a card from the hand.
+     * Verifies that the hand size decreases correctly.
+     */
     @Test
     public void testRemoveCard() {
         Hand hand = new Hand();
@@ -39,6 +65,11 @@ public class HandTest {
         hand.removeCard(0);
         assertEquals(1, hand.getSize());
     }
+
+    /**
+     * Tests that remaining cards shift correctly after removal.
+     * Verifies that the correct card is at index 0 after removing the first card.
+     */
     @Test
     public void testRemoveCards() {
         Hand hand = new Hand();
@@ -50,6 +81,11 @@ public class HandTest {
         assertEquals(card2, hand.getCard(0));
     }
 
+    /**
+     * Tests dealing initial cards from the deck.
+     * Verifies that startCards removes exactly 7 cards from the deck
+     * and adds them to the hand.
+     */
     @Test
     public void testStartCard() {
         Hand hand = new Hand();
