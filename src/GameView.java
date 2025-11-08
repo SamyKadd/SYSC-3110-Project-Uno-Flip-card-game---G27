@@ -60,7 +60,19 @@ public class GameView extends JFrame {
         
         // Center panel - shows player's hand
         handPanel = createHandPanel();
-        add(handPanel, BorderLayout.CENTER);
+
+        JScrollPane handScrollPane = new JScrollPane(
+                handPanel,
+                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
+
+        handScrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        // Constrain height properly
+        handScrollPane.setPreferredSize(new Dimension(1400, 240));
+
+        add(handScrollPane, BorderLayout.CENTER);
         
         // Bottom panel - shows controls and scoreboard
         JPanel bottomPanel = createBottomPanel();
@@ -75,15 +87,18 @@ public class GameView extends JFrame {
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+        panel.setPreferredSize(new Dimension(1400, 200));
+
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+
         // Title label
         JLabel titleLabel = new JLabel("Top Card");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        panel.add(titleLabel, BorderLayout.WEST);
+        leftPanel.add(titleLabel, BorderLayout.WEST);
         
         // Top card display
         topCardPanel = new JPanel();
-        topCardPanel.setPreferredSize(new Dimension(150, 100));
+        topCardPanel.setPreferredSize(new Dimension(100, 140));
         topCardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         topCardPanel.setBackground(Color.WHITE);
         
@@ -91,7 +106,10 @@ public class GameView extends JFrame {
         topCardLabel.setFont(new Font("Arial", Font.BOLD, 12));
         topCardPanel.add(topCardLabel);
         
-        panel.add(topCardPanel, BorderLayout.CENTER);
+        topCardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        leftPanel.add(topCardPanel);
+        panel.add(leftPanel, BorderLayout.WEST);
         
         // Status section
         JPanel statusPanel = new JPanel(new GridLayout(2, 1));
@@ -115,9 +133,10 @@ public class GameView extends JFrame {
      */
     private JPanel createHandPanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 30));
         panel.setBorder(BorderFactory.createTitledBorder("Your Hand"));
         panel.setBackground(new Color(200, 220, 240));
+        panel.setPreferredSize(new Dimension(1400, 300));
         return panel;
     }
 
@@ -129,7 +148,8 @@ public class GameView extends JFrame {
     private JPanel createBottomPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+        panel.setPreferredSize(new Dimension(1400, 80));
+
         // Left side - control buttons
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
@@ -206,10 +226,10 @@ public class GameView extends JFrame {
      */
     private JButton createCardButton(Card card, int index) {
         JButton button = new JButton("<html><center>" + formatCardText(card) + "</center></html>");
-        button.setPreferredSize(new Dimension(120, 160));
+        button.setPreferredSize(new Dimension(120, 180));
         button.setBackground(getColorForCard(card));
         button.setFont(new Font("Arial", Font.BOLD, 11));
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         button.setFocusPainted(false);
         
         // Store the index in the button's action command
