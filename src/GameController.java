@@ -84,7 +84,7 @@ public class GameController implements GameUIListener {
      * @return a list of Card objects representing the player's hand
      */
     private List<Card> getHandCards(Player player){
-        return player.getHand().getCards();
+        return player.getHand().getCardsList();
     }
 
     /**

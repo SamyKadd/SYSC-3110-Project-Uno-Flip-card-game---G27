@@ -60,7 +60,7 @@ public class Hand {
     public List<Card> getCardsList() {
         return cards;
     }
-    
+
     /**
      * Initializes the hand with 7 cards from the top of the deck.
      * This method is typically called at the start of the game.
@@ -89,13 +89,14 @@ public class Hand {
      *
      * @return a multi-line string representation of all cards in the hand
      */
-    public List<Card> getCards() {
+    public String getCards() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getSize(); i++) {
             sb.append(cards.get(i).toString()).append("\n");
         }
         return sb.toString();
     }
+
 
     /**
      * Returns a string representation of this hand.
