@@ -120,4 +120,37 @@ public class GameView extends JFrame {
         panel.setBackground(new Color(200, 220, 240));
         return panel;
     }
+
+    /**
+     * Creates the bottom panel with game controls and scoreboard.
+     *
+     * @return JPanel containing controls and scoreboard
+     */
+    private JPanel createBottomPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Left side - control buttons
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        nextPlayerButton = new JButton("NEXT PLAYER");
+        nextPlayerButton.setFont(new Font("Arial", Font.BOLD, 12));
+        nextPlayerButton.setPreferredSize(new Dimension(150, 40));
+        
+        drawCardButton = new JButton("DRAW CARD");
+        drawCardButton.setFont(new Font("Arial", Font.BOLD, 12));
+        drawCardButton.setPreferredSize(new Dimension(150, 40));
+        
+        controlPanel.add(nextPlayerButton);
+        controlPanel.add(drawCardButton);
+        
+        panel.add(controlPanel, BorderLayout.WEST);
+        
+        // Right side - scoreboard
+        scoreboardLabel = new JLabel("Scoreboard: ");
+        scoreboardLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        panel.add(scoreboardLabel, BorderLayout.EAST);
+        
+        return panel;
+    }
 }
