@@ -26,14 +26,23 @@ public class GameController implements GameUIListener {
         this.view.setListener(this);
 
         this.model.addPropertyChangeListener(new PropertyChangeListener() {
+            private String lastPlayer = null;
+
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("state".equals(evt.getPropertyName())) {
                     GameState newState = (GameState) evt.getNewValue();
                     view.render(newState);
+
+                    // Detect turn change
+                    if (newState.curPlayerName != null && !newState.curPlayerName.equals(lastPlayer)) {
+                        hasPlayedThisTurn = false; // unlock for new player
+                        lastPlayer = newState.curPlayerName;
+                    }
                 }
             }
         });
+
     }
 
     /**
