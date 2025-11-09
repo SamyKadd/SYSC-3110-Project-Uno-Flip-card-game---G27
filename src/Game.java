@@ -308,8 +308,13 @@ public class Game {
                         } else {
                             currentPlayerIndex = nextPlayer(currentPlayerIndex);
                         }
-                        break;
+                        GameState s2 = exportState();
+                        s2.statusMessage = (players.size() == 2)
+                                ? getCurrentPlayer().getName() + " played REVERSE! Same player goes again!"
+                                : "Play direction reversed!";
+                        pcs.firePropertyChange("state", null, s2);
 
+                        break;
                 }
             }
             notifyStateChanged();
