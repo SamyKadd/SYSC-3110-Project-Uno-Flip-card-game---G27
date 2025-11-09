@@ -89,12 +89,18 @@ public class GameController implements GameUIListener {
      * @param index the index of the card to be played
      * @return true if the play was successful; false otherwise
      */
-    private boolean attemptPlayCard(int index){
+    private boolean attemptPlayCard(int index) {
+        GameState state = model.exportState();
+        if (state.turnComplete) {
+            view.showError("You already played this turn! Click Next Player.");
+            return false;
+        }
+
         Player current = model.getCurrentPlayer();
         Card card = current.getHand().getCard(index);
 
-        if(!model.isValidPlay(card)){
-            view.showError("Invalid card play! Try again");
+        if (!model.isValidPlay(card)) {
+            view.showError("Invalid card play! Try again.");
             return false;
         }
 
@@ -102,6 +108,7 @@ public class GameController implements GameUIListener {
         view.updateStatusMessage(current.getName() + " played " + card);
         return true;
     }
+
 
     /**
      * Attempts to draw a card for the current player
