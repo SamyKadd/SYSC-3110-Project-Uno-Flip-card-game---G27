@@ -296,7 +296,11 @@ public class Game {
 
                     case REVERSE:
                         clockwise = !clockwise;
-                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                        if (players.size() == 2) {
+                            currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
+                        } else {
+                            currentPlayerIndex = nextPlayer(currentPlayerIndex);
+                        }
                         break;
                 }
             }
