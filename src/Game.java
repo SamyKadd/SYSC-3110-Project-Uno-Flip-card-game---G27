@@ -393,4 +393,11 @@ public class Game {
         public Card getTopCard() {
             return top;
         }
-    }
+        public void addPropertyChangeListener(PropertyChangeListener listener) {
+            pcs.addPropertyChangeListener(listener);
+        }
+        public void removePropertyChangeListener(PropertyChangeListener listener) {
+            pcs.removePropertyChangeListener(listener);
+        }
+
+}
