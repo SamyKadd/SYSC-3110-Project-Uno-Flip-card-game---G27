@@ -246,24 +246,25 @@ public class Game {
          * @return true if the card can be played, false otherwise
          */
         public boolean isValidPlay(Card cardToPlay) {
-            // Wild cards can always be played
+            if (cardToPlay == null) return false;
+            // Wilds can always be played
             if (cardToPlay.getValue() == Card.Value.WILD || cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
                 return true;
             }
-            // If the top card is a wild with chosen color, match that color
+            // If a wild color is active (a color chosen from a previous wild)
             if (topWild != null) {
                 return cardToPlay.getColor() == topWild;
             }
-            // Otherwise, match by color or value
+            // If there is a top card on the discard pile
             if (top != null) {
-                // Allow same color OR same number/action (even if color differs)
-                return (cardToPlay.getColor() != null && top.getColor() != null &&
-                        cardToPlay.getColor().equals(top.getColor()))
-                        || cardToPlay.getValue().equals(top.getValue());
+                // Allow match by color OR value
+                return (cardToPlay.getColor() == top.getColor()) ||
+                        (cardToPlay.getValue() == top.getValue());
             }
-            // Default true if no top card (e.g., game just started)
+            // Default true if no top card yet
             return true;
         }
+
 
 
         /**
