@@ -5,6 +5,8 @@ public class GameState {
     public String curPlayerName;
     public List<Card> curHand = new ArrayList<>();
     public Card topCard;
+    public boolean turnComplete = false;
+
 
     public String statusMessage = "";
 
