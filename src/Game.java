@@ -165,6 +165,7 @@ public class Game {
         System.out.println("\nGame starting!\n");
 
         playGame();
+        notifyStateChanged();
     }
 
     /**
@@ -313,6 +314,7 @@ public class Game {
                         break;
                 }
             }
+            notifyStateChanged();
         }
 
         //This class is desgined to return the next player
@@ -332,7 +334,8 @@ public class Game {
             }
         }
 
-        //Taking a card from the top of the deck and returning it
+
+    //Taking a card from the top of the deck and returning it
         /**
          * Draws a single card from the top of the deck.
          *
@@ -363,6 +366,7 @@ public class Game {
                     players.get(index).getHand().addCard(card);
                 }
             }
+            notifyStateChanged();
         }
 
         //Getting user to pick next color
