@@ -235,6 +235,12 @@ public class GameView extends JFrame {
         JButton button = new JButton(formatCardText(card));
         button.setPreferredSize(new Dimension(120, 180));
         button.setBackground(getColorForCard(card));
+        button.setOpaque(true);
+        button.setForeground(
+                card.getColor() == null || card.getColor() == Card.Color.YELLOW
+                        ? Color.BLACK
+                        : Color.WHITE
+        );
         button.setFont(new Font("Arial", Font.BOLD, 11));
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         button.setFocusPainted(false);
