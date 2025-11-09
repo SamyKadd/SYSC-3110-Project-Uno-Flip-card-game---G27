@@ -66,7 +66,7 @@ public class GameController implements GameUIListener {
      */
     private void push(){
         GameState state = new GameState();
-        Player current = model.getPlayer(0);
+        Player current = model.getCurrentPlayer();
         state.curPlayerName = current.getName();
         state.curHand = getHandCards(current);
         state.topCard = null;
