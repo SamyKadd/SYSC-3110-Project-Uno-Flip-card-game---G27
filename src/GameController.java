@@ -69,7 +69,7 @@ public class GameController implements GameUIListener {
         Player current = model.getCurrentPlayer();
         state.curPlayerName = current.getName();
         state.curHand = getHandCards(current);
-        state.topCard = null;
+        state.topCard = model.getTopCard();
         state.statusMessage = getStatusMessage();
         state.canDraw = true;
         state.canPlay = true;
