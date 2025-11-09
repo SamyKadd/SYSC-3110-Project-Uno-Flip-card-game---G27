@@ -420,8 +420,23 @@ public class Game {
         private void notifyStateChanged() {
             pcs.firePropertyChange("state", null, exportState());
         }
+        /**
+         * Makes the current player draw one card and updates state.
+         */
+        public void drawCardForCurrentPlayer() {
+            Player cur = getCurrentPlayer();
+            Card card = drawCard();
+            if (card != null) {
+                cur.getHand().addCard(card);
+            }
+            notifyStateChanged();
+        }
 
-
-
-
+        /**
+         * Advances to the next player's turn and updates state.
+         */
+        public void advanceTurn() {
+            currentPlayerIndex = nextPlayer(currentPlayerIndex);
+            notifyStateChanged();
+        }
 }
