@@ -82,10 +82,6 @@ public class GameController implements GameUIListener {
     private void push() {
         view.render(model.exportState());
     }
-
-
-
-
     /**
      * Attempts to play a card from the player's hand
      * Calls the appropriate method in the Game model
@@ -135,9 +131,10 @@ public class GameController implements GameUIListener {
      *
      * @param color the color selected by the player
      */
-    private void applyWildColor(Card.Color color){
-
-        view.updateStatusMessage("The wild card color is now " + color);
+    private void applyWildColor(Card.Color color) {
+        model.setTopWildColor(color);
+        view.updateStatusMessage("Wild card color set to " + color);
     }
+
 
 }
