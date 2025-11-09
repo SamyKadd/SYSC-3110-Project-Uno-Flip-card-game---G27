@@ -236,11 +236,16 @@ public class GameView extends JFrame {
         button.setPreferredSize(new Dimension(120, 180));
         button.setBackground(getColorForCard(card));
         button.setOpaque(true);
-        button.setForeground(
-                card.getColor() == null || card.getColor() == Card.Color.YELLOW
-                        ? Color.BLACK
-                        : Color.WHITE
-        );
+        if (card.getColor() == null) {
+            // Wild cards are black → use white text
+            button.setForeground(Color.WHITE);
+        } else if (card.getColor() == Card.Color.YELLOW) {
+            // Yellow is bright → black text
+            button.setForeground(Color.BLACK);
+        } else {
+            // All other colors → white text
+            button.setForeground(Color.WHITE);
+        }
         button.setFont(new Font("Arial", Font.BOLD, 11));
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         button.setFocusPainted(false);
