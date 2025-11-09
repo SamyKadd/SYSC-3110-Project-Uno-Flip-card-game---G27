@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 public class GameController implements GameUIListener {
     private Game model;
@@ -54,10 +55,20 @@ public class GameController implements GameUIListener {
      * @param model the game model that contains the logic and data
      * @param view the game view responsible for the GUI
      */
-    public GameController(Game model, GameView view){
+    public GameController(Game model, GameView view) {
         this.model = model;
         this.view = view;
         this.view.setListener(this);
+
+        this.model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("state".equals(evt.getPropertyName())) {
+                    GameState newState = (GameState) evt.getNewValue();
+                    view.render(newState);
+                }
+            }
+        });
     }
 
     /**
