@@ -387,6 +387,7 @@ public class Game {
                 }
             }
         }
+        //need to add javadocs later
         public Player getCurrentPlayer() {
             return players.get(currentPlayerIndex);
         }
@@ -411,6 +412,11 @@ public class Game {
             s.needsWildColor = false;
             return s;
         }
+
+        private void notifyStateChanged() {
+            pcs.firePropertyChange("state", null, exportState());
+        }
+
 
 
 
