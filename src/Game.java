@@ -399,5 +399,19 @@ public class Game {
         public void removePropertyChangeListener(PropertyChangeListener listener) {
             pcs.removePropertyChangeListener(listener);
         }
+        public GameState exportState() {
+            GameState s = new GameState();
+            Player cur = getCurrentPlayer();
+            s.curPlayerName = cur.getName();
+            s.curHand = new ArrayList<>(cur.getHand().getCardsList());
+            s.topCard = getTopCard();
+            s.canDraw = true;
+            s.canPlay = true;
+            s.canNext = true;
+            s.needsWildColor = false;
+            return s;
+        }
+
+
 
 }
