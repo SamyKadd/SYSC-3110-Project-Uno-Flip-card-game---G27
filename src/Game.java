@@ -386,4 +386,7 @@ public class Game {
         public Player getCurrentPlayer() {
             return players.get(currentPlayerIndex);
         }
+        public Card getTopCard() {
+            return top;
+        }
     }
