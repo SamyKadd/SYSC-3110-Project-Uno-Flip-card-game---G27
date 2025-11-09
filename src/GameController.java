@@ -101,8 +101,8 @@ public class GameController implements GameUIListener {
             view.showError("Invalid card play! Try again");
             return false;
         }
-        current.getHand().removeCard(index);
-        model.handleActionCard(card);
+
+        model.playCardFromHand(index);
         view.updateStatusMessage(current.getName() + " played " + card);
         return true;
     }
