@@ -1,6 +1,8 @@
 import java.util.*;
 import java.util.List;
 import java.util.Scanner;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  * Represents the main UNO game logic and state.
@@ -19,6 +21,8 @@ public class Game {
     private Card.Color topWild = null; //If the top card on discard pile is wild card
     private Scanner input;
     List<Card> discardedPile =  new ArrayList<>();
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
 
     /**
      * Constructs a new Game instance.
