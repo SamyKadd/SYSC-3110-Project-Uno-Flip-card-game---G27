@@ -19,7 +19,6 @@ public class Game {
     private boolean clockwise; //+1 forward and -1 reverse order
     private Card top; //The card thats on the top of the discard pile
     private Card.Color topWild = null; //If the top card on discard pile is wild card
-    private Scanner input;
     List<Card> discardedPile =  new ArrayList<>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -35,7 +34,7 @@ public class Game {
         discardedPile = new ArrayList<>();
         currentPlayerIndex = 0;
         clockwise = true;
-        input = new Scanner(System.in);
+//        input = new Scanner(System.in);
         initializeDeck();
     }
 
@@ -133,40 +132,30 @@ public class Game {
      * Validates player count (2-4 players required), deals 7 cards to each player,
      * places the first card on the discard pile, and begins the game loop.
      */
-    public void startGame(){
-
-        if (players.size() < 2) {
-            System.out.println("Need at least 2 players to start the game.");
-            return;
+    public void startGame() {
+        if (players.size() < 2 || players.size() > 4) {
+            throw new IllegalStateException("Game must have 2–4 players before starting.");
         }
 
-        if (players.size() > 4) {
-            System.out.println("Maximum 4 players allowed.");
-            return;
-        }
-
-        for (Player player: players){
+        // Deal 7 cards to each player
+        for (Player player : players) {
             player.getHand().startCards(deck);
-            System.out.println(player.getName() + " hand:");
-            player.displayHand();
-
         }
 
+        // Pick first top card that’s not an action
         do {
             top = deck.remove(0);
             if (top.isActionCard()) {
-                // Put action card back at the bottom of the deck
                 deck.add(top);
             }
         } while (top.isActionCard());
 
         discardedPile.add(top);
-        System.out.println("Starting card: " + top);
-        System.out.println("\nGame starting!\n");
 
-        playGame();
+        // Trigger initial state for GUI
         notifyStateChanged();
     }
+
 
     /**
      * Main game loop that handles player turns.
@@ -174,77 +163,77 @@ public class Game {
      * and manages turn progression.
      * This method contains the core game logic
      */
-    private void playGame() {
-        while (true) {
-            Player currentPlayer = players.get(currentPlayerIndex);
-
-            // Display game state
-            System.out.println("===========================================");
-            System.out.println(currentPlayer.getName() + "'s turn");
-            System.out.println("Top card on discard pile: " + (topWild != null ? topWild : top));
-            System.out.println("-------------------------------------------");
-
-            // Show current player's hand with numbers
-            System.out.println("Your cards:");
-            Hand hand = currentPlayer.getHand();
-            for (int i = 0; i < hand.getSize(); i++) {
-                System.out.println(i + ": " + hand.getCard(i));
-            }
-
-            System.out.println("\nEnter card number to play, or 'D' to draw a card:");
-            String s = input.nextLine().trim();
-
-            if (s.equalsIgnoreCase("D")) {
-                Card drawnCard = drawCard();
-                if (drawnCard != null) {
-                    hand.addCard(drawnCard);
-                    System.out.println("You drew: " + drawnCard);
-                }
-                currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                continue;
-            }
-
-            try {
-                int cardIndex = Integer.parseInt(s);
-
-                if (cardIndex < 0 || cardIndex >= hand.getSize()) {
-                    System.out.println("Invalid card number! Try again.");
-                    continue;
-                }
-                
-                Card playedCard = hand.getCard(cardIndex);
-
-                if (!isValidPlay(playedCard)) {
-                    System.out.println("You cannot play this card! Card must match colour or value. Try again.");
-                    continue;
-                }
-
-                hand.removeCard(cardIndex);
-                top = playedCard;
-                discardedPile.add(playedCard);
-                topWild = null; // Reset wild color unless a wild is played
-
-                System.out.println("You played: " + playedCard);
-
-                // Check if player won
-                if (hand.getSize() == 0) {
-                    System.out.println("\n===========================================");
-                    System.out.println(currentPlayer.getName() + " wins!");
-                    System.out.println("===========================================");
-                    break;
-                }
-
-                if(playedCard.isActionCard()){
-                    handleActionCard(playedCard);
-                } else {
-                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                }
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Enter a number or 'D'.");
-            }
-        }
-    }
+//    private void playGame() {
+//        while (true) {
+//            Player currentPlayer = players.get(currentPlayerIndex);
+//
+//            // Display game state
+//            System.out.println("===========================================");
+//            System.out.println(currentPlayer.getName() + "'s turn");
+//            System.out.println("Top card on discard pile: " + (topWild != null ? topWild : top));
+//            System.out.println("-------------------------------------------");
+//
+//            // Show current player's hand with numbers
+//            System.out.println("Your cards:");
+//            Hand hand = currentPlayer.getHand();
+//            for (int i = 0; i < hand.getSize(); i++) {
+//                System.out.println(i + ": " + hand.getCard(i));
+//            }
+//
+//            System.out.println("\nEnter card number to play, or 'D' to draw a card:");
+//            String s = input.nextLine().trim();
+//
+//            if (s.equalsIgnoreCase("D")) {
+//                Card drawnCard = drawCard();
+//                if (drawnCard != null) {
+//                    hand.addCard(drawnCard);
+//                    System.out.println("You drew: " + drawnCard);
+//                }
+//                currentPlayerIndex = nextPlayer(currentPlayerIndex);
+//                continue;
+//            }
+//
+//            try {
+//                int cardIndex = Integer.parseInt(s);
+//
+//                if (cardIndex < 0 || cardIndex >= hand.getSize()) {
+//                    System.out.println("Invalid card number! Try again.");
+//                    continue;
+//                }
+//
+//                Card playedCard = hand.getCard(cardIndex);
+//
+//                if (!isValidPlay(playedCard)) {
+//                    System.out.println("You cannot play this card! Card must match colour or value. Try again.");
+//                    continue;
+//                }
+//
+//                hand.removeCard(cardIndex);
+//                top = playedCard;
+//                discardedPile.add(playedCard);
+//                topWild = null; // Reset wild color unless a wild is played
+//
+//                System.out.println("You played: " + playedCard);
+//
+//                // Check if player won
+//                if (hand.getSize() == 0) {
+//                    System.out.println("\n===========================================");
+//                    System.out.println(currentPlayer.getName() + " wins!");
+//                    System.out.println("===========================================");
+//                    break;
+//                }
+//
+//                if(playedCard.isActionCard()){
+//                    handleActionCard(playedCard);
+//                } else {
+//                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
+//                }
+//
+//            } catch (NumberFormatException e) {
+//                System.out.println("Invalid input! Enter a number or 'D'.");
+//            }
+//        }
+//    }
 
         /**
          * Checks if a card can be legally played on the current top card.
@@ -280,44 +269,42 @@ public class Game {
          *
          * @param card the action card whose effect should be applied
          */
-        public void handleActionCard(Card card){
-            if(card.isActionCard()) {
+        public void handleActionCard(Card card) {
+            if (card.isActionCard()) {
                 switch (card.getValue()) {
                     case SKIP:
                         currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
-                        System.out.println("Skipping player. Next Turn: " + players.get(currentPlayerIndex).getName());
                         break;
 
                     case WILD:
-                        topWild = askColorSwitch();
-                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println("Wild has been played, color is set to " + topWild + ". Next Turn: "  + players.get(currentPlayerIndex).getName());
-                        break;
+                        // tell the view to prompt for color
+                        GameState s = exportState();
+                        s.needsWildColor = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
 
                     case WILD_DRAW_TWO:
-                        topWild = askColorSwitch();
                         drawCards(nextPlayer(currentPlayerIndex), 2);
+                        topWild = null; // color will be set later by controller
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println("Wild +2 has been played, color is set to " + topWild + ". " + players.get(currentPlayerIndex).getName() + " drew 2 cards, it is now their turn.");
                         break;
 
                     case DRAW_ONE:
                         drawCards(nextPlayer(currentPlayerIndex), 1);
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println(players.get(currentPlayerIndex).getName() + " drew 1 card, it is now their turn.");
                         break;
 
                     case REVERSE:
                         clockwise = !clockwise;
                         currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        System.out.println("Reversing direction. Next Turn: " + players.get(currentPlayerIndex).getName());
                         break;
                 }
             }
             notifyStateChanged();
         }
 
-        //This class is desgined to return the next player
+
+    //This class is desgined to return the next player
         /**
          * Calculates the index of the next player based on current direction.
          * Handles wrapping around the player list in both clockwise and
@@ -334,6 +321,15 @@ public class Game {
             }
         }
 
+        private void reshuffleFromDiscard() {
+            if (discardedPile.size() > 1) {
+                Card lastTop = discardedPile.remove(discardedPile.size() - 1);
+                deck.addAll(discardedPile);
+                discardedPile.clear();
+                discardedPile.add(lastTop);
+                Collections.shuffle(deck);
+            }
+        }
 
     //Taking a card from the top of the deck and returning it
         /**
@@ -341,15 +337,15 @@ public class Game {
          *
          * @return the card drawn from the deck, or null if deck is empty
          */
-        private Card drawCard(){
+        private Card drawCard() {
             if (deck.isEmpty()) {
-                // (TODO in Milestone 2: reshuffle from discard if you add one)
-                System.out.println("Deck is empty!");
-                return null;
+                reshuffleFromDiscard();
             }
-            // draw from top of list; if you prefer, use remove(deck.size()-1)
+            if (deck.isEmpty()) return null; // still empty
             return deck.remove(0);
         }
+
+
 
         //Drawing a Card from deck and putting it in players hands
         /**
@@ -377,20 +373,20 @@ public class Game {
          *
          * @return the color chosen by the player
          */
-        private Card.Color askColorSwitch(){
-            while (true){
-                System.out.print("Choose a color (R/G/Y/B:   ");
-                String colorChose = input.nextLine();
-                switch (colorChose){
-                    case "R": return Card.Color.RED;
-                    case "G": return Card.Color.GREEN;
-                    case "Y": return Card.Color.YELLOW;
-                    case "B": return Card.Color.BLUE;
-                    default:;
-                        System.out.println("Invalid option");
-                }
-            }
-        }
+//        private Card.Color askColorSwitch(){
+//            while (true){
+//                System.out.print("Choose a color (R/G/Y/B:   ");
+//                String colorChose = input.nextLine();
+//                switch (colorChose){
+//                    case "R": return Card.Color.RED;
+//                    case "G": return Card.Color.GREEN;
+//                    case "Y": return Card.Color.YELLOW;
+//                    case "B": return Card.Color.BLUE;
+//                    default:;
+//                        System.out.println("Invalid option");
+//                }
+//            }
+//        }
         //need to add javadocs later
         public Player getCurrentPlayer() {
             return players.get(currentPlayerIndex);
@@ -439,4 +435,26 @@ public class Game {
             currentPlayerIndex = nextPlayer(currentPlayerIndex);
             notifyStateChanged();
         }
+    public void setTopWildColor(Card.Color color) {
+        this.topWild = color;
+        notifyStateChanged();
+    }
+    public void playCardFromHand(int handIndex) {
+        Player cur = getCurrentPlayer();
+        Card played = cur.getHand().removeCard(handIndex);
+        if (played == null || !isValidPlay(played)) return;
+        top = played;
+        discardedPile.add(played);
+
+        if (cur.getHand().getSize() == 0) {
+            GameState s = exportState();
+            s.statusMessage = cur.getName() + " wins!";
+            pcs.firePropertyChange("state", null, s);
+            return;
+        }
+
+        handleActionCard(played);
+    }
+
+
 }
