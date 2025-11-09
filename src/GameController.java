@@ -10,6 +10,8 @@ import java.util.List;
 public class GameController implements GameUIListener {
     private Game model;
     private GameView view;
+    private boolean hasPlayedThisTurn = false;
+
 
 
     /**
@@ -89,25 +91,27 @@ public class GameController implements GameUIListener {
      * @param index the index of the card to be played
      * @return true if the play was successful; false otherwise
      */
-    private boolean attemptPlayCard(int index) {
-        GameState state = model.exportState();
-        if (state.turnComplete) {
-            view.showError("You already played this turn! Click Next Player.");
+    private boolean attemptPlayCard(int index){
+        if (hasPlayedThisTurn) {
+            view.showError("You already played this turn! Click 'Next Player'.");
             return false;
         }
 
         Player current = model.getCurrentPlayer();
         Card card = current.getHand().getCard(index);
 
-        if (!model.isValidPlay(card)) {
-            view.showError("Invalid card play! Try again.");
+        if(!model.isValidPlay(card)){
+            view.showError("Invalid card play! Try again");
             return false;
         }
 
         model.playCardFromHand(index);
+        hasPlayedThisTurn = true; //Lock playing again
         view.updateStatusMessage(current.getName() + " played " + card);
+        push(); // optional, re-render the view
         return true;
     }
+
 
 
     /**
@@ -117,10 +121,18 @@ public class GameController implements GameUIListener {
      * @return true if the draw was successful; false otherwise
      */
     private boolean attemptDrawCard(){
+        if (hasPlayedThisTurn) {
+            view.showError("You already acted this turn! Click 'Next Player'.");
+            return false;
+        }
+
         model.drawCardForCurrentPlayer();
+        hasPlayedThisTurn = true; // Lock turn after drawing
         view.updateStatusMessage("You drew a card.");
+        push();
         return true;
     }
+
 
     /**
      * Advances the game to the next player's turn
@@ -128,8 +140,9 @@ public class GameController implements GameUIListener {
      */
     private void advanceTurn(){
         model.advanceTurn();
+        hasPlayedThisTurn = false; // Unlock for next player
         view.updateStatusMessage("Next player's turn!");
-
+        push();
     }
 
     /**
