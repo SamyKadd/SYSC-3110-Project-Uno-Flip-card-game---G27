@@ -450,8 +450,11 @@ public class Game {
         top = played;
         discardedPile.add(played);
 
+        GameState s = exportState();
+        s.turnComplete = true; // player finished their turn
+        pcs.firePropertyChange("state", null, s);
+
         if (cur.getHand().getSize() == 0) {
-            GameState s = exportState();
             s.statusMessage = cur.getName() + " wins!";
             pcs.firePropertyChange("state", null, s);
             return;
