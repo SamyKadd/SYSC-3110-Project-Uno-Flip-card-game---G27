@@ -302,11 +302,14 @@ public class Game {
                     case REVERSE:
                         clockwise = !clockwise;
                         if (players.size() == 2) {
-                            currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
+                            // In 2-player games, Reverse acts like a Skip → same player plays again
+                            // So don't advance to next player at all
+                            // (Just keep currentPlayerIndex the same)
                         } else {
                             currentPlayerIndex = nextPlayer(currentPlayerIndex);
                         }
                         break;
+
                 }
             }
             notifyStateChanged();
