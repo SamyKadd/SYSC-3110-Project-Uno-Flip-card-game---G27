@@ -232,7 +232,7 @@ public class GameView extends JFrame {
      * @return JButton styled as a card
      */
     private JButton createCardButton(Card card, int index) {
-        JButton button = new JButton("<html><center>" + formatCardText(card) + "</center></html>");
+        JButton button = new JButton(formatCardText(card));
         button.setPreferredSize(new Dimension(120, 180));
         button.setBackground(getColorForCard(card));
         button.setFont(new Font("Arial", Font.BOLD, 11));
@@ -260,9 +260,10 @@ public class GameView extends JFrame {
         if (card.getColor() == null) {
             return card.getValue().toString().replace("_", " ");
         }
-        return card.getColor().toString() + "<br>" + 
-               card.getValue().toString().replace("_", " ");
+        return card.getColor().toString() + " " +
+                card.getValue().toString().replace("_", " ");
     }
+
     
     /**
      * Gets the background color for a card.
