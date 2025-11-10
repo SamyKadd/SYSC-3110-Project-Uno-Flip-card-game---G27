@@ -279,13 +279,18 @@ public class Game {
                 switch (card.getValue()) {
                     case SKIP:
                         currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
-                        break;
+                        GameState s = exportState();
+                        s.statusMessage = players.get(currentPlayerIndex).getName() + " played SKIP! " +
+                                getCurrentPlayer().getName() + " is skipped!";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
 
                     case WILD:
                         // tell the view to prompt for color
-                        GameState s = exportState();
-                        s.needsWildColor = true;
-                        pcs.firePropertyChange("state", null, s);
+                        GameState gs = exportState();
+                        gs.needsWildColor = true;
+                        pcs.firePropertyChange("state", null, gs);
                         return;
 
                     case WILD_DRAW_TWO:
@@ -302,19 +307,19 @@ public class Game {
                     case REVERSE:
                         clockwise = !clockwise;
                         if (players.size() == 2) {
-                            // In 2-player games, Reverse acts like a Skip → same player plays again
-                            // So don't advance to next player at all
-                            // (Just keep currentPlayerIndex the same)
+                            // Reverse acts like Skip in 2-player game → same player goes again
+                            // (Keep index the same)
                         } else {
                             currentPlayerIndex = nextPlayer(currentPlayerIndex);
                         }
+
                         GameState s2 = exportState();
                         s2.statusMessage = (players.size() == 2)
                                 ? getCurrentPlayer().getName() + " played REVERSE! Same player goes again!"
                                 : "Play direction reversed!";
+                        s2.turnComplete = true; // mark that turn changed
                         pcs.firePropertyChange("state", null, s2);
-
-                        break;
+                        return;
                 }
             }
             notifyStateChanged();
