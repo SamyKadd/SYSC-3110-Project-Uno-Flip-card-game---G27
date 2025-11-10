@@ -455,8 +455,11 @@ public class Game {
          */
         public void advanceTurn() {
             currentPlayerIndex = nextPlayer(currentPlayerIndex);
-            notifyStateChanged();
+            GameState s = exportState();
+            s.statusMessage = getCurrentPlayer().getName() + "'s turn!";
+            pcs.firePropertyChange("state", null, s);
         }
+
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
         notifyStateChanged();
