@@ -390,8 +390,6 @@ public class Game {
             return deck.remove(0);
         }
 
-
-
         //Drawing a Card from deck and putting it in players hands
         /**
          * Makes a player draw multiple cards from the deck.
@@ -408,6 +406,42 @@ public class Game {
                 }
             }
             notifyStateChanged();
+        }
+
+        /**
+         * Calculates and awards points to the winning player.
+         * Points are calculated based on cards remaining in other players' hands:
+         * - Number cards: face value (0-9 points)
+         * - Action cards: 20 points each
+         * - Wild cards: 50 points each
+         * 
+         * @param winner the player who won the round
+         */
+        private void calculateAndAwardScore(Player winner) {
+            int totalScore = 0;
+            
+            for (Player player : players) {
+                if (player != winner) {
+                    for (Card card : player.getHand().getCardsList()) {
+                        if (card.getValue() == Card.Value.WILD || 
+                            card.getValue() == Card.Value.WILD_DRAW_TWO) {
+                            totalScore += 50;
+                        } else if (card.isActionCard()) {
+                            totalScore += 20;
+                        } else {
+                            // Number cards - use their face value 
+                            totalScore += card.getValue().ordinal();
+                        }
+                    }
+                }
+            }
+            
+            winner.addScore(totalScore);
+            
+            // Update the state to show scores
+            GameState s = exportState();
+            s.statusMessage = winner.getName() + " wins and scores " + totalScore + " points!";
+            pcs.firePropertyChange("state", null, s);
         }
 
         //Getting user to pick next color
@@ -515,7 +549,12 @@ public class Game {
         pcs.firePropertyChange("state", null, s);
 
         if (cur.getHand().getSize() == 0) {
-            s.statusMessage = cur.getName() + " wins!";
+            // Calculate and award scores before declaring winner
+            calculateAndAwardScore(cur);
+
+            // Update scoreboard in the view
+            s = exportState();
+            s.statusMessage = cur.getName() + " wins! Final Score: " + cur.getScore();
             pcs.firePropertyChange("state", null, s);
             return;
         }

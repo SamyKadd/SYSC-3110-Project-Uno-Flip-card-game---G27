@@ -390,6 +390,11 @@ public class GameView extends JFrame {
                 uiListener.onChooseWildCardCol(chosen);
             }
         }
+
+        // Update scoreboard whenever state changes
+        if (model != null) {
+            updateScoreboard(model.getPlayers());
+        }
     }
     
     /**
