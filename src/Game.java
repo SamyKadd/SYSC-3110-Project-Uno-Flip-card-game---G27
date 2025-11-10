@@ -327,7 +327,7 @@ public class Game {
                         for (int i = 0; i < 2; i++) {
                             Card drawnCard = drawCard();
                             if (drawnCard != null) {
-                                players.get(target).getHand().addCard(card);
+                                players.get(target).getHand().addCard(drawnCard);
                             }
                         }
 
