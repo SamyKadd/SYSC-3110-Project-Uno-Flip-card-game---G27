@@ -278,12 +278,18 @@ public class Game {
             if (card.isActionCard()) {
                 switch (card.getValue()) {
                     case SKIP:
-                        currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
+                        Player skippedBy = getCurrentPlayer(); // Save who played the skip
+                        int skippedPlayerIndex = nextPlayer(currentPlayerIndex);
+                        String skippedName = players.get(skippedPlayerIndex).getName();
+
+                        // Move to the next player's turn (skip one)
+                        currentPlayerIndex = nextPlayer(skippedPlayerIndex);
+
                         GameState s = exportState();
-                        s.statusMessage = players.get(currentPlayerIndex).getName() + " played SKIP! " +
-                                getCurrentPlayer().getName() + " is skipped!";
+                        s.statusMessage = skippedBy.getName() + " played SKIP! " + skippedName + " is skipped!";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
+
                         return;
 
                     case WILD:
