@@ -15,5 +15,6 @@ public class GameState {
     public boolean canDraw;
     public boolean canNext;
     public boolean needsWildColor;
+    public Card.Color wildColor;
 
 }

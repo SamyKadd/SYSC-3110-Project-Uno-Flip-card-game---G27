@@ -357,6 +357,17 @@ public class GameView extends JFrame {
         if (s.curPlayerName != null) {
             updateCurrentPlayer(s.curPlayerName);
         }
+
+        if ((s.topCard.getValue() == Card.Value.WILD || 
+             s.topCard.getValue() == Card.Value.WILD_DRAW_TWO)) {
+            // Get the wild color from the Game model
+            if (s.wildColor != null) {  
+                topCardPanel.setBackground(getColorForCardColor(s.wildColor));
+                topCardLabel.setText(s.topCard.getValue().toString().replace("_", " ") + 
+                                   " - " + s.wildColor);
+            }
+        }
+        
         updateStatusMessage(s.statusMessage == null ? "" : s.statusMessage);
 
         drawCardButton.setEnabled(s.canDraw);

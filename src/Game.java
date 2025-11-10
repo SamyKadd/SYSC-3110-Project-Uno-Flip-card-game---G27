@@ -451,6 +451,7 @@ public class Game {
             s.curPlayerName = cur.getName();
             s.curHand = new ArrayList<>(cur.getHand().getCardsList());
             s.topCard = getTopCard();
+            s.wildColor = topWild;
             s.canDraw = true;
             s.canPlay = true;
             s.canNext = true;
