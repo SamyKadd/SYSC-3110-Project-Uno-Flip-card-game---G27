@@ -73,7 +73,7 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 - Added rendering to GameView
 - Completed 3 Sequence Diagrams to simulate main game scenarios 
 - Created and completed GameController
-- Created GameUIListener interface, along with the methods(w/0 logic implementation)
+- Created GameUIListener interface, along with the methods(w/o logic implementation)
 
 **Seham Khalifa**
 - Implemented startCards() method in Hand class (deal 7 cards)
