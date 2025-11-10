@@ -107,7 +107,7 @@ public class GameView extends JFrame {
         topCardPanel.setBackground(Color.WHITE);
         
         topCardLabel = new JLabel("", SwingConstants.CENTER);
-        topCardLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        topCardLabel.setFont(new Font("Arial", Font.BOLD, 10));
         topCardPanel.add(topCardLabel);
         
         topCardPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
