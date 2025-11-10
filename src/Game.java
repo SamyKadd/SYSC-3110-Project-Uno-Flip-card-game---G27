@@ -296,8 +296,11 @@ public class Game {
                     case WILD_DRAW_TWO:
                         drawCards(nextPlayer(currentPlayerIndex), 2);
                         topWild = null; // color will be set later by controller
-                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        break;
+
+                        GameState wd2 = exportState();
+                        wd2.needsWildColor = true;
+                        pcs.firePropertyChange("state", null, wd2);
+                        return;
 
                     case DRAW_ONE:
                         drawCards(nextPlayer(currentPlayerIndex), 1);
