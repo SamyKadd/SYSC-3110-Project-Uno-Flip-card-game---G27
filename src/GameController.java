@@ -34,14 +34,17 @@ public class GameController implements GameUIListener {
 
                 GameState newState = (GameState) evt.getNewValue();
 
-                //Unlock if turn changed or model signaled a completed action
-                boolean turnChanged = newState.curPlayerName != null && !newState.curPlayerName.equals(lastPlayer);
-                if (turnChanged || newState.turnComplete) {
+                // Unlock only when the player changes or a 2-player reverse replay occurs
+                boolean turnChanged = newState.curPlayerName != null &&
+                        !newState.curPlayerName.equals(lastPlayer);
+                boolean twoPlayerReverseReplay = newState.statusMessage != null &&
+                        newState.statusMessage.contains("Same player goes again!");
+                if (turnChanged || twoPlayerReverseReplay) {
                     hasPlayedThisTurn = false;
-                    lastPlayer = newState.curPlayerName;
                 }
+                lastPlayer = newState.curPlayerName;
 
-                //Always show model's own status message
+                // Always show the model’s status message
                 if (newState.statusMessage != null && !newState.statusMessage.isEmpty()) {
                     view.updateStatusMessage(newState.statusMessage);
                 }
@@ -49,6 +52,7 @@ public class GameController implements GameUIListener {
                 view.render(newState);
             }
         });
+
 
 
 
@@ -80,7 +84,7 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onNext(){
-        advanceTurn();
+        model.advanceTurn();
     }
 
     /**
@@ -151,17 +155,6 @@ public class GameController implements GameUIListener {
         return true;
     }
 
-
-    /**
-     * Advances the game to the next player's turn
-     * Delegates turn progression to the model
-     */
-    private void advanceTurn(){
-        model.advanceTurn();
-        hasPlayedThisTurn = false; // Unlock for next player
-        view.updateStatusMessage("Next player's turn!");
-        push();
-    }
 
     /**
      * Applies the chosen color for a played wild card
