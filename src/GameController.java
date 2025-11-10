@@ -30,18 +30,21 @@ public class GameController implements GameUIListener {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if ("state".equals(evt.getPropertyName())) {
-                    GameState newState = (GameState) evt.getNewValue();
-                    view.render(newState);
+                if (!"state".equals(evt.getPropertyName())) return;
 
-                    // Detect turn change
-                    if (newState.curPlayerName != null && !newState.curPlayerName.equals(lastPlayer)) {
-                        hasPlayedThisTurn = false; // unlock for new player
-                        lastPlayer = newState.curPlayerName;
-                    }
+                GameState newState = (GameState) evt.getNewValue();
+
+                // If the model advanced to a different player (e.g., SKIP or REVERSE),
+                // unlock actions for that new player.
+                if (newState.curPlayerName != null && !newState.curPlayerName.equals(lastPlayer)) {
+                    hasPlayedThisTurn = false;
+                    lastPlayer = newState.curPlayerName;
                 }
+
+                view.render(newState);
             }
         });
+
 
     }
 
