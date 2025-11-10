@@ -21,6 +21,8 @@ public class Game {
     private Card.Color topWild = null; //If the top card on discard pile is wild card
     List<Card> discardedPile =  new ArrayList<>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
+
 
 
     /**
@@ -277,58 +279,70 @@ public class Game {
         public void handleActionCard(Card card) {
             if (card.isActionCard()) {
                 switch (card.getValue()) {
-                    case SKIP:
-                        Player skippedBy = getCurrentPlayer(); // Save who played the skip
-                        int skippedPlayerIndex = nextPlayer(currentPlayerIndex);
-                        String skippedName = players.get(skippedPlayerIndex).getName();
-
-                        // Move to the next player's turn (skip one)
-                        currentPlayerIndex = nextPlayer(skippedPlayerIndex);
+                    case SKIP: {
+                        // Do not advance now. Let the "Next Player" button apply the skip.
+                        pendingSkips += 1;
 
                         GameState s = exportState();
-                        s.statusMessage = skippedBy.getName() + " played SKIP! " + skippedName + " is skipped!";
+                        s.statusMessage = "SKIP played. Next player will be skipped when you click Next Player.";
+                        s.turnComplete = true; // current player’s action is done; must click Next
+                        pcs.firePropertyChange("state", null, s);
+                        return;
+                    }
+
+                    case REVERSE: {
+                        // Flip direction immediately, but don't advance. Next button will move according to new direction.
+                        clockwise = !clockwise;
+
+                        GameState s = exportState();
+                        if (players.size() == 2) {
+                            // In 2-player, Reverse acts like a Skip → same player goes again after Next
+                            pendingSkips += 1;
+                            s.statusMessage = "REVERSE played. (2 players) Acts like SKIP — same player after Next Player.";
+                        } else {
+                            s.statusMessage = "REVERSE played. Direction changed. Click Next Player to continue.";
+                        }
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
-
                         return;
+                    }
 
-                    case WILD:
-                        // tell the view to prompt for color
-                        GameState gs = exportState();
-                        gs.needsWildColor = true;
-                        pcs.firePropertyChange("state", null, gs);
+                    case WILD: {
+                        // Choose color now; don't advance. Next button will move turn.
+                        GameState s = exportState();
+                        s.needsWildColor = true;
+                        s.statusMessage = "WILD played. Choose a color, then click Next Player.";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
                         return;
+                    }
 
-                    case WILD_DRAW_TWO:
-                        drawCards(nextPlayer(currentPlayerIndex), 2);
-                        topWild = null; // color will be set later by controller
+                    case WILD_DRAW_TWO: {
+                        // Draw to the next player now, but don't advance. On Next Player, we skip that player (as per UNO).
+                        int target = nextPlayer(currentPlayerIndex);
+                        drawCards(target, 2);
+                        // After a +2, the target loses their turn, so schedule a skip for when Next is pressed.
+                        pendingSkips += 1;
 
-                        GameState wd2 = exportState();
-                        wd2.needsWildColor = true;
-                        pcs.firePropertyChange("state", null, wd2);
+                        GameState s = exportState();
+                        s.statusMessage = players.get(target).getName() + " draws 2. Click Next Player to continue (they will be skipped).";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
                         return;
+                    }
 
-                    case DRAW_ONE:
-                        drawCards(nextPlayer(currentPlayerIndex), 1);
-                        currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        break;
+                    case DRAW_ONE: {
+                        // Draw to the next player now, but don't advance. On Next Player, we skip that player.
+                        int target = nextPlayer(currentPlayerIndex);
+                        drawCards(target, 1);
+                        pendingSkips += 1;
 
-                    case REVERSE:
-                        clockwise = !clockwise;
-                        if (players.size() == 2) {
-                            // Reverse acts like Skip in 2-player game → same player goes again
-                            // (Keep index the same)
-                        } else {
-                            currentPlayerIndex = nextPlayer(currentPlayerIndex);
-                        }
-
-                        GameState s2 = exportState();
-                        s2.statusMessage = (players.size() == 2)
-                                ? getCurrentPlayer().getName() + " played REVERSE! Same player goes again!"
-                                : "Play direction reversed!";
-                        s2.turnComplete = true; // mark that turn changed
-                        pcs.firePropertyChange("state", null, s2);
+                        GameState s = exportState();
+                        s.statusMessage = players.get(target).getName() + " draws 1. Click Next Player to continue (they will be skipped).";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
                         return;
+                    }
                 }
             }
             notifyStateChanged();
@@ -463,16 +477,31 @@ public class Game {
          * Advances to the next player's turn and updates state.
          */
         public void advanceTurn() {
-            currentPlayerIndex = nextPlayer(currentPlayerIndex);
+            // Apply any pending skip(s) when the user presses "Next Player"
+            if (pendingSkips > 0) {
+                // skip exactly one player per click (the "skipped" one),
+                // and land on the following player
+                currentPlayerIndex = nextPlayer(nextPlayer(currentPlayerIndex));
+                pendingSkips -= 1;
+            } else {
+                // normal one-step advance in current direction
+                currentPlayerIndex = nextPlayer(currentPlayerIndex);
+            }
+
             GameState s = exportState();
             s.statusMessage = getCurrentPlayer().getName() + "'s turn!";
+            // turnComplete is false here; it's a fresh turn
             pcs.firePropertyChange("state", null, s);
         }
 
+
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
-        notifyStateChanged();
+        GameState s = exportState();
+        s.statusMessage = "Wild color set to " + color + ". Click Next Player to continue.";
+        pcs.firePropertyChange("state", null, s);
     }
+
     public void playCardFromHand(int handIndex) {
         Player cur = getCurrentPlayer();
         Card played = cur.getHand().removeCard(handIndex);
