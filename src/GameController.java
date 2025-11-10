@@ -34,16 +34,22 @@ public class GameController implements GameUIListener {
 
                 GameState newState = (GameState) evt.getNewValue();
 
-                // If the model advanced to a different player (e.g., SKIP or REVERSE),
-                // unlock actions for that new player.
-                if (newState.curPlayerName != null && !newState.curPlayerName.equals(lastPlayer)) {
+                //Unlock if turn changed or model signaled a completed action
+                boolean turnChanged = newState.curPlayerName != null && !newState.curPlayerName.equals(lastPlayer);
+                if (turnChanged || newState.turnComplete) {
                     hasPlayedThisTurn = false;
                     lastPlayer = newState.curPlayerName;
+                }
+
+                //Always show model's own status message
+                if (newState.statusMessage != null && !newState.statusMessage.isEmpty()) {
+                    view.updateStatusMessage(newState.statusMessage);
                 }
 
                 view.render(newState);
             }
         });
+
 
 
     }
