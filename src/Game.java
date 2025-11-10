@@ -323,7 +323,14 @@ public class Game {
 
                         // Draw to the next player now, but don't advance. On Next Player, we skip that player (as per UNO).
                         int target = nextPlayer(currentPlayerIndex);
-                        drawCards(target, 2);
+                        
+                        for (int i = 0; i < 2; i++) {
+                            Card drawnCard = drawCard();
+                            if (drawnCard != null) {
+                                players.get(target).getHand().addCard(card);
+                            }
+                        }
+
                         // After a +2, the target loses their turn, so schedule a skip for when Next is pressed.
                         pendingSkips += 1;
 
@@ -338,7 +345,12 @@ public class Game {
                     case DRAW_ONE: {
                         // Draw to the next player now, but don't advance. On Next Player, we skip that player.
                         int target = nextPlayer(currentPlayerIndex);
-                        drawCards(target, 1);
+                        
+                        Card drawnCard = drawCard();
+                        if (drawnCard != null) {
+                            players.get(target).getHand().addCard(drawnCard);
+                        }
+
                         pendingSkips += 1;
 
                         GameState s = exportState();
