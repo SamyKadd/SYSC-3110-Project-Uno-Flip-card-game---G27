@@ -358,7 +358,7 @@ public class GameView extends JFrame {
             updateCurrentPlayer(s.curPlayerName);
         }
 
-        if ((s.topCard.getValue() == Card.Value.WILD || 
+        if (s.topCard != null && (s.topCard.getValue() == Card.Value.WILD || 
              s.topCard.getValue() == Card.Value.WILD_DRAW_TWO)) {
             // Get the wild color from the Game model
             if (s.wildColor != null) {  

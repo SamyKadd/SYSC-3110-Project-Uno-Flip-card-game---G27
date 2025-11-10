@@ -24,7 +24,6 @@ public class Game {
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
 
 
-
     /**
      * Constructs a new Game instance.
      * Initializes an empty player list, creates and shuffles the deck,
@@ -309,6 +308,8 @@ public class Game {
 
                     case WILD: {
                         // Choose color now; don't advance. Next button will move turn.
+                        topWild = null;
+
                         GameState s = exportState();
                         s.needsWildColor = true;
                         s.statusMessage = "WILD played. Choose a color, then click Next Player.";
@@ -318,6 +319,8 @@ public class Game {
                     }
 
                     case WILD_DRAW_TWO: {
+                        topWild = null;
+
                         // Draw to the next player now, but don't advance. On Next Player, we skip that player (as per UNO).
                         int target = nextPlayer(currentPlayerIndex);
                         drawCards(target, 2);
@@ -325,6 +328,7 @@ public class Game {
                         pendingSkips += 1;
 
                         GameState s = exportState();
+                        s.needsWildColor = true;
                         s.statusMessage = players.get(target).getName() + " draws 2. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -534,6 +538,7 @@ public class Game {
         this.topWild = color;
         GameState s = exportState();
         s.statusMessage = "Wild color set to " + color + ". Click Next Player to continue.";
+        s.needsWildColor = false; // Without this, playing a wildcard will lock the color to "wildcard" permanently
         pcs.firePropertyChange("state", null, s);
     }
 
@@ -543,6 +548,10 @@ public class Game {
         if (played == null || !isValidPlay(played)) return;
         top = played;
         discardedPile.add(played);
+
+        if (played.getValue() != Card.Value.WILD && played.getValue() != Card.Value.WILD_DRAW_TWO) {
+            topWild = null; // Clear wild color for non-wild cards
+        }
 
         GameState s = exportState();
         s.turnComplete = true; // player finished their turn
