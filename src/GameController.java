@@ -128,11 +128,10 @@ public class GameController implements GameUIListener {
         }
 
         model.playCardFromHand(index);
-        hasPlayedThisTurn = true; //Lock playing again
-        view.updateStatusMessage(current.getName() + " played " + card);
-        push(); // optional, re-render the view
+        hasPlayedThisTurn = true; // Lock playing again
         return true;
     }
+
 
 
 
@@ -147,14 +146,10 @@ public class GameController implements GameUIListener {
             view.showError("You already acted this turn! Click 'Next Player'.");
             return false;
         }
-
         model.drawCardForCurrentPlayer();
-        hasPlayedThisTurn = true; // Lock turn after drawing
-        view.updateStatusMessage("You drew a card.");
-        push();
+        hasPlayedThisTurn = true;
         return true;
     }
-
 
     /**
      * Applies the chosen color for a played wild card
