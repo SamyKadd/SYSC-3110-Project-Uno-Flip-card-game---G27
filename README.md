@@ -25,10 +25,10 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - `Main.java` - Entry point and application initialization
 
 ### Test Files
-- `CardTest.java` - 8 unit tests for Card class
-- `HandTest.java` - 9 unit tests for Hand class
+- `CardTest.java` - 6 unit tests for Card class
+- `HandTest.java` - 5 unit tests for Hand class
 - `PlayerTest.java` - 6 unit tests for Player class
-- `GameTest.java` - 13 unit tests for Game class
+- `GameTest.java` - 18 unit tests for Game class
 - `GameViewManualTest.java` - Manual GUI testing (not JUnit)
 
 ### Documentation
