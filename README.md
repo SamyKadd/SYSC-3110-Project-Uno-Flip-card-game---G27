@@ -72,6 +72,16 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Created initial README.md and project documentation
 - Created the data structures file
 - Implemented three test cases in GameTest
+- Created and implemented GameView file and began GUI layout (panels, labels, component initialization)
+- Implemented bottom panel, hand display, top-card rendering, card button creation, card color formatting, and card string formatting
+- Implemented view update methods for current player, selected color, and scoreboard
+- Implemented getters for card buttons, draw card button, and next-player indicator
+- Created GameViewTest for View inspection
+- Updated DataStructures file with all Milestone 2 changes (MVC structures and new fields)
+- Fixed game logic bugs (draw-one/draw-two not adding cards, Wild Draw Two color prompt issue, other minor errors)
+- Implemented top-card color update after wild draw two card color selection
+- Updated README.md with updated milestone information
+- Added basic test cases to confirm game logic after MVC integration
 
 **Samy Kaddour**
 - Implemented WILD card functionality with color selection
