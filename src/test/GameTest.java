@@ -158,4 +158,81 @@ public class GameTest {
         game.addPlayer(p2);
         assertDoesNotThrow(() -> game.handleActionCard(new Card(Card.Color.RED, Card.Value.SKIP)));
     }
+
+    @Test
+    void testStartGameRequiresMinimumTwoPlayers() {
+        game.addPlayer(p1);
+        assertThrows(IllegalStateException.class, () -> game.startGame());
+    }
+
+    @Test
+    void testStartGameDealsSevenCardsToEachPlayer() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        assertEquals(7, p1.getHand().getSize());
+        assertEquals(7, p2.getHand().getSize());
+    }
+
+    @Test
+    void testGetCurrentPlayerReturnsFirstPlayer() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        assertSame(p1, game.getCurrentPlayer());
+    }
+
+    @Test
+    void testTopCardExistsAfterGameStarts() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        assertNotNull(game.getTopCard());
+    }
+
+    @Test
+    void testDrawCardForCurrentPlayer() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        int initialSize = p1.getHand().getSize();
+        game.drawCardForCurrentPlayer();
+        assertEquals(initialSize + 1, p1.getHand().getSize());
+    }
+
+    @Test
+    void testAdvanceTurnChangesCurrentPlayer() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        Player firstPlayer = game.getCurrentPlayer();
+        game.advanceTurn();
+        Player secondPlayer = game.getCurrentPlayer();
+        assertNotSame(firstPlayer, secondPlayer);
+    }
+
+    @Test
+    void testSetTopWildColor() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        game.setTopWildColor(Card.Color.RED);
+        // Test that a red card is now valid
+        Card redCard = new Card(Card.Color.RED, Card.Value.FIVE);
+        assertTrue(game.isValidPlay(redCard));
+    }
+
+    @Test
+    void testIsValidPlayWithWildColor() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+        game.setTopWildColor(Card.Color.BLUE);
+        
+        Card blueCard = new Card(Card.Color.BLUE, Card.Value.THREE);
+        Card redCard = new Card(Card.Color.RED, Card.Value.THREE);
+        
+        assertTrue(game.isValidPlay(blueCard));
+        assertFalse(game.isValidPlay(redCard));
+    }
 }
