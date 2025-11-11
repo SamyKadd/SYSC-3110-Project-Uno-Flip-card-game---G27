@@ -1,37 +1,45 @@
-# UNO Card Game - Milestone 1
+# UNO Card Game - Milestone 2
 
 ## Project Overview
-A text-based implementation of UNO card game in Java supporting 2-4 players with all standard action cards.
+A graphical implementation of UNO card game in Java using Swing GUI and MVC architecture, supporting 2-4 players with all standard action cards.
 
 ---
 
 ## Deliverables
 
-### Source Code
+### Source Code - Model
 - `Card.java` - Card representation with color and value
 - `Hand.java` - Manages player's hand of cards  
 - `Player.java` - Player with name, score, and hand
-- `Game.java` - Main game logic and controller
-- `Main.java` - Entry point
+- `Game.java` - Game logic and state management (Model)
+- `GameState.java` - Encapsulates game state for MVC communication
+
+### Source Code - View
+- `GameView.java` - Graphical user interface using Java Swing
+- `PlayerSelectionDialog.java` - Dialog for selecting number of players
+
+### Source Code - Controller
+- `GameController.java` - Controller managing Model-View interaction
+- `GameUIListener.java` - Interface for UI event handling
+- `Main.java` - Entry point and application initialization
 
 ### Test Files
-- `CardTest.java` - 5 unit tests for Card class
-- `HandTest.java` - 6 unit tests for Hand class
+- `CardTest.java` - 8 unit tests for Card class
+- `HandTest.java` - 9 unit tests for Hand class
 - `PlayerTest.java` - 6 unit tests for Player class
-- `GameTest.java` - Unit tests for Game class
+- `GameTest.java` - 13 unit tests for Game class
+- `GameViewManualTest.java` - Manual GUI testing (not JUnit)
 
 ### Documentation
 - `README.md` - This file
+- `Data_Structures.md` - Data structure changes from Milestone 1 to 2
 - JavaDoc comments in all source files
 - UML Class Diagram (`diagrams/UML_diagram`)
 - Sequence Diagrams (`diagrams/sequence_DIAGRAM`)
-- Data Structures Explanation Document
 
 ---
 
 ## Team Contributions
-
-### Milestone 1
 
 **Joodi Al-Asaad**
 - Refactored Card class to use enums (Color and Value)
@@ -100,39 +108,63 @@ Run test files through your IDE or JUnit test runner.
 
 ## How to Play
 
-1. Enter card number (0, 1, 2...) to play that card
-2. Enter 'D' to draw a card and pass your turn
-3. For WILD cards, enter R/G/Y/B to choose color
-4. Match color OR value of top card to play
-5. First player with 0 cards wins
+
+### Starting the Game
+1. Select number of players (2-4) from the dialog
+2. Click OK to start the game
+3. Each player is dealt 7 cards automatically
+
+### During Your Turn
+1. **Play a Card**: Click on a card in your hand to play it
+   - Card must match color OR value of top card
+   - Wild cards can always be played
+2. **Draw a Card**: Click "DRAW CARD" button to draw one card and end your turn
+3. **Next Player**: Click "NEXT PLAYER" after playing/drawing to advance turn
+
+### Special Cards
+- **SKIP**: Next player loses their turn (automatically handled)
+- **REVERSE**: Turn order reverses (in 2-player acts like Skip)
+- **DRAW ONE**: Next player draws 1 card and loses their turn
+- **WILD**: Choose a color from dialog, then click Next Player
+- **WILD DRAW TWO**: Next player draws 2 cards and loses their turn, then choose a color
+
+---
+
+### Model (Game.java)
+- Manages game state, deck, players, and turn logic
+- Validates card plays and handles action cards
+- Fires PropertyChangeEvents when state changes
+- No knowledge of View or Controller
+
+### View (GameView.java)
+- Displays game state using Swing components
+- Renders cards, top card, player info, status messages
+- Captures user input (button clicks, card selection)
+- No direct access to Model
+
+### Controller (GameController.java)
+- Listens for View events via GameUIListener interface
+- Validates and forwards actions to Model
+- Observes Model changes via PropertyChangeListener
+- Updates View when Model state changes
+- Manages turn locking to prevent multiple actions per turn
 
 ---
 
 ## Known Issues
 
-These will all be resolved according to the instructions in the upcoming Milestones.
+1. **No Multi-Round Support**: Game ends after one round. Winner is declared but game cannot continue to next round.
 
-1. **Deck Exhaustion**: If deck runs empty, players cannot draw cards. Future versions will reshuffle discard pile.
+2. **No AI Players**: All players must be human.
 
-2. **Single Round Only**: Game ends after one round. Multiple round scoring not yet implemented.
+3. **No UNO Call**: Players are not required to call "UNO" when down to one card.
 
-3. **No AI Players**: All players must be human.
+4. **Card Hand Visibility**: All players see the current player's hand (designed for same-device play).
 
-4. **Initial Hand Display**: Starting hands are displayed to all players.
-
----
-
-## Data Structures Used
-
-- **ArrayList<Card> deck** - For drawing cards and shuffling
-- **List<Player> players** - For turn order and indexed access
-- **List<Card> cards (in Hand)** - For displaying numbered cards to players
-- **List<Card> discardedPile** - Tracks all played cards
-
-See data structures document for detailed explanation.
+5. **No Save/Load**: Game state cannot be saved and resumed.
 
 ---
 
 **Course**: SYSC 3110  
 **Milestone**: 1  
-**Date**: 2025-10-27
+**Date**: 2025-11-10
