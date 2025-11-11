@@ -83,6 +83,8 @@ A text-based implementation of UNO card game in Java supporting 2-4 players with
 - Added displayHand() functionality
 - Initialized deck ArrayList in Game class
 - Created 5 PlayerTest unit tests including toString() test
+- Created a method in Hand to access all the player's cards directly
+- Completed GameController methods
 
 ---
 
