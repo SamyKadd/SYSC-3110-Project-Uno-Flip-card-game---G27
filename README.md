@@ -56,7 +56,10 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Created all test files (CardTest, HandTest, PlayerTest, GameTest)
 - Implemented 6 HandTest unit tests
 - Added card play validation and turn advancement logic
-- Completed UML class diagrams 
+- Completed UML class diagrams
+- Connected model and view with PropertyChangeListener for automatic GUI updates
+- Improved turn logic to prevent multiple plays per turn and reset properly after each turn.
+- Fixed and refined action card behavior (Skip, Reverse, Draw One, Wild Draw Two).
 
 **Mahdi Bouakline**
 - Implemented initial Card.java and Hand.java skeleton code
