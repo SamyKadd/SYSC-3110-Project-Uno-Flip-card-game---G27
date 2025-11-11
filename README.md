@@ -60,6 +60,7 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Connected model and view with PropertyChangeListener for automatic GUI updates
 - Improved turn logic to prevent multiple plays per turn and reset properly after each turn.
 - Fixed and refined action card behavior (Skip, Reverse, Draw One, Wild Draw Two).
+- Completed UML class diagrams
 
 **Mahdi Bouakline**
 - Implemented initial Card.java and Hand.java skeleton code
