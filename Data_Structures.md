@@ -138,7 +138,6 @@ This document explains the data structure choices made in the UNO card game impl
 - Clear contract between Model and View
 - Supports stateless View rendering
 
-```
 
 ### ArrayList<JButton> cardButtons (in GameView class)
 
