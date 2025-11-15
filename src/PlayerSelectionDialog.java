@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 
-// Have to integrate this within MVC structure later
 /**
  * Dialog for selecting the number of players at game start.
  * Allows selection of 2-4 players.
@@ -54,7 +53,7 @@ public class PlayerSelectionDialog extends JDialog {
         questionIcon.setPreferredSize(new Dimension(40, 40));
         questionIcon.setHorizontalAlignment(SwingConstants.CENTER);
         
-        JLabel instructionLabel = new JLabel("Select the total number of players:");
+        JLabel instructionLabel = new JLabel("Select the number of Human players:");
         instructionLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         
         labelPanel.add(questionIcon);
