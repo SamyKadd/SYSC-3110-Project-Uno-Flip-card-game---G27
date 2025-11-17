@@ -4,7 +4,7 @@ import java.awt.*;
 // Have to integrate this within MVC structure later
 /**
  * Dialog for selecting the number of AI players at game start.
- * Allows selection of 2-4 AI players.
+ * Allows selection of 1-3 AI players.
  *
  * @author G27
  * @version 2.0
@@ -20,10 +20,10 @@ public class PlayerSelectionDialog extends JDialog {
      *
      * @param parent the parent frame
      */
-    public PlayerSelectionDialog(JFrame parent) {
+    public AIPlayerSelectionDialog(JFrame parent) {
         // This is a rough guess to try to replicate the style from the image
-        super(parent, "Player Selection", true);
-        numberOfAIPlayers = 2;
+        super(parent, "AI Player Selection", true);
+        numberOfAIPlayers = 1;
         confirmed = false;
         
         initializeComponents();
@@ -63,7 +63,7 @@ public class PlayerSelectionDialog extends JDialog {
         
         // ComboBox panel
         JPanel comboPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        AIplayerCountComboBox = new JComboBox<>(new Integer[]{2, 3, 4});
+        AIplayerCountComboBox = new JComboBox<>(new Integer[]{1, 2, 3});
         AIplayerCountComboBox.setPreferredSize(new Dimension(300, 35));
         AIplayerCountComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         comboPanel.add(AIplayerCountComboBox);
@@ -99,11 +99,11 @@ public class PlayerSelectionDialog extends JDialog {
     }
     
     /**
-     * Gets the selected number of players.
+     * Gets the selected number of AI players.
      *
-     * @return number of players (2-4)
+     * @return number of AI players (1-3)
      */
-    public int getnumberOfAIPlayers() {
+    public int getNumberOfAIPlayers() {
         return numberOfAIPlayers;
     }
     
@@ -117,13 +117,13 @@ public class PlayerSelectionDialog extends JDialog {
     }
     
     /**
-     * Shows the dialog and returns the selected number of players.
+     * Shows the dialog and returns the selected number of AI players.
      *
      * @param parent the parent frame
      * @return number of players, or -1 if cancelled
      */
     public static int showDialog(JFrame parent) {
-        PlayerSelectionDialog dialog = new PlayerSelectionDialog(parent);
+        AIPlayerSelectionDialog dialog = new AIPlayerSelectionDialog(parent);
         dialog.setVisible(true);
         
         if (dialog.isConfirmed()) {
