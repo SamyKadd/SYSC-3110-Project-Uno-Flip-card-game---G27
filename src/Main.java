@@ -10,12 +10,23 @@ public class Main {
             // Show player selection dialog
             int numPlayers = PlayerSelectionDialog.showDialog(view);
 
-            // Show player selection dialog
-            int numAIPlayers = AIPlayerSelectionDialog.showDialog(view);
-
             // If user cancels, close the app
             if (numPlayers == -1) {
                 System.exit(0);
+            }
+
+            // Calculate how many AI players we can add (we can have a max of 4 total players)
+            int maxAIPlayers = 4 - numPlayers;
+            int numAIPlayers = 0;
+            
+            if (maxAIPlayers > 0) {
+                numAIPlayers = AIPlayerSelectionDialog.showDialog(view);
+                if (numAIPlayers == -1) {
+                    numAIPlayers = 0; // Default to no AI if cancelled
+                }
+                
+                // Ensure we don't exceed 4 total players
+                numAIPlayers = Math.min(numAIPlayers, maxAIPlayers);
             }
 
             // Create players automatically
@@ -25,7 +36,7 @@ public class Main {
 
             // Create AI players automatically
             for (int i = 1; i <= numAIPlayers; i++) {
-                model.addPlayer(new Player("AI Player " + i));
+                model.addPlayer(new AIPlayer("AI Player " + i));
             }
 
             // Start the game
