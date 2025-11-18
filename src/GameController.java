@@ -50,9 +50,20 @@ public class GameController implements GameUIListener {
                 }
 
                 view.render(newState);
+
+                // Check if current player is AI and handle their turn
+                Player currentPlayer = model.getCurrentPlayer();
+                if (currentPlayer instanceof AIPlayer && !hasPlayedThisTurn) {
+                    
+                    // Disable buttons for AI turn
+                    view.getDrawCardButton().setEnabled(false);
+                    view.getNextPlayerButton().setEnabled(false);
+                }
             }
         });
 
+// Have to implement a function here to handle the AI turn, haven't figured out
+// 100% how yet
 
 
 
@@ -66,6 +77,10 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onPlayCard(int handIndex){
+        // Don't allow human interaction during AI turns
+        if (model.getCurrentPlayer() instanceof AIPlayer) {
+            return;
+        }
         attemptPlayCard(handIndex);
     }
 
@@ -75,6 +90,9 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onDraw(){
+        if (model.getCurrentPlayer() instanceof AIPlayer) {
+            return;
+        }
         attemptDrawCard();
     }
 
