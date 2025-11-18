@@ -9,7 +9,7 @@ import java.awt.*;
  * @author G27
  * @version 2.0
  */
-public class PlayerSelectionDialog extends JDialog {
+public class AIPlayerSelectionDialog extends JDialog {
     
     private int numberOfAIPlayers;
     private boolean confirmed;
@@ -127,7 +127,7 @@ public class PlayerSelectionDialog extends JDialog {
         dialog.setVisible(true);
         
         if (dialog.isConfirmed()) {
-            return dialog.getnumberOfAIPlayers();
+            return dialog.getNumberOfAIPlayers();
         }
         return -1;
     }

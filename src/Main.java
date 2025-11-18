@@ -10,6 +10,9 @@ public class Main {
             // Show player selection dialog
             int numPlayers = PlayerSelectionDialog.showDialog(view);
 
+            // Show player selection dialog
+            int numAIPlayers = AIPlayerSelectionDialog.showDialog(view);
+
             // If user cancels, close the app
             if (numPlayers == -1) {
                 System.exit(0);
@@ -18,6 +21,11 @@ public class Main {
             // Create players automatically
             for (int i = 1; i <= numPlayers; i++) {
                 model.addPlayer(new Player("Player " + i));
+            }
+
+            // Create AI players automatically
+            for (int i = 1; i <= numAIPlayers; i++) {
+                model.addPlayer(new Player("AI Player " + i));
             }
 
             // Start the game
