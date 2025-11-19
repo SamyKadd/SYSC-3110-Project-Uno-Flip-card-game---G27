@@ -8,7 +8,7 @@
 
 public class Card {
     public enum Color {RED, BLUE, YELLOW, GREEN};
-    public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_ONE, REVERSE, WILD, WILD_DRAW_TWO};
+    public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_ONE, REVERSE, WILD, WILD_DRAW_TWO, DRAW_FIVE};
     private Color color;
     private Value value;
 
@@ -32,7 +32,7 @@ public class Card {
      * @return true if the value is an action card, false otherwise
      */
     private boolean checkIfActionCard(Value value) {
-        return value.equals(Value.SKIP) || value.equals(Value.DRAW_ONE) ||  value.equals(Value.REVERSE) || value.equals(Value.WILD) || value.equals(Value.WILD_DRAW_TWO);
+        return value.equals(Value.SKIP) || value.equals(Value.DRAW_ONE) ||  value.equals(Value.REVERSE) || value.equals(Value.WILD) || value.equals(Value.WILD_DRAW_TWO) || value.equals(Value.DRAW_FIVE);
     }
 
     /**

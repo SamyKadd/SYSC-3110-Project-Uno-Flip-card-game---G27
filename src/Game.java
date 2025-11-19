@@ -83,6 +83,11 @@ public class Game {
             deck.add(new Card(color, Card.Value.DRAW_ONE));
             deck.add(new Card(color, Card.Value.REVERSE));
             deck.add(new Card(color, Card.Value.REVERSE));
+
+            // Add Draw Five cards (2 per color for UNO Flip)
+            // Putting this here temporarily, not 100% sure how many we need per deck
+            deck.add(new Card(color, Card.Value.DRAW_FIVE));
+            deck.add(new Card(color, Card.Value.DRAW_FIVE));
         }
 
         // Wild cards (4 of each type, no color)
@@ -355,6 +360,26 @@ public class Game {
 
                         GameState s = exportState();
                         s.statusMessage = players.get(target).getName() + " draws 1. Click Next Player to continue (they will be skipped).";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
+                    }
+
+                    case DRAW_FIVE: {
+                        // Next player draws 5 cards and loses their turn
+                        int target = nextPlayer(currentPlayerIndex);
+                        
+                        for (int i = 0; i < 5; i++) {
+                            Card drawnCard = drawCard();
+                            if (drawnCard != null) {
+                                players.get(target).getHand().addCard(drawnCard);
+                            }
+                        }
+
+                        pendingSkips += 1;
+
+                        GameState s = exportState();
+                        s.statusMessage = players.get(target).getName() + " draws 5. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
                         return;
