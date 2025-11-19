@@ -58,6 +58,8 @@ public class GameController implements GameUIListener {
                     // Disable buttons for AI turn
                     view.getDrawCardButton().setEnabled(false);
                     view.getNextPlayerButton().setEnabled(false);
+                    // THESE HAVE TO BE REENABLED IN HANDLEAITURN or else they will not be clickable and the game
+                    // will be permanently stuck on the AI turn
                 }
             }
         });
