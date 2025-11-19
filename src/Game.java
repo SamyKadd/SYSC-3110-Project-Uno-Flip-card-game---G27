@@ -84,10 +84,14 @@ public class Game {
             deck.add(new Card(color, Card.Value.REVERSE));
             deck.add(new Card(color, Card.Value.REVERSE));
 
-            // Add Draw Five cards (2 per color for UNO Flip)
+            // Adding Draw Five cards (2 per color for UNO Flip)
             // Putting this here temporarily, not 100% sure how many we need per deck
             deck.add(new Card(color, Card.Value.DRAW_FIVE));
             deck.add(new Card(color, Card.Value.DRAW_FIVE));
+
+            // Adding Skip Everyone cards (2 per color for UNO Flip)
+            deck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            deck.add(new Card(color, Card.Value.SKIP_EVERYONE));
         }
 
         // Wild cards (4 of each type, no color)
@@ -384,6 +388,17 @@ public class Game {
                         pcs.firePropertyChange("state", null, s);
                         return;
                     }
+
+                    case SKIP_EVERYONE: {
+                        // Skip all other players - current player plays again
+                        pendingSkips = players.size() - 1;
+                        
+                        GameState s = exportState();
+                        s.statusMessage = "SKIP EVERYONE played! " + getCurrentPlayer().getName() + " plays again!";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
+                    }
                 }
             }
             notifyStateChanged();
@@ -467,6 +482,8 @@ public class Game {
                         if (card.getValue() == Card.Value.WILD || 
                             card.getValue() == Card.Value.WILD_DRAW_TWO) {
                             totalScore += 50;
+                        } else if (card.getValue() == Card.Value.SKIP_EVERYONE) {
+                            totalScore += 30;  
                         } else if (card.isActionCard()) {
                             totalScore += 20;
                         } else {
