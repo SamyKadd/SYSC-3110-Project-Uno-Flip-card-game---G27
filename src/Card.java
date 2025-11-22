@@ -8,7 +8,7 @@
 
 public class Card {
     public enum Color {RED, BLUE, YELLOW, GREEN};
-    public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_ONE, REVERSE, WILD, WILD_DRAW_TWO, DRAW_FIVE, SKIP_EVERYONE};
+    public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_ONE, REVERSE, WILD, WILD_DRAW_TWO, DRAW_FIVE, SKIP_EVERYONE, WILD_DRAW_COLOUR, FLIP};
     private Color color;
     private Value value;
 
