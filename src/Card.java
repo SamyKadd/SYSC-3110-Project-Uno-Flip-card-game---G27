@@ -33,7 +33,7 @@ public class Card {
      */
     private boolean checkIfActionCard(Value value) {
         return value.equals(Value.SKIP) || value.equals(Value.DRAW_ONE) ||  value.equals(Value.REVERSE) || 
-            value.equals(Value.WILD) || value.equals(Value.WILD_DRAW_TWO) || value.equals(Value.DRAW_FIVE) || value.equals(Value.SKIP_EVERYONE);
+            value.equals(Value.WILD) || value.equals(Value.WILD_DRAW_TWO) || value.equals(Value.DRAW_FIVE) || value.equals(Value.SKIP_EVERYONE) || value.equals(Value.WILD_DRAW_COLOUR) || value.equals(Value.FLIP);
     }
 
     /**
