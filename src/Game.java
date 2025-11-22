@@ -369,6 +369,7 @@ public class Game {
                         return;
                     }
 
+                    //Add logic so Draw Five, Skip Everyone, and Wild Draw Colour are only playable on the dark side.
                     case DRAW_FIVE: {
                         // Next player draws 5 cards and loses their turn
                         int target = nextPlayer(currentPlayerIndex);
@@ -398,6 +399,12 @@ public class Game {
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
                         return;
+                    }
+                    case WILD_DRAW_COLOUR: {
+                        //add logic
+                    }
+                    case FLIP: {
+                        //add logic
                     }
                 }
             }
