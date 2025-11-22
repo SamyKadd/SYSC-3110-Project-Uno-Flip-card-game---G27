@@ -167,6 +167,15 @@ public class Game {
         notifyStateChanged();
     }
 
+    /**
+     * Returns the current side of the game (LIGHT or DARK).
+     * The game always begins on the LIGHT side, and switches when a FLIP card is played.
+     *
+     * @return the active Side of the game
+     */
+    public Side getCurrentSide() {
+        return currentSide;
+    }
 
     /**
      * Main game loop that handles player turns.
@@ -272,6 +281,10 @@ public class Game {
                 return (cardToPlay.getColor() == top.getColor()) ||
                         (cardToPlay.getValue() == top.getValue());
             }
+            if (getCurrentSide() == Side.LIGHT) {
+                // block DRAW_FIVE, SKIP_EVERYONE, WILD_DRAW_COLOUR
+            }
+
             // Default true if no top card yet
             return true;
         }
@@ -405,7 +418,17 @@ public class Game {
                         //add logic
                     }
                     case FLIP: {
-                        //add logic
+                        if(currentSide == Side.LIGHT){
+                            currentSide = Side.DARK;
+                        }
+                        else{
+                            currentSide = Side.LIGHT;
+                        }
+                        GameState s = exportState();
+                        s.statusMessage = "Flipped to " + getCurrentSide();
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
                     }
                 }
             }
