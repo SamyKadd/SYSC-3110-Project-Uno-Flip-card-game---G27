@@ -267,6 +267,10 @@ public class Game {
          */
         public boolean isValidPlay(Card cardToPlay) {
             if (cardToPlay == null) return false;
+
+            if (getCurrentSide() == Side.LIGHT && (cardToPlay.getValue() == Card.Value.SKIP_EVERYONE || cardToPlay.getValue() == Card.Value.DRAW_FIVE || cardToPlay.getValue() == Card.Value.WILD_DRAW_COLOUR)) {
+                return false;
+            }
             // Wilds can always be played
             if (cardToPlay.getValue() == Card.Value.WILD || cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
                 return true;
@@ -280,9 +284,6 @@ public class Game {
                 // Allow match by color OR value
                 return (cardToPlay.getColor() == top.getColor()) ||
                         (cardToPlay.getValue() == top.getValue());
-            }
-            if (getCurrentSide() == Side.LIGHT) {
-                // block DRAW_FIVE, SKIP_EVERYONE, WILD_DRAW_COLOUR
             }
 
             // Default true if no top card yet
@@ -383,6 +384,19 @@ public class Game {
                         return;
                     }
 
+                    case FLIP: {
+                        if(currentSide == Side.LIGHT){
+                            currentSide = Side.DARK;
+                        }
+                        else{
+                            currentSide = Side.LIGHT;
+                        }
+                        GameState s = exportState();
+                        s.statusMessage = "Flipped to " + getCurrentSide();
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
+                    }
                     //Add logic so Draw Five, Skip Everyone, and Wild Draw Colour are only playable on the dark side.
                     case DRAW_FIVE: {
                         // Next player draws 5 cards and loses their turn
@@ -416,19 +430,6 @@ public class Game {
                     }
                     case WILD_DRAW_COLOUR: {
                         //add logic
-                    }
-                    case FLIP: {
-                        if(currentSide == Side.LIGHT){
-                            currentSide = Side.DARK;
-                        }
-                        else{
-                            currentSide = Side.LIGHT;
-                        }
-                        GameState s = exportState();
-                        s.statusMessage = "Flipped to " + getCurrentSide();
-                        s.turnComplete = true;
-                        pcs.firePropertyChange("state", null, s);
-                        return;
                     }
                 }
             }
