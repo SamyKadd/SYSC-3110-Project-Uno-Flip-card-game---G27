@@ -22,6 +22,7 @@ public class Game {
     List<Card> discardedPile =  new ArrayList<>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
+    private Side currentSide = Side.LIGHT; //to track Light/Dark state
 
 
     /**
