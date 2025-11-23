@@ -3,4 +3,6 @@ public interface GameUIListener {
     void onDraw();
     void onNext();
     void onChooseWildCardCol(Card.Color color);
+    void onChooseDarkWildColor(Card.Color color);
+
 }
