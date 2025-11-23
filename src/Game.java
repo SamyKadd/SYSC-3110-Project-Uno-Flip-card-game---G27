@@ -429,7 +429,28 @@ public class Game {
                         return;
                     }
                     case WILD_DRAW_COLOUR: {
-                        //add logic
+                        topWild = null;
+
+                        // TODO: Create a DARK-side color picker UI (TEAL, PURPLE, PINK, ORANGE)
+                        // TODO: Store the selected dark color in a new GameState field (e.g., needsDarkColor)
+                        // TODO: Add a new controller callback (onChooseDarkWildColor) similar to onChooseWildCardCol
+                        // TODO: After color is selected, implement draw-until-matching-color logic:
+                        // draw cards for targetPlayer until drawnCard.getColor() == chosenDarkColor
+
+                        int targetPlayer = nextPlayer(currentPlayerIndex);
+                        Card drawnCard = drawCard();
+//                        while(drawnCard.getColor() != chosenColor){
+//                          // TODO: Replace temporary drawCard() placeholder with actual loop once chosenDarkColor exists
+//                        }
+
+
+                        GameState s = exportState();
+                        s.needsWildColor = true; // TEMPORARY — uses light-side UI selector
+                        s.statusMessage = "WILD DRAW COLOR played. Choose a color, then click Next Player.";
+                        s.turnComplete = true;
+                        pcs.firePropertyChange("state", null, s);
+                        return;
+
                     }
                 }
             }
