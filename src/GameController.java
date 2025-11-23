@@ -117,6 +117,21 @@ public class GameController implements GameUIListener {
     public void onChooseWildCardCol(Card.Color color){
         applyWildColor(color);
     }
+    /**
+     * Handles the player's selected DARK-side color for the
+     * Wild Draw Colour card. This method is called by the view
+     * after the user chooses one of the dark colors
+     * (TEAL, PURPLE, PINK, or ORANGE).
+     * The chosen color is passed to the Game model, which stores
+     * it and will later trigger the draw-until-matching-color logic.
+     *
+     * @param color the DARK-side color selected for the Wild Draw Colour card
+     */
+    @Override
+    public void onChooseDarkWildColor(Card.Color color) {
+        model.setDarkWildColor(color);
+    }
+
 
 
     /**
