@@ -137,7 +137,7 @@ public class Game {
         buildDarkDeck();
 
         //start game using light deck
-        deck.addAll(lightDeck);
+        deck = lightDeck;
 
         // Shuffle the deck
         Collections.shuffle(deck);
@@ -291,25 +291,13 @@ public class Game {
          * and replaces the main deck with the opposite side’s cards.
          */
         private void switchDeck() {
-            if (currentSide == Side.LIGHT) {
-                // Move leftover cards to light deck
-                lightDeck.clear();
-                lightDeck.addAll(deck);
+            // Flip the side
+            currentSide = (currentSide == Side.LIGHT) ? Side.DARK : Side.LIGHT;
 
-                // Switch to dark side deck
-                deck.clear();
-                deck.addAll(darkDeck);
-            } else {
-                // Move leftover cards to dark deck
-                darkDeck.clear();
-                darkDeck.addAll(deck);
+            // Point deck to the correct list
+            deck = (currentSide == Side.LIGHT) ? lightDeck : darkDeck;
 
-                // Switch to light side deck
-                deck.clear();
-                deck.addAll(lightDeck);
-            }
-
-            // Shuffle new deck
+            // Shuffle new active deck
             Collections.shuffle(deck);
         }
 
@@ -407,13 +395,6 @@ public class Game {
                     }
 
                     case FLIP: {
-                        if(currentSide == Side.LIGHT){
-                            currentSide = Side.DARK;
-                        }
-                        else{
-                            currentSide = Side.LIGHT;
-                        }
-
                         switchDeck();
                         flipTopCard();
 
