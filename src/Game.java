@@ -430,27 +430,19 @@ public class Game {
                         pcs.firePropertyChange("state", null, s);
                         return;
                     }
-                    case WILD_DRAW_COLOUR: {
-                        int target = nextPlayer(currentPlayerIndex);
-
-                        Card drawn;
-                        do {
-                            drawn = drawCard();
-                            if (drawn != null) {
-                                players.get(target).getHand().addCard(drawn);
-                            }
-                        } while (drawn != null && drawn.getColor() != darkWildColor);
-
-                        // Target loses 1 turn
-                        pendingSkips += 1;
+                    case WILD_DRAW_COLOR: {
+                        // PHASE 1 — prompt user for color, do NOT draw cards yet
+                        darkWildColor = null; // IMPORTANT: reset any previous color
 
                         GameState s = exportState();
-                        s.statusMessage = players.get(target).getName()
-                                + " draws until they get " + darkWildColor + "! Click Next Player.";
+                        s.needsDarkWildColor = true;  // tells GameView to open dark color dialog
+                        s.statusMessage = "WILD DRAW COLOUR played! Choose a DARK color.";
                         s.turnComplete = true;
+
                         pcs.firePropertyChange("state", null, s);
                         return;
                     }
+
 
                 }
             }
@@ -659,14 +651,34 @@ public class Game {
     }
 
     public void setDarkWildColor(Card.Color color) {
+        if (color == null) return;
+
         this.darkWildColor = color;
-        this.topWild = color; // optional: treat like normal wild color
+        this.topWild = color; // top card now behaves like a wild with chosen color
+
+        int target = nextPlayer(currentPlayerIndex);
+        Card drawn;
+
+        // PHASE 2 — draw until matching the chosen dark color
+        do {
+            drawn = drawCard();
+            if (drawn != null) {
+                players.get(target).getHand().addCard(drawn);
+            }
+        } while (drawn != null && drawn.getColor() != darkWildColor);
+
+        // Target loses their next turn
+        pendingSkips += 1;
 
         GameState s = exportState();
-        s.statusMessage = "Dark wild color set to " + color + ". Click Next Player to continue.";
+        s.statusMessage = players.get(target).getName()
+                + " draws until they get " + darkWildColor + "! Click Next Player.";
         s.needsDarkWildColor = false;
+        s.turnComplete = true;
+
         pcs.firePropertyChange("state", null, s);
     }
+
 
 
 
