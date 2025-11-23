@@ -18,7 +18,7 @@ public class GameState {
     public Card.Color wildColor;
     public boolean gameOver = false;
     public boolean needsDarkWildColor = false;
-    public Card.Color chosenDarkWildColor;
+    public Card.Color DarkWildColor;
 
 
 }
