@@ -247,6 +247,40 @@ public class Game {
         }
 
         /**
+         * Flips the current top card to its opposite-side version.
+         * Light-side cards convert to their dark equivalents,
+         * and dark-side cards convert to their light equivalents.
+         */
+        private void flipTopCard() {
+            if (top == null) return;
+
+            Card.Value v = top.getValue();
+
+            // If top card is a light-side card, convert to dark equivalent
+            if (currentSide == Side.DARK) {
+                switch (v) {
+                    case SKIP:          top = new Card(null, Card.Value.SKIP_EVERYONE); break;
+                    case DRAW_ONE:      top = new Card(null, Card.Value.DRAW_FIVE); break;
+                    case WILD:          top = new Card(null, Card.Value.WILD_DRAW_COLOR); break;
+                    case WILD_DRAW_TWO: top = new Card(null, Card.Value.WILD_DRAW_COLOR); break;
+                    // number cards simply "flip" by recolor
+                    default: top = new Card(Card.Color.PINK, v); break;
+                }
+            }
+
+            // If top card is a dark-side card, convert to light equivalent
+            else {
+                switch (v) {
+                    case SKIP_EVERYONE: top = new Card(null, Card.Value.SKIP); break;
+                    case DRAW_FIVE:     top = new Card(null, Card.Value.DRAW_ONE); break;
+                    case WILD_DRAW_COLOR: top = new Card(null, Card.Value.WILD); break;
+                    default: top = new Card(Card.Color.RED, v); break;
+                }
+            }
+        }
+
+
+        /**
          * Switches the active deck between the light deck and dark deck.
          * Moves all remaining cards from the current deck into their side’s deck,
          * and replaces the main deck with the opposite side’s cards.
@@ -376,6 +410,7 @@ public class Game {
                         }
 
                         switchDeck();
+                        flipTopCard();
 
                         GameState s = exportState();
                         s.statusMessage = "Flipped to " + getCurrentSide();
@@ -383,7 +418,7 @@ public class Game {
                         pcs.firePropertyChange("state", null, s);
                         return;
                     }
-                    //Add logic so Draw Five, Skip Everyone, and Wild Draw Colour are only playable on the dark side.
+
                     case DRAW_FIVE: {
                         // Next player draws 5 cards and loses their turn
                         int target = nextPlayer(currentPlayerIndex);
@@ -434,7 +469,7 @@ public class Game {
         }
 
 
-    //This class is desgined to return the next player
+        //This class is desgined to return the next player
         /**
          * Calculates the index of the next player based on current direction.
          * Handles wrapping around the player list in both clockwise and
