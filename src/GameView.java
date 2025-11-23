@@ -300,11 +300,19 @@ public class GameView extends JFrame {
             case RED:
                 return new Color(255, 80, 80);
             case BLUE:
-                return new Color(80, 150, 255);
+                return new Color(87, 151, 246);
             case GREEN:
-                return new Color(80, 200, 120);
+                return new Color(69, 246, 129);
             case YELLOW:
                 return new Color(255, 220, 80);
+            case PURPLE:
+                return new Color(182, 52, 207);
+            case ORANGE:
+                return new Color(244, 109, 82);
+            case PINK:
+                return new Color(241, 111, 194);
+            case TEAL:
+                return new Color(0, 143, 134);
             default:
                 return Color.WHITE;
         }
