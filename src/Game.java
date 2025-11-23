@@ -14,23 +14,29 @@ import java.beans.PropertyChangeSupport;
  */
 public class Game {
     private List<Player> players;
+
     private ArrayList<Card>deck;
     private ArrayList<Card> lightDeck;
     private ArrayList<Card> darkDeck;
+
     private int currentPlayerIndex;
     private boolean clockwise; //+1 forward and -1 reverse order
+
     private Card top; //The card thats on the top of the discard pile
     private Card.Color topWild = null; //If the top card on discard pile is wild card
-    List<Card> discardedPile =  new ArrayList<>();
+
+    private List<Card> lightDiscard = new ArrayList<>();
+    private List<Card> darkDiscard = new ArrayList<>();
+
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
+
     private Side currentSide = Side.LIGHT; //to track Light/Dark state
     private Card.Color darkWildColor = null;
 
     private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
-
-
 
     /**
      * Constructs a new Game instance.
@@ -42,7 +48,6 @@ public class Game {
         deck = new ArrayList<>();
         lightDeck = new ArrayList<>();
         darkDeck = new ArrayList<>();
-        discardedPile = new ArrayList<>();
         currentPlayerIndex = 0;
         clockwise = true;
 //        input = new Scanner(System.in);
@@ -194,7 +199,7 @@ public class Game {
             }
         } while (top.isActionCard());
 
-        discardedPile.add(top);
+        lightDiscard.add(top);
 
         // Trigger initial state for GUI
         notifyStateChanged();
@@ -487,17 +492,24 @@ public class Game {
         }
 
         private void reshuffleFromDiscard() {
-            if (discardedPile.size() > 1) {
-                Card lastTop = discardedPile.remove(discardedPile.size() - 1);
-                deck.addAll(discardedPile);
-                discardedPile.clear();
-                discardedPile.add(lastTop);
+
+            List<Card> discard = (currentSide == Side.LIGHT) ? lightDiscard : darkDiscard;
+
+            if (discard.size() > 1) {
+
+                Card lastTop = discard.remove(discard.size() - 1); // keep top card
+
+                deck.addAll(discard);   // return all other cards to deck
+                discard.clear();
+                discard.add(lastTop);   // put top card back
+
                 Collections.shuffle(deck);
             }
         }
 
 
-        //Taking a card from the top of the deck and returning it
+
+    //Taking a card from the top of the deck and returning it
         /**
          * Draws a single card from the top of the deck.
          *
@@ -717,7 +729,12 @@ public class Game {
         Card played = cur.getHand().removeCard(handIndex);
         if (played == null || !isValidPlay(played)) return;
         top = played;
-        discardedPile.add(played);
+        if (currentSide == Side.LIGHT) {
+            lightDiscard.add(played);
+        } else {
+            darkDiscard.add(played);
+        }
+
 
         if (played.getValue() != Card.Value.WILD && played.getValue() != Card.Value.WILD_DRAW_TWO) {
             topWild = null; // Clear wild color for non-wild cards
