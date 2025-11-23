@@ -649,6 +649,18 @@ public class Game {
         pcs.firePropertyChange("state", null, s);
     }
 
+    public void setDarkWildColor(Card.Color color) {
+        this.topWild = color;
+
+        GameState s = exportState();
+        s.wildColor = color;
+        s.needsDarkWildColor = false;
+
+        s.statusMessage = "Dark wild color set to " + color + ". Click Next Player to continue.";
+        pcs.firePropertyChange("state", null, s);
+    }
+
+
     public void playCardFromHand(int handIndex) {
         Player cur = getCurrentPlayer();
         Card played = cur.getHand().removeCard(handIndex);
