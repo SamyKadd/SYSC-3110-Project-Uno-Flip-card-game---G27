@@ -270,7 +270,7 @@ public class Game {
         public boolean isValidPlay(Card cardToPlay) {
             if (cardToPlay == null) return false;
 
-            if (getCurrentSide() == Side.LIGHT && (cardToPlay.getValue() == Card.Value.SKIP_EVERYONE || cardToPlay.getValue() == Card.Value.DRAW_FIVE || cardToPlay.getValue() == Card.Value.WILD_DRAW_COLOUR)) {
+            if (getCurrentSide() == Side.LIGHT && (cardToPlay.getValue() == Card.Value.SKIP_EVERYONE || cardToPlay.getValue() == Card.Value.DRAW_FIVE || cardToPlay.getValue() == Card.Value.WILD_DRAW_COLOR)) {
                 return false;
             }
             // Wilds can always be played
@@ -650,6 +650,14 @@ public class Game {
         pcs.firePropertyChange("state", null, s);
     }
 
+    /**
+     * Sets the chosen dark wild color and applies the second phase of the
+     * WILD DRAW COLOR effect. After the player selects a color, the next
+     * player draws cards until they draw a card matching that chosen color.
+     * The targeted player also loses their next turn.
+     *
+     * @param color the dark wild color selected by the player
+     */
     public void setDarkWildColor(Card.Color color) {
         if (color == null) return;
 
