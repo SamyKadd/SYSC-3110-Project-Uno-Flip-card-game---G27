@@ -49,6 +49,62 @@ public class Game {
         initializeDeck();
     }
 
+    private void buildLightDeck() {
+        for (Card.Color color : LIGHT_COLORS) {
+            // According to the UNO website, there is only one 0 card per color
+            lightDeck.add(new Card(color, Card.Value.ZERO));
+
+            // Every other number has two per color
+            lightDeck.add(new Card(color, Card.Value.ONE));
+            lightDeck.add(new Card(color, Card.Value.ONE));
+            lightDeck.add(new Card(color, Card.Value.TWO));
+            lightDeck.add(new Card(color, Card.Value.TWO));
+            lightDeck.add(new Card(color, Card.Value.THREE));
+            lightDeck.add(new Card(color, Card.Value.THREE));
+            lightDeck.add(new Card(color, Card.Value.FOUR));
+            lightDeck.add(new Card(color, Card.Value.FOUR));
+            lightDeck.add(new Card(color, Card.Value.FIVE));
+            lightDeck.add(new Card(color, Card.Value.FIVE));
+            lightDeck.add(new Card(color, Card.Value.SIX));
+            lightDeck.add(new Card(color, Card.Value.SIX));
+            lightDeck.add(new Card(color, Card.Value.SEVEN));
+            lightDeck.add(new Card(color, Card.Value.SEVEN));
+            lightDeck.add(new Card(color, Card.Value.EIGHT));
+            lightDeck.add(new Card(color, Card.Value.EIGHT));
+            lightDeck.add(new Card(color, Card.Value.NINE));
+            lightDeck.add(new Card(color, Card.Value.NINE));
+
+            // Light side action cards (two of each per color)
+            lightDeck.add(new Card(color, Card.Value.SKIP));
+            lightDeck.add(new Card(color, Card.Value.SKIP));
+            lightDeck.add(new Card(color, Card.Value.DRAW_ONE));
+            lightDeck.add(new Card(color, Card.Value.DRAW_ONE));
+            lightDeck.add(new Card(color, Card.Value.REVERSE));
+            lightDeck.add(new Card(color, Card.Value.REVERSE));
+
+        }
+        // Light-Side Wild cards (4 of each type, no color)
+        for (int i = 0; i < 4; i++) {
+            lightDeck.add(new Card(null, Card.Value.WILD));
+            lightDeck.add(new Card(null, Card.Value.WILD_DRAW_TWO));
+        }
+    }
+
+    private void buildDarkDeck() {
+        for  (Card.Color color : DARK_COLORS) {
+            // Dark side special cards
+            darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
+            darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
+
+            darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+        }
+        // Dark-side Wild Draw Color (4 copies)
+        for (int i = 0; i < 4; i++) {
+            darkDeck.add(new Card(null, Card.Value.WILD_DRAW_COLOR));
+        }
+    }
+
     /**
      * Initializes the UNO deck with all standard cards.
      * Creates:
@@ -61,54 +117,11 @@ public class Game {
      * The deck is shuffled after creation.
      */
     private void initializeDeck() {
-        // Adding numbered cards (0-9)
-        for (Card.Color color : Card.Color.values()) {
-            // According to the UNO website, there is only one 0 card per color
-            deck.add(new Card(color, Card.Value.ZERO));
+        buildLightDeck();
+        buildDarkDeck();
 
-            // Every other number has two per color
-            deck.add(new Card(color, Card.Value.ONE));
-            deck.add(new Card(color, Card.Value.ONE));
-            deck.add(new Card(color, Card.Value.TWO));
-            deck.add(new Card(color, Card.Value.TWO));
-            deck.add(new Card(color, Card.Value.THREE));
-            deck.add(new Card(color, Card.Value.THREE));
-            deck.add(new Card(color, Card.Value.FOUR));
-            deck.add(new Card(color, Card.Value.FOUR));
-            deck.add(new Card(color, Card.Value.FIVE));
-            deck.add(new Card(color, Card.Value.FIVE));
-            deck.add(new Card(color, Card.Value.SIX));
-            deck.add(new Card(color, Card.Value.SIX));
-            deck.add(new Card(color, Card.Value.SEVEN));
-            deck.add(new Card(color, Card.Value.SEVEN));
-            deck.add(new Card(color, Card.Value.EIGHT));
-            deck.add(new Card(color, Card.Value.EIGHT));
-            deck.add(new Card(color, Card.Value.NINE));
-            deck.add(new Card(color, Card.Value.NINE));
-
-            // Adding two of each action card per color
-            deck.add(new Card(color, Card.Value.SKIP));
-            deck.add(new Card(color, Card.Value.SKIP));
-            deck.add(new Card(color, Card.Value.DRAW_ONE));
-            deck.add(new Card(color, Card.Value.DRAW_ONE));
-            deck.add(new Card(color, Card.Value.REVERSE));
-            deck.add(new Card(color, Card.Value.REVERSE));
-
-            // Adding Draw Five cards (2 per color for UNO Flip)
-            // Putting this here temporarily, not 100% sure how many we need per deck
-            darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
-            darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
-
-            // Adding Skip Everyone cards (2 per color for UNO Flip)
-            darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
-            darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
-        }
-
-        // Wild cards (4 of each type, no color)
-        for (int i = 0; i < 4; i++) {
-            deck.add(new Card(null, Card.Value.WILD));
-            deck.add(new Card(null, Card.Value.WILD_DRAW_TWO));
-        }
+        //start game using light deck
+        deck.addAll(lightDeck);
 
         // Shuffle the deck
         Collections.shuffle(deck);
