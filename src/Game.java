@@ -23,6 +23,8 @@ public class Game {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
     private Side currentSide = Side.LIGHT; //to track Light/Dark state
+    private Card.Color darkWildColor = null;
+
 
 
     /**
@@ -429,29 +431,27 @@ public class Game {
                         return;
                     }
                     case WILD_DRAW_COLOUR: {
-                        topWild = null;
+                        int target = nextPlayer(currentPlayerIndex);
 
-                        // TODO: Create a DARK-side color picker UI (TEAL, PURPLE, PINK, ORANGE)
-                        // TODO: Store the selected dark color in a new GameState field (e.g., needsDarkColor)
-                        // TODO: Add a new controller callback (onChooseDarkWildColor) similar to onChooseWildCardCol
-                        // TODO: After color is selected, implement draw-until-matching-color logic:
-                        // draw cards for targetPlayer until drawnCard.getColor() == chosenDarkColor
+                        Card drawn;
+                        do {
+                            drawn = drawCard();
+                            if (drawn != null) {
+                                players.get(target).getHand().addCard(drawn);
+                            }
+                        } while (drawn != null && drawn.getColor() != darkWildColor);
 
-                        int targetPlayer = nextPlayer(currentPlayerIndex);
-                        Card drawnCard = drawCard();
-//                        while(drawnCard.getColor() != chosenColor){
-//                          // TODO: Replace temporary drawCard() placeholder with actual loop once chosenDarkColor exists
-//                        }
-
+                        // Target loses 1 turn
+                        pendingSkips += 1;
 
                         GameState s = exportState();
-                        s.needsWildColor = true; // TEMPORARY — uses light-side UI selector
-                        s.statusMessage = "WILD DRAW COLOR played. Choose a color, then click Next Player.";
+                        s.statusMessage = players.get(target).getName()
+                                + " draws until they get " + darkWildColor + "! Click Next Player.";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
                         return;
-
                     }
+
                 }
             }
             notifyStateChanged();
@@ -593,14 +593,23 @@ public class Game {
         public GameState exportState() {
             GameState s = new GameState();
             Player cur = getCurrentPlayer();
+
             s.curPlayerName = cur.getName();
             s.curHand = new ArrayList<>(cur.getHand().getCardsList());
             s.topCard = getTopCard();
+
+            // Wild colors
             s.wildColor = topWild;
+            s.darkWildColor = this.darkWildColor; // send chosen dark color to UI
+
+            // UI flags
             s.canDraw = true;
             s.canPlay = true;
             s.canNext = true;
+
             s.needsWildColor = false;
+            s.needsDarkWildColor = false;
+
             return s;
         }
 
@@ -650,15 +659,15 @@ public class Game {
     }
 
     public void setDarkWildColor(Card.Color color) {
-        this.topWild = color;
+        this.darkWildColor = color;
+        this.topWild = color; // optional: treat like normal wild color
 
         GameState s = exportState();
-        s.wildColor = color;
-        s.needsDarkWildColor = false;
-
         s.statusMessage = "Dark wild color set to " + color + ". Click Next Player to continue.";
+        s.needsDarkWildColor = false;
         pcs.firePropertyChange("state", null, s);
     }
+
 
 
     public void playCardFromHand(int handIndex) {
