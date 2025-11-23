@@ -424,7 +424,7 @@ public class GameView extends JFrame {
         if (s.topCard != null &&
                 (s.topCard.getValue() == Card.Value.WILD ||
                         s.topCard.getValue() == Card.Value.WILD_DRAW_TWO ||
-                        s.topCard.getValue() == Card.Value.WILD_DRAW_COLOUR)) {
+                        s.topCard.getValue() == Card.Value.WILD_DRAW_COLOR)) {
 
             if (s.wildColor != null) {
                 topCardPanel.setBackground(getColorForCardColor(s.wildColor));
