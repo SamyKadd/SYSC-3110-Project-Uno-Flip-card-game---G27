@@ -49,6 +49,15 @@ public class Game {
         initializeDeck();
     }
 
+    /**
+     * Creates all cards used on the light side of UNO Flip.
+     * This includes:
+     * - Number cards (0–9)
+     * - Skip, Reverse, Draw One
+     * - Wild and Wild Draw Two cards
+     *
+     * All cards are added to the lightDeck list.
+     */
     private void buildLightDeck() {
         for (Card.Color color : LIGHT_COLORS) {
             // According to the UNO website, there is only one 0 card per color
@@ -90,6 +99,15 @@ public class Game {
         }
     }
 
+
+    /**
+     * Creates all cards used on the dark side of UNO Flip.
+     * This includes:
+     * - Draw Five
+     * - Skip Everyone
+     * - Wild Draw Color
+     * All cards are added to the darkDeck list.
+     */
     private void buildDarkDeck() {
         for  (Card.Color color : DARK_COLORS) {
             // Dark side special cards
@@ -106,15 +124,9 @@ public class Game {
     }
 
     /**
-     * Initializes the UNO deck with all standard cards.
-     * Creates:
-     * - One 0 card per color (4 total)
-     * - Two of each numbered card 1-9 per color (72 total)
-     * - Two of each action card (SKIP, DRAW_ONE, REVERSE) per color (24 total)
-     * - Four WILD cards (4 total)
-     * - Four WILD_DRAW_TWO cards (4 total)
-     * Total: 108 cards
-     * The deck is shuffled after creation.
+     * Builds the light deck and the dark deck.
+     * The game starts with the light deck, which is shuffled
+     * and used as the main drawing deck.
      */
     private void initializeDeck() {
         buildLightDeck();
@@ -199,83 +211,6 @@ public class Game {
         return currentSide;
     }
 
-    /**
-     * Main game loop that handles player turns.
-     * Displays game state, shows current player's hand,
-     * and manages turn progression.
-     * This method contains the core game logic
-     */
-//    private void playGame() {
-//        while (true) {
-//            Player currentPlayer = players.get(currentPlayerIndex);
-//
-//            // Display game state
-//            System.out.println("===========================================");
-//            System.out.println(currentPlayer.getName() + "'s turn");
-//            System.out.println("Top card on discard pile: " + (topWild != null ? topWild : top));
-//            System.out.println("-------------------------------------------");
-//
-//            // Show current player's hand with numbers
-//            System.out.println("Your cards:");
-//            Hand hand = currentPlayer.getHand();
-//            for (int i = 0; i < hand.getSize(); i++) {
-//                System.out.println(i + ": " + hand.getCard(i));
-//            }
-//
-//            System.out.println("\nEnter card number to play, or 'D' to draw a card:");
-//            String s = input.nextLine().trim();
-//
-//            if (s.equalsIgnoreCase("D")) {
-//                Card drawnCard = drawCard();
-//                if (drawnCard != null) {
-//                    hand.addCard(drawnCard);
-//                    System.out.println("You drew: " + drawnCard);
-//                }
-//                currentPlayerIndex = nextPlayer(currentPlayerIndex);
-//                continue;
-//            }
-//
-//            try {
-//                int cardIndex = Integer.parseInt(s);
-//
-//                if (cardIndex < 0 || cardIndex >= hand.getSize()) {
-//                    System.out.println("Invalid card number! Try again.");
-//                    continue;
-//                }
-//
-//                Card playedCard = hand.getCard(cardIndex);
-//
-//                if (!isValidPlay(playedCard)) {
-//                    System.out.println("You cannot play this card! Card must match colour or value. Try again.");
-//                    continue;
-//                }
-//
-//                hand.removeCard(cardIndex);
-//                top = playedCard;
-//                discardedPile.add(playedCard);
-//                topWild = null; // Reset wild color unless a wild is played
-//
-//                System.out.println("You played: " + playedCard);
-//
-//                // Check if player won
-//                if (hand.getSize() == 0) {
-//                    System.out.println("\n===========================================");
-//                    System.out.println(currentPlayer.getName() + " wins!");
-//                    System.out.println("===========================================");
-//                    break;
-//                }
-//
-//                if(playedCard.isActionCard()){
-//                    handleActionCard(playedCard);
-//                } else {
-//                    currentPlayerIndex = nextPlayer(currentPlayerIndex);
-//                }
-//
-//            } catch (NumberFormatException e) {
-//                System.out.println("Invalid input! Enter a number or 'D'.");
-//            }
-//        }
-//    }
 
         /**
          * Checks if a card can be legally played on the current top card.
