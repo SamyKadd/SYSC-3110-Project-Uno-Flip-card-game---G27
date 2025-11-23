@@ -15,6 +15,8 @@ import java.beans.PropertyChangeSupport;
 public class Game {
     private List<Player> players;
     private ArrayList<Card>deck;
+    private ArrayList<Card> lightDeck;
+    private ArrayList<Card> darkDeck;
     private int currentPlayerIndex;
     private boolean clockwise; //+1 forward and -1 reverse order
     private Card top; //The card thats on the top of the discard pile
@@ -24,6 +26,9 @@ public class Game {
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
     private Side currentSide = Side.LIGHT; //to track Light/Dark state
     private Card.Color darkWildColor = null;
+
+    private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
+    private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
 
 
 
@@ -35,6 +40,8 @@ public class Game {
     public Game() {
         players = new ArrayList<>();
         deck = new ArrayList<>();
+        lightDeck = new ArrayList<>();
+        darkDeck = new ArrayList<>();
         discardedPile = new ArrayList<>();
         currentPlayerIndex = 0;
         clockwise = true;
@@ -89,12 +96,12 @@ public class Game {
 
             // Adding Draw Five cards (2 per color for UNO Flip)
             // Putting this here temporarily, not 100% sure how many we need per deck
-            deck.add(new Card(color, Card.Value.DRAW_FIVE));
-            deck.add(new Card(color, Card.Value.DRAW_FIVE));
+            darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
+            darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
 
             // Adding Skip Everyone cards (2 per color for UNO Flip)
-            deck.add(new Card(color, Card.Value.SKIP_EVERYONE));
-            deck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
         }
 
         // Wild cards (4 of each type, no color)
