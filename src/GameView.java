@@ -317,7 +317,41 @@ public class GameView extends JFrame {
                 return Color.WHITE;
         }
     }
-    
+
+    /**
+     * Prompts the player to select a DARK-side color for the
+     * Wild Draw Colour card. The available dark colors are:
+     * TEAL, PURPLE, PINK, and ORANGE.
+     *
+     * The selected color is returned as a {@code Card.Color} enum
+     * and will be used by the controller to execute the
+     * Wild Draw Colour effect.
+     *
+     * @return the DARK-side color chosen by the player; defaults to TEAL if closed
+     */
+    public Card.Color promptForDarkWildColor() {
+        Object[] options = {"TEAL", "PURPLE", "PINK", "ORANGE"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose a DARK color:",
+                "Wild Draw Colour",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        switch (choice) {
+            case 0: return Card.Color.TEAL;
+            case 1: return Card.Color.PURPLE;
+            case 2: return Card.Color.PINK;
+            case 3: return Card.Color.ORANGE;
+            default: return Card.Color.TEAL;
+        }
+    }
+
+
     /**
      * Updates the current player display.
      *
