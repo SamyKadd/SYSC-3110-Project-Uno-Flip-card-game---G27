@@ -124,9 +124,8 @@ public class Game {
     }
 
     /**
-     * Builds the light deck and the dark deck.
-     * The game starts with the light deck, which is shuffled
-     * and used as the main drawing deck.
+     * Builds both the light and dark decks, then loads the light deck
+     * as the starting draw deck. The deck is shuffled after loading.
      */
     private void initializeDeck() {
         buildLightDeck();
@@ -247,9 +246,36 @@ public class Game {
             return true;
         }
 
-
-
         /**
+         * Switches the active deck between the light deck and dark deck.
+         * Moves all remaining cards from the current deck into their side’s deck,
+         * and replaces the main deck with the opposite side’s cards.
+         */
+        private void switchDeck() {
+            if (currentSide == Side.LIGHT) {
+                // Move leftover cards to light deck
+                lightDeck.clear();
+                lightDeck.addAll(deck);
+
+                // Switch to dark side deck
+                deck.clear();
+                deck.addAll(darkDeck);
+            } else {
+                // Move leftover cards to dark deck
+                darkDeck.clear();
+                darkDeck.addAll(deck);
+
+                // Switch to light side deck
+                deck.clear();
+                deck.addAll(lightDeck);
+            }
+
+            // Shuffle new deck
+            Collections.shuffle(deck);
+        }
+
+
+         /**
          * Executes the special action associated with an action card.
          * Handles: SKIP, WILD, WILD_DRAW_TWO, DRAW_ONE, and REVERSE cards.
          * Updates game state and advances to the next player as appropriate.
@@ -348,6 +374,9 @@ public class Game {
                         else{
                             currentSide = Side.LIGHT;
                         }
+
+                        switchDeck();
+
                         GameState s = exportState();
                         s.statusMessage = "Flipped to " + getCurrentSide();
                         s.turnComplete = true;
@@ -432,7 +461,8 @@ public class Game {
             }
         }
 
-    //Taking a card from the top of the deck and returning it
+
+        //Taking a card from the top of the deck and returning it
         /**
          * Draws a single card from the top of the deck.
          *
@@ -463,6 +493,8 @@ public class Game {
             }
             notifyStateChanged();
         }
+
+
 
         /**
          * Calculates and awards points to the winning player.
