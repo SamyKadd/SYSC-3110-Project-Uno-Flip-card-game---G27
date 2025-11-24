@@ -33,6 +33,7 @@ public class GameStateEvent extends EventObject {
     public List<Card> getCurHand() { return new ArrayList<>(curHand); }
     public Card getTopCard() { return topCard; }
 
+    // Getters and setters
     public boolean isTurnComplete() { return turnComplete; }
     public void setTurnComplete(boolean turnComplete) { this.turnComplete = turnComplete; }
 
