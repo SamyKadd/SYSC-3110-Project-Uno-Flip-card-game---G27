@@ -105,6 +105,7 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Created GameUIListener interface, along with the methods(w/o logic implementation)
 - Created Helper class to assign the new uno flip points
 - Altered the calculateAndAwardScore to implement the helper class 
+- Implemented tests
 - Created Sequence diagram for flipcard
 - Created Sequence diagram for ai turn
 
@@ -117,7 +118,14 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Initialized deck ArrayList in Game class
 - Created 5 PlayerTest unit tests including toString() test
 - Created a method in Hand to access all the player's cards directly
+- Added a proper View interface and updated controller to use it
+- Model now supports multiple views with add/remove view methods
+- Rebuilt GameStateEvent: correct naming, extends EventObject, private fields, full getters/setters
+- Fixed controller–model separation by moving validation logic back into the model
 - Completed GameController methods
+- Updated calculateAndAwardScore() to correctly compute and assign the winners points
+- Updated GameView’s render() method to use the new getters and correctly display all state changes
+- Updated GameController’s onPlayCard() and onDraw() methods to rely on the model’s validity checks instead of making decisions in the controller
 
 ---
 
