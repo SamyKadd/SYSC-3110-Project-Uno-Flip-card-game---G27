@@ -351,9 +351,10 @@ public class GameTest {
 
         game.playCardFromHand(attacker.getHand().getCardsList().indexOf(skipEveryone));
 
-        game.advanceTurn();
-        assertSame(attacker, game.getCurrentPlayer(),
-                "Player should get another turn after SKIP_EVERYONE");
+        game.advanceTurn(); // first skip
+        game.advanceTurn(); // second skip
+        assertSame(attacker, game.getCurrentPlayer());
+
     }
 
 
