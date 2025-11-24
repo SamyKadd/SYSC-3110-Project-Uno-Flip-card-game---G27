@@ -1,6 +1,5 @@
 import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -644,14 +643,16 @@ public class Game {
     }
     /**
      * Makes the current player draw one card and updates state.
+     *
+     * @return
      */
-    public void drawCardForCurrentPlayer() {
+    public boolean drawCardForCurrentPlayer() {
         Player cur = getCurrentPlayer();
         Card card = drawCard();
-        if (card != null) {
-            cur.getHand().addCard(card);
-        }
+        if (card == null) return false;
+        cur.getHand().addCard(card);
         notifyStateChanged();
+        return true;
     }
 
     /**
@@ -722,10 +723,10 @@ public class Game {
     }
 
 
-    public void playCardFromHand(int handIndex) {
+    public boolean playCardFromHand(int handIndex) {
         Player cur = getCurrentPlayer();
         Card played = cur.getHand().removeCard(handIndex);
-        if (played == null || !isValidPlay(played)) return;
+        if (played == null || !isValidPlay(played)) return false;
         top = played;
         if (currentSide == Side.LIGHT) {
             lightDiscard.add(played);
@@ -750,10 +751,11 @@ public class Game {
             s = exportState();
             s.setStatusMessage(cur.getName() + " wins! Final Score: " + cur.getScore());
             pcs.firePropertyChange("state", null, s);
-            return;
+            return true;
         }
 
         handleActionCard(played);
+        return true;
     }
 
 }

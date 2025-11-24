@@ -8,8 +8,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class GameController implements GameUIListener {
-    private Game model;
-    private GameViewInterface view;
+    private final Game model;
+    private final GameViewInterface view;
     private boolean hasPlayedThisTurn = false;
 
     /**
@@ -78,10 +78,10 @@ public class GameController implements GameUIListener {
     @Override
     public void onPlayCard(int handIndex){
         // Don't allow human interaction during AI turns
-        if (model.getCurrentPlayer() instanceof AIPlayer) {
-            return;
-        }
-        attemptPlayCard(handIndex);
+        if (model.getCurrentPlayer() instanceof AIPlayer) return;
+        boolean valid = model.playCardFromHand(handIndex); // model checks validity
+        if (valid) hasPlayedThisTurn = true;
+        else view.showError("Invalid card play! Try again.");
     }
 
     /**
@@ -90,10 +90,11 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onDraw(){
-        if (model.getCurrentPlayer() instanceof AIPlayer) {
-            return;
-        }
-        attemptDrawCard();
+        if (model.getCurrentPlayer() instanceof AIPlayer) return;
+        boolean valid = model.drawCardForCurrentPlayer();
+        if (valid) hasPlayedThisTurn = true;
+        else view.showError("Cannot draw a card right now.");
+
     }
 
     /**
@@ -113,7 +114,8 @@ public class GameController implements GameUIListener {
      */
     @Override
     public void onChooseWildCardCol(Card.Color color){
-        applyWildColor(color);
+        //applyWildColor(color);
+        model.setTopWildColor(color);
     }
     /**
      * Handles the player's selected DARK-side color for the
