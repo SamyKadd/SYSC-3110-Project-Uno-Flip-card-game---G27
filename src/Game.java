@@ -601,9 +601,8 @@ public class Game {
         Player cur = getCurrentPlayer();
         GameStateEvent s = new GameStateEvent(this, cur.getName(), cur.getHand().getCardsList(), getTopCard());
 
-        s.curPlayerName = cur.getName();
-        s.curHand = new ArrayList<>(cur.getHand().getCardsList());
-        s.topCard = getTopCard();
+        s.setWildColor(topWild);
+        s.setDarkWildColor(this.darkWildColor); // send chosen dark color to UI
 
         // Wild colors
         s.wildColor = topWild;
