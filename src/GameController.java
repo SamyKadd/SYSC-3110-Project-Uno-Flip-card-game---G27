@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameController implements GameUIListener, ActionListener {
     private final Game model;
@@ -63,8 +65,9 @@ public class GameController implements GameUIListener, ActionListener {
                     // Disable buttons for AI turn
                     view.getDrawCardButton().setEnabled(false);
                     view.getNextPlayerButton().setEnabled(false);
-                    // THESE HAVE TO BE REENABLED IN HANDLEAITURN or else they will not be clickable and the game
-                    // will be permanently stuck on the AI turn
+
+                    handleAITurn();
+
                 }
             }
         });
@@ -76,7 +79,91 @@ public class GameController implements GameUIListener, ActionListener {
 
     }
 
+    /**
+     * Handles the AI player's entire turn:
+     * - Chooses a legal card with a simple strategy, or draws if none
+     * - Plays the card (or draws)
+     * - Advances to the next player
+     * - Re-enables buttons for human players
+     */
+    private void handleAITurn() {
+        hasPlayedThisTurn = true; // lock out extra actions this turn
 
+        Player currentPlayer = model.getCurrentPlayer();
+        if (!(currentPlayer instanceof AIPlayer)) {
+            // Safety check – should not happen, but just in case
+            view.getDrawCardButton().setEnabled(false);
+            view.getNextPlayerButton().setEnabled(false);
+            hasPlayedThisTurn = false;
+            return;
+        }
+
+        //choose what card to play, if any
+        Hand hand = currentPlayer.getHand();
+        int chosenIndex = chooseAIPlayIndex(hand);
+
+        if (chosenIndex >= 0) {
+            // Try to play the chosen card
+            boolean success = model.playCardFromHand(chosenIndex);
+            if (!success) {
+                // If somehow invalid, just draw instead
+                model.drawCardForCurrentPlayer();
+            }
+        }
+        else{
+            // No playable card → draw one
+            model.drawCardForCurrentPlayer();
+        }
+
+        // After action or draw, advance to next player
+        model.advanceTurn();
+
+        // Re-enable buttons (in case the next player is human)
+        view.getDrawCardButton().setEnabled(true);
+        view.getNextPlayerButton().setEnabled(true);
+
+        // New player's turn starts fresh
+        hasPlayedThisTurn = false;
+    }
+
+    /**
+     * Simple AI strategy:
+     * 1. Find all playable cards.
+     * 2. Prefer a non-wild card that matches the current color.
+     * 3. Otherwise, play the first playable card.
+     * 4. If none are playable, return -1.
+     */
+    private int chooseAIPlayIndex(Hand hand) {
+        List<Integer> playable = new ArrayList<>();
+
+        for (int i = 0; i < hand.getSize(); i++) {
+            Card c = hand.getCard(i);
+            if (model.isValidPlay(c)) {
+                playable.add(i);
+            }
+        }
+
+        if (playable.isEmpty()) {
+            return -1; // nothing legal, must draw
+        }
+
+        // Determine "current color": wild color if active, otherwise top card's color
+        Card top = model.getTopCard();
+        Card.Color activeColor = (top != null) ? top.getColor() : null;
+
+        // 1) Try to play a non-wild card that matches the active color
+        if (activeColor != null) {
+            for (int idx : playable) {
+                Card c = hand.getCard(idx);
+                if (c.getColor() != null && c.getColor() == activeColor) {
+                    return idx;
+                }
+            }
+        }
+
+        // 2) Otherwise just play the first playable card
+        return playable.get(0);
+    }
 
     /**
      * Handles the action when a player clicks on a card in their hand
