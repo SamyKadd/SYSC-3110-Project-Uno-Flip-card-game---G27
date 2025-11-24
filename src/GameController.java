@@ -173,11 +173,19 @@ public class GameController implements GameUIListener, ActionListener {
      */
     @Override
     public void onPlayCard(int handIndex){
-        // Don't allow human interaction during AI turns
         if (model.getCurrentPlayer() instanceof AIPlayer) return;
-        boolean valid = model.playCardFromHand(handIndex); // model checks validity
-        if (valid) hasPlayedThisTurn = true;
-        else view.showError("Invalid card play! Try again.");
+
+        if (hasPlayedThisTurn) {
+            view.showError("You already played this turn! Click 'Next Player'.");
+            return;
+        }
+
+        boolean valid = model.playCardFromHand(handIndex);
+        if (valid) {
+            hasPlayedThisTurn = true;
+        } else {
+            view.showError("Invalid card play! Try again.");
+        }
     }
 
     /**
@@ -187,6 +195,12 @@ public class GameController implements GameUIListener, ActionListener {
     @Override
     public void onDraw(){
         if (model.getCurrentPlayer() instanceof AIPlayer) return;
+
+        if (hasPlayedThisTurn) {
+            view.showError("You already acted this turn! Click 'Next Player'.");
+            return;
+        }
+
         boolean valid = model.drawCardForCurrentPlayer();
         if (valid) hasPlayedThisTurn = true;
         else view.showError("Cannot draw a card right now.");
