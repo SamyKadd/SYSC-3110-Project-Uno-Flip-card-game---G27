@@ -1,8 +1,8 @@
-# UNO Card Game - Milestone 2
+# UNO Card Game - Milestone 3
 
 
 ## Project Overview
-A graphical implementation of UNO card game in Java using Swing GUI and MVC architecture, supporting 2-4 players with all standard action cards.
+A graphical implementation of the UNO Flip card game in Java using Swing GUI and MVC architecture, supporting 2-4 players (human or AI) with all standard and Flip action cards.
 
 ---
 
@@ -89,6 +89,12 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Implemented top-card color update after wild draw two card color selection
 - Updated README.md with updated milestone information
 - Added basic test cases to confirm game logic after MVC integration
+- Added AI player selection dialog and integrated AI player count into game setup
+- Modified Main to enforce maximum of 4 total players including AI
+- Created AIPlayer class and initial AI behaviour structure
+- Implemented SKIP_EVERYONE action card logic and DRAW_FIVE card logic and integrated into model action-card handling
+- Created test cases for the AIPlayer class
+- Fixed issue where human players could play more than one card per turn
 
 **Samy Kaddour**
 - Implemented WILD card functionality with color selection
@@ -199,5 +205,5 @@ Run test files through your IDE or JUnit test runner.
 ---
 
 **Course**: SYSC 3110  
-**Milestone**: 2  
-**Date**: 2025-11-10
+**Milestone**: 3  
+**Date**: 2025-11-24
