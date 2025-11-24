@@ -356,20 +356,26 @@ public class GameTest {
 //        assertSame(attacker, game.getCurrentPlayer());
 //
 //    }
-//    @Test
-//    void testScoringAfterWin() {
-//        game.addPlayer(p1);
-//        game.addPlayer(p2);
-//
-//        // Fake setup
-//        p1.getHand().getCardsList().clear(); // p1 wins
-//        p2.getHand().addCard(new Card(Card.Color.RED, Card.Value.NINE));
-//
-//        // Simulate scoring
-//        game.playCardFromHand(0); // triggers score calculation
-//
-//        assertTrue(p1.getScore() > 0, "Winner should receive points.");
-//    }
+    @Test
+    void testScoringAfterWin() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+
+        Player winner = game.getCurrentPlayer();
+        Player loser = (winner == p1) ? p2 : p1;
+
+        winner.getHand().getCardsList().clear();
+        winner.getHand().addCard(new Card(null, Card.Value.WILD));
+
+        loser.getHand().getCardsList().clear();
+        loser.getHand().addCard(new Card(Card.Color.RED, Card.Value.NINE));
+
+        game.playCardFromHand(0);
+
+        assertTrue(winner.getScore() > 0, "Winner should receive points.");
+    }
+
 
 
 
