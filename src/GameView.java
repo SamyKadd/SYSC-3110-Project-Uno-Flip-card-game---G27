@@ -403,7 +403,7 @@ public class GameView extends JFrame implements GameViewInterface {
         }
 
         // --- DARK WILD COLOR PROMPT FIRST ---
-        if (s.needsDarkWildColor()) {
+        if (s.isNeedsDarkWildColor()) {
             Card.Color chosen = promptForDarkWildColor();
             if (uiListener != null && chosen != null) {
                 uiListener.onChooseDarkWildColor(chosen);
@@ -412,7 +412,7 @@ public class GameView extends JFrame implements GameViewInterface {
         }
 
         // --- LIGHT WILD COLOR PROMPT SECOND ---
-        if (s.needsWildColor()) {
+        if (s.isNeedsWildColor()) {
             Card.Color chosen = promptForWildColor();
             if (uiListener != null && chosen != null) {
                 uiListener.onChooseWildCardCol(chosen);
@@ -439,8 +439,8 @@ public class GameView extends JFrame implements GameViewInterface {
         updateStatusMessage(s.getStatusMessage() == null ? "" : s.getStatusMessage());
 
         // --- BUTTON STATES ---
-        drawCardButton.setEnabled(s.canDraw());
-        nextPlayerButton.setEnabled(s.canNext());
+        drawCardButton.setEnabled(s.isCanDraw());
+        nextPlayerButton.setEnabled(s.isCanNext());
 
         // --- REDRAW PLAYER HAND ---
         handPanel.removeAll();
