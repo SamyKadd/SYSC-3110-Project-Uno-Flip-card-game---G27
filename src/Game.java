@@ -1,6 +1,5 @@
 import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -26,6 +25,8 @@ public class Game {
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
     private Side currentSide = Side.LIGHT; //to track Light/Dark state
     private Card.Color darkWildColor = null;
+
+    private List<GameViewInterface> views = new ArrayList<>();
 
     private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
@@ -263,7 +264,7 @@ public class Game {
                         // Do not advance now. Let the "Next Player" button apply the skip.
                         pendingSkips += 1;
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.statusMessage = "SKIP played. Next player will be skipped when you click Next Player.";
                         s.turnComplete = true; // current player’s action is done; must click Next
                         pcs.firePropertyChange("state", null, s);
@@ -274,7 +275,7 @@ public class Game {
                         // Flip direction immediately, but don't advance. Next button will move according to new direction.
                         clockwise = !clockwise;
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         if (players.size() == 2) {
                             // In 2-player, Reverse acts like a Skip → same player goes again after Next
                             pendingSkips += 1;
@@ -291,7 +292,7 @@ public class Game {
                         // Choose color now; don't advance. Next button will move turn.
                         topWild = null;
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.needsWildColor = true;
                         s.statusMessage = "WILD played. Choose a color, then click Next Player.";
                         s.turnComplete = true;
@@ -315,7 +316,7 @@ public class Game {
                         // After a +2, the target loses their turn, so schedule a skip for when Next is pressed.
                         pendingSkips += 1;
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.needsWildColor = true;
                         s.statusMessage = players.get(target).getName() + " draws 2. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
@@ -334,7 +335,7 @@ public class Game {
 
                         pendingSkips += 1;
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.statusMessage = players.get(target).getName() + " draws 1. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -348,7 +349,7 @@ public class Game {
                         else{
                             currentSide = Side.LIGHT;
                         }
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.statusMessage = "Flipped to " + getCurrentSide();
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -368,7 +369,7 @@ public class Game {
 
                         pendingSkips += 1;
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.statusMessage = players.get(target).getName() + " draws 5. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -379,7 +380,7 @@ public class Game {
                         // Skip all other players - current player plays again
                         pendingSkips = players.size() - 1;
                         
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.statusMessage = "SKIP EVERYONE played! " + getCurrentPlayer().getName() + " plays again!";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -389,7 +390,7 @@ public class Game {
                         // PHASE 1 — prompt user for color, do NOT draw cards yet
                         darkWildColor = null; // IMPORTANT: reset any previous color
 
-                        GameState s = exportState();
+                        GameStateEvent s = exportState();
                         s.needsDarkWildColor = true;  // tells GameView to open dark color dialog
                         s.statusMessage = "WILD DRAW COLOUR played! Choose a DARK color.";
                         s.turnComplete = true;
@@ -497,7 +498,7 @@ public class Game {
             winner.addScore(totalScore);
             
             // Update the state to show scores
-            GameState s = exportState();
+            GameStateEvent s = exportState();
             s.statusMessage = winner.getName() + " wins and scores " + totalScore + " points!";
             pcs.firePropertyChange("state", null, s);
         }
@@ -537,9 +538,9 @@ public class Game {
         public void removePropertyChangeListener(PropertyChangeListener listener) {
             pcs.removePropertyChangeListener(listener);
         }
-        public GameState exportState() {
-            GameState s = new GameState();
+        public GameStateEvent exportState() {
             Player cur = getCurrentPlayer();
+            GameStateEvent s = new GameStateEvent(this, cur.getName(), cur.getHand().getCardsList(), top);
 
             s.curPlayerName = cur.getName();
             s.curHand = new ArrayList<>(cur.getHand().getCardsList());
@@ -561,8 +562,26 @@ public class Game {
         }
 
         private void notifyStateChanged() {
-            pcs.firePropertyChange("state", null, exportState());
+            Player cur = getCurrentPlayer();
+            GameStateEvent event = new GameStateEvent(this, cur.getName(), cur.getHand().getCardsList(), top);
+            for (GameViewInterface view : views) {
+                view.render(event);
+            }
         }
+
+        public void addView(GameViewInterface view) {
+            views.add(view);
+        }
+        public void removeView(GameViewInterface view) {
+            views.remove(view);
+        }
+        private void notifyViews(GameStateEvent event) {
+            for (GameViewInterface view : views) {
+                view.render(event);
+            }
+        }
+
+
         /**
          * Makes the current player draw one card and updates state.
          */
@@ -590,7 +609,7 @@ public class Game {
                 currentPlayerIndex = nextPlayer(currentPlayerIndex);
             }
 
-            GameState s = exportState();
+            GameStateEvent s = exportState();
             s.statusMessage = getCurrentPlayer().getName() + "'s turn!";
             // turnComplete is false here; it's a fresh turn
             pcs.firePropertyChange("state", null, s);
@@ -599,7 +618,7 @@ public class Game {
 
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
-        GameState s = exportState();
+        GameStateEvent s = exportState();
         s.statusMessage = "Wild color set to " + color + ". Click Next Player to continue.";
         s.needsWildColor = false; // Without this, playing a wildcard will lock the color to "wildcard" permanently
         pcs.firePropertyChange("state", null, s);
@@ -633,7 +652,7 @@ public class Game {
         // Target loses their next turn
         pendingSkips += 1;
 
-        GameState s = exportState();
+        GameStateEvent s = exportState();
         s.statusMessage = players.get(target).getName()
                 + " draws until they get " + darkWildColor + "! Click Next Player.";
         s.needsDarkWildColor = false;
@@ -656,7 +675,7 @@ public class Game {
             topWild = null; // Clear wild color for non-wild cards
         }
 
-        GameState s = exportState();
+        GameStateEvent s = exportState();
         s.turnComplete = true; // player finished their turn
         pcs.firePropertyChange("state", null, s);
 

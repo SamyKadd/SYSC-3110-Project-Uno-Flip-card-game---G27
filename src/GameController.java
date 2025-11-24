@@ -6,13 +6,11 @@
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
+
 public class GameController implements GameUIListener {
     private Game model;
-    private GameView view;
+    private GameViewInterface view;
     private boolean hasPlayedThisTurn = false;
-
-
 
     /**
      * Constructs a new GameController and connects the model and view
@@ -20,7 +18,7 @@ public class GameController implements GameUIListener {
      * @param model the game model that contains the logic and data
      * @param view the game view responsible for the GUI
      */
-    public GameController(Game model, GameView view) {
+    public GameController(Game model, GameViewInterface view) {
         this.model = model;
         this.view = view;
         this.view.setListener(this);
@@ -32,7 +30,7 @@ public class GameController implements GameUIListener {
             public void propertyChange(PropertyChangeEvent evt) {
                 if (!"state".equals(evt.getPropertyName())) return;
 
-                GameState newState = (GameState) evt.getNewValue();
+                GameStateEvent newState = (GameStateEvent) evt.getNewValue();
 
                 // Unlock only when the player changes or a 2-player reverse replay occurs
                 boolean turnChanged = newState.curPlayerName != null &&

@@ -12,7 +12,7 @@ import java.util.Collections;
  * @author G27
  * @version 2.0
  */
-public class GameView extends JFrame {
+public class GameView extends JFrame implements GameViewInterface {
     
     // These are the bare minimum I imagine we'll need to show the game state, I'll remove
     // and add some as we progress
@@ -392,7 +392,7 @@ public class GameView extends JFrame {
      *
      * @param s is the current games state
      */
-    public void render(GameState s) {
+    public void render(GameStateEvent s) {
 
         // --- TOP CARD + PLAYER NAME ---
         if (s.topCard != null) {
