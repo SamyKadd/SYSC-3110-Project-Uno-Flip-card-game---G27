@@ -596,9 +596,6 @@ public class Game {
     /**
      * Calculates and awards points to the winning player.
      * Points are calculated based on cards remaining in other players' hands:
-     * - Number cards: face value (0-9 points)
-     * - Action cards: 20 points each
-     * - Wild cards: 50 points each
      *
      * @param winner the player who won the round
      */
@@ -608,24 +605,13 @@ public class Game {
         for (Player player : players) {
             if (player != winner) {
                 for (Card card : player.getHand().getCardsList()) {
-                    if (card.getValue() == Card.Value.WILD || card.getValue() == Card.Value.WILD_DRAW_TWO ||
-                            card.getValue() == Card.Value.WILD_DRAW_COLOR) {
-                        totalScore += 50;
-                    } else if (card.getValue() == Card.Value.SKIP_EVERYONE) {
-                        totalScore += 30;
-                    } else if (card.isActionCard()) {
-                        totalScore += 20;
-                    } else {
-                        // Number cards - use their face value
-                        totalScore += card.getValue().ordinal();
-                    }
+                    totalScore += getCardScore(card);
                 }
             }
         }
 
         winner.addScore(totalScore);
 
-        // Update the state to show scores
         GameStateEvent s = exportState();
         s.setStatusMessage(winner.getName() + " wins and scores " + totalScore + " points!");
         pcs.firePropertyChange("state", null, s);
