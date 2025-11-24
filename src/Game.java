@@ -539,7 +539,59 @@ public class Game {
         notifyStateChanged();
     }
 
+    /**
+     * Returns the score value of a card according to UNO Flip rules.
+     * Scoring is based on the card's value.
+     *
+     * - Number cards: face value (0-9 points)
+     * - Action cards: 10-30 points each
+     * - Wild cards: 40-60 points each
+     *
+     * @param card the card in which assigning points to
+     */
+    private int getCardScore(Card card) {
+        Card.Value v = card.getValue();
 
+        switch (v) {
+            //number cards: face value
+            case ZERO:  return 0;
+            case ONE:   return 1;
+            case TWO:   return 2;
+            case THREE: return 3;
+            case FOUR:  return 4;
+            case FIVE:  return 5;
+            case SIX:   return 6;
+            case SEVEN: return 7;
+            case EIGHT: return 8;
+            case NINE:  return 9;
+
+            //light-side action card
+            case DRAW_ONE:
+                return 10;
+
+            //20-point actions
+            case DRAW_FIVE:   // dark
+            case SKIP:        // light
+            case REVERSE:     // light/dark
+            case FLIP:        // light/dark
+                return 20;
+
+            //special dark action
+            case SKIP_EVERYONE:
+                return 30;
+
+            //wild cards
+            case WILD:
+                return 40;
+            case WILD_DRAW_TWO:
+                return 50;
+            case WILD_DRAW_COLOR:
+                return 60;
+
+            default:
+                return 0;
+        }
+    }
 
     /**
      * Calculates and awards points to the winning player.
