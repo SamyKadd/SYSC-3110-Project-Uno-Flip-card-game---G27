@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.List;
+import java.util.Scanner;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -13,25 +14,29 @@ import java.beans.PropertyChangeSupport;
  */
 public class Game {
     private List<Player> players;
+
     private ArrayList<Card>deck;
     private ArrayList<Card> lightDeck;
     private ArrayList<Card> darkDeck;
+
     private int currentPlayerIndex;
     private boolean clockwise; //+1 forward and -1 reverse order
+
     private Card top; //The card thats on the top of the discard pile
     private Card.Color topWild = null; //If the top card on discard pile is wild card
-    List<Card> discardedPile =  new ArrayList<>();
+
+    private List<Card> lightDiscard = new ArrayList<>();
+    private List<Card> darkDiscard = new ArrayList<>();
+
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
+
     private Side currentSide = Side.LIGHT; //to track Light/Dark state
     private Card.Color darkWildColor = null;
 
-    private List<GameViewInterface> views = new ArrayList<>();
-
     private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
-
-
 
     /**
      * Constructs a new Game instance.
@@ -43,7 +48,6 @@ public class Game {
         deck = new ArrayList<>();
         lightDeck = new ArrayList<>();
         darkDeck = new ArrayList<>();
-        discardedPile = new ArrayList<>();
         currentPlayerIndex = 0;
         clockwise = true;
 //        input = new Scanner(System.in);
@@ -125,16 +129,15 @@ public class Game {
     }
 
     /**
-     * Builds the light deck and the dark deck.
-     * The game starts with the light deck, which is shuffled
-     * and used as the main drawing deck.
+     * Builds both the light and dark decks, then loads the light deck
+     * as the starting draw deck. The deck is shuffled after loading.
      */
     private void initializeDeck() {
         buildLightDeck();
         buildDarkDeck();
 
         //start game using light deck
-        deck.addAll(lightDeck);
+        deck = lightDeck;
 
         // Shuffle the deck
         Collections.shuffle(deck);
@@ -196,7 +199,7 @@ public class Game {
             }
         } while (top.isActionCard());
 
-        discardedPile.add(top);
+        lightDiscard.add(top);
 
         // Trigger initial state for GUI
         notifyStateChanged();
@@ -248,9 +251,58 @@ public class Game {
             return true;
         }
 
+        /**
+         * Flips the current top card to its opposite-side version.
+         * Light-side cards convert to their dark equivalents,
+         * and dark-side cards convert to their light equivalents.
+         */
+        private void flipTopCard() {
+            if (top == null) return;
+
+            Card.Value v = top.getValue();
+
+            // If top card is a light-side card, convert to dark equivalent
+            if (currentSide == Side.DARK) {
+                switch (v) {
+                    case SKIP:          top = new Card(null, Card.Value.SKIP_EVERYONE); break;
+                    case DRAW_ONE:      top = new Card(null, Card.Value.DRAW_FIVE); break;
+                    case WILD:          top = new Card(null, Card.Value.WILD_DRAW_COLOR); break;
+                    case WILD_DRAW_TWO: top = new Card(null, Card.Value.WILD_DRAW_COLOR); break;
+                    // number cards simply "flip" by recolor
+                    default: top = new Card(Card.Color.PINK, v); break;
+                }
+            }
+
+            // If top card is a dark-side card, convert to light equivalent
+            else {
+                switch (v) {
+                    case SKIP_EVERYONE: top = new Card(null, Card.Value.SKIP); break;
+                    case DRAW_FIVE:     top = new Card(null, Card.Value.DRAW_ONE); break;
+                    case WILD_DRAW_COLOR: top = new Card(null, Card.Value.WILD); break;
+                    default: top = new Card(Card.Color.RED, v); break;
+                }
+            }
+        }
 
 
         /**
+         * Switches the active deck between the light deck and dark deck.
+         * Moves all remaining cards from the current deck into their side’s deck,
+         * and replaces the main deck with the opposite side’s cards.
+         */
+        private void switchDeck() {
+            // Flip the side
+            currentSide = (currentSide == Side.LIGHT) ? Side.DARK : Side.LIGHT;
+
+            // Point deck to the correct list
+            deck = (currentSide == Side.LIGHT) ? lightDeck : darkDeck;
+
+            // Shuffle new active deck
+            Collections.shuffle(deck);
+        }
+
+
+         /**
          * Executes the special action associated with an action card.
          * Handles: SKIP, WILD, WILD_DRAW_TWO, DRAW_ONE, and REVERSE cards.
          * Updates game state and advances to the next player as appropriate.
@@ -264,7 +316,7 @@ public class Game {
                         // Do not advance now. Let the "Next Player" button apply the skip.
                         pendingSkips += 1;
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.statusMessage = "SKIP played. Next player will be skipped when you click Next Player.";
                         s.turnComplete = true; // current player’s action is done; must click Next
                         pcs.firePropertyChange("state", null, s);
@@ -275,7 +327,7 @@ public class Game {
                         // Flip direction immediately, but don't advance. Next button will move according to new direction.
                         clockwise = !clockwise;
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         if (players.size() == 2) {
                             // In 2-player, Reverse acts like a Skip → same player goes again after Next
                             pendingSkips += 1;
@@ -292,7 +344,7 @@ public class Game {
                         // Choose color now; don't advance. Next button will move turn.
                         topWild = null;
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.needsWildColor = true;
                         s.statusMessage = "WILD played. Choose a color, then click Next Player.";
                         s.turnComplete = true;
@@ -316,7 +368,7 @@ public class Game {
                         // After a +2, the target loses their turn, so schedule a skip for when Next is pressed.
                         pendingSkips += 1;
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.needsWildColor = true;
                         s.statusMessage = players.get(target).getName() + " draws 2. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
@@ -335,7 +387,7 @@ public class Game {
 
                         pendingSkips += 1;
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.statusMessage = players.get(target).getName() + " draws 1. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -343,19 +395,16 @@ public class Game {
                     }
 
                     case FLIP: {
-                        if(currentSide == Side.LIGHT){
-                            currentSide = Side.DARK;
-                        }
-                        else{
-                            currentSide = Side.LIGHT;
-                        }
-                        GameStateEvent s = exportState();
+                        switchDeck();
+                        flipTopCard();
+
+                        GameState s = exportState();
                         s.statusMessage = "Flipped to " + getCurrentSide();
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
                         return;
                     }
-                    //Add logic so Draw Five, Skip Everyone, and Wild Draw Colour are only playable on the dark side.
+
                     case DRAW_FIVE: {
                         // Next player draws 5 cards and loses their turn
                         int target = nextPlayer(currentPlayerIndex);
@@ -369,7 +418,7 @@ public class Game {
 
                         pendingSkips += 1;
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.statusMessage = players.get(target).getName() + " draws 5. Click Next Player to continue (they will be skipped).";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -380,7 +429,7 @@ public class Game {
                         // Skip all other players - current player plays again
                         pendingSkips = players.size() - 1;
                         
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.statusMessage = "SKIP EVERYONE played! " + getCurrentPlayer().getName() + " plays again!";
                         s.turnComplete = true;
                         pcs.firePropertyChange("state", null, s);
@@ -390,7 +439,7 @@ public class Game {
                         // PHASE 1 — prompt user for color, do NOT draw cards yet
                         darkWildColor = null; // IMPORTANT: reset any previous color
 
-                        GameStateEvent s = exportState();
+                        GameState s = exportState();
                         s.needsDarkWildColor = true;  // tells GameView to open dark color dialog
                         s.statusMessage = "WILD DRAW COLOUR played! Choose a DARK color.";
                         s.turnComplete = true;
@@ -406,7 +455,7 @@ public class Game {
         }
 
 
-    //This class is desgined to return the next player
+        //This class is desgined to return the next player
         /**
          * Calculates the index of the next player based on current direction.
          * Handles wrapping around the player list in both clockwise and
@@ -424,14 +473,22 @@ public class Game {
         }
 
         private void reshuffleFromDiscard() {
-            if (discardedPile.size() > 1) {
-                Card lastTop = discardedPile.remove(discardedPile.size() - 1);
-                deck.addAll(discardedPile);
-                discardedPile.clear();
-                discardedPile.add(lastTop);
+
+            List<Card> discard = (currentSide == Side.LIGHT) ? lightDiscard : darkDiscard;
+
+            if (discard.size() > 1) {
+
+                Card lastTop = discard.remove(discard.size() - 1); // keep top card
+
+                deck.addAll(discard);   // return all other cards to deck
+                discard.clear();
+                discard.add(lastTop);   // put top card back
+
                 Collections.shuffle(deck);
             }
         }
+
+
 
     //Taking a card from the top of the deck and returning it
         /**
@@ -464,6 +521,8 @@ public class Game {
             }
             notifyStateChanged();
         }
+
+
 
         /**
          * Calculates and awards points to the winning player.
@@ -498,7 +557,7 @@ public class Game {
             winner.addScore(totalScore);
             
             // Update the state to show scores
-            GameStateEvent s = exportState();
+            GameState s = exportState();
             s.statusMessage = winner.getName() + " wins and scores " + totalScore + " points!";
             pcs.firePropertyChange("state", null, s);
         }
@@ -538,9 +597,9 @@ public class Game {
         public void removePropertyChangeListener(PropertyChangeListener listener) {
             pcs.removePropertyChangeListener(listener);
         }
-        public GameStateEvent exportState() {
+        public GameState exportState() {
+            GameState s = new GameState();
             Player cur = getCurrentPlayer();
-            GameStateEvent s = new GameStateEvent(this, cur.getName(), cur.getHand().getCardsList(), top);
 
             s.curPlayerName = cur.getName();
             s.curHand = new ArrayList<>(cur.getHand().getCardsList());
@@ -562,26 +621,8 @@ public class Game {
         }
 
         private void notifyStateChanged() {
-            Player cur = getCurrentPlayer();
-            GameStateEvent event = new GameStateEvent(this, cur.getName(), cur.getHand().getCardsList(), top);
-            for (GameViewInterface view : views) {
-                view.render(event);
-            }
+            pcs.firePropertyChange("state", null, exportState());
         }
-
-        public void addView(GameViewInterface view) {
-            views.add(view);
-        }
-        public void removeView(GameViewInterface view) {
-            views.remove(view);
-        }
-        private void notifyViews(GameStateEvent event) {
-            for (GameViewInterface view : views) {
-                view.render(event);
-            }
-        }
-
-
         /**
          * Makes the current player draw one card and updates state.
          */
@@ -609,7 +650,7 @@ public class Game {
                 currentPlayerIndex = nextPlayer(currentPlayerIndex);
             }
 
-            GameStateEvent s = exportState();
+            GameState s = exportState();
             s.statusMessage = getCurrentPlayer().getName() + "'s turn!";
             // turnComplete is false here; it's a fresh turn
             pcs.firePropertyChange("state", null, s);
@@ -618,7 +659,7 @@ public class Game {
 
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
-        GameStateEvent s = exportState();
+        GameState s = exportState();
         s.statusMessage = "Wild color set to " + color + ". Click Next Player to continue.";
         s.needsWildColor = false; // Without this, playing a wildcard will lock the color to "wildcard" permanently
         pcs.firePropertyChange("state", null, s);
@@ -652,7 +693,7 @@ public class Game {
         // Target loses their next turn
         pendingSkips += 1;
 
-        GameStateEvent s = exportState();
+        GameState s = exportState();
         s.statusMessage = players.get(target).getName()
                 + " draws until they get " + darkWildColor + "! Click Next Player.";
         s.needsDarkWildColor = false;
@@ -669,13 +710,18 @@ public class Game {
         Card played = cur.getHand().removeCard(handIndex);
         if (played == null || !isValidPlay(played)) return;
         top = played;
-        discardedPile.add(played);
+        if (currentSide == Side.LIGHT) {
+            lightDiscard.add(played);
+        } else {
+            darkDiscard.add(played);
+        }
+
 
         if (played.getValue() != Card.Value.WILD && played.getValue() != Card.Value.WILD_DRAW_TWO) {
             topWild = null; // Clear wild color for non-wild cards
         }
 
-        GameStateEvent s = exportState();
+        GameState s = exportState();
         s.turnComplete = true; // player finished their turn
         pcs.firePropertyChange("state", null, s);
 
