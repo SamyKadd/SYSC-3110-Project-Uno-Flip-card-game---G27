@@ -722,8 +722,6 @@ public class Game {
     }
 
 
-
-
     public void playCardFromHand(int handIndex) {
         Player cur = getCurrentPlayer();
         Card played = cur.getHand().removeCard(handIndex);
