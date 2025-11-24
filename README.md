@@ -103,6 +103,10 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Completed 3 Sequence Diagrams to simulate main game scenarios 
 - Created and completed GameController
 - Created GameUIListener interface, along with the methods(w/o logic implementation)
+- Created Helper class to assign the new uno flip points
+- Altered the calculateAndAwardScore to implement the helper class 
+- Created Sequence diagram for flipcard
+- Created Sequence diagram for ai turn
 
 **Seham Khalifa**
 - Implemented startCards() method in Hand class (deal 7 cards)
