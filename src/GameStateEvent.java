@@ -3,20 +3,23 @@ import java.util.EventObject;
 import java.util.List;
 
 public class GameStateEvent extends EventObject {
-    public String curPlayerName;
-    public List<Card> curHand = new ArrayList<>();
-    public Card topCard;
-    public boolean turnComplete = false;
-    public String statusMessage = "";
-    //Using the following to enable or disable controls in view
-    public boolean canPlay;
-    public boolean canDraw;
-    public boolean canNext;
-    public boolean needsWildColor;
-    public Card.Color wildColor;
-    public boolean gameOver = false;
-    public boolean needsDarkWildColor = false;
-    public Card.Color darkWildColor;
+    private final String curPlayerName;
+    private final List<Card> curHand;
+    private final Card topCard;
+
+    private boolean turnComplete = false;
+    private String statusMessage = "";
+
+    // Control flags for the view
+    private boolean canPlay = false;
+    private boolean canDraw = false;
+    private boolean canNext = false;
+    private boolean needsWildColor = false;
+    private Card.Color wildColor;
+
+    private boolean gameOver = false;
+    private boolean needsDarkWildColor = false;
+    private Card.Color darkWildColor;
 
     public GameStateEvent(Object source, String curPlayerName, List<Card> curHand, Card topCard) {
         super(source);
