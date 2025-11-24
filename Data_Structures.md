@@ -10,7 +10,7 @@ This document explains the data structure choices made in the UNO card game impl
 ### New Data Structures Added in Milestone 2:
 1. **PropertyChangeSupport pcs** (in Game class)
 2. **int pendingSkips** (in Game class)
-3. **GameState class** (new class)
+3. **GameStateEvent class** (new class)
 4. **ArrayList<JButton> cardButtons** (in GameView class)
 5. **GameUIListener interface** (new interface)
 
@@ -73,7 +73,7 @@ This document explains the data structure choices made in the UNO card game impl
 - `get(index)` - Viewing card at index
 - `remove(index)` - Playing a card
 - `size()` - Checking hand size and win condition
-- `getCardsList()` - Returns list for GameState population
+- `getCardsList()` - Returns list for GameStateEvent population
 
 **Milestone 2 Changes:**
 - Added getCardsList() method to support MVC state transfer
@@ -123,7 +123,7 @@ This document explains the data structure choices made in the UNO card game impl
 
 ---
 
-### GameState class (new class)
+### GameStateEvent class (new class)
 
 **Why chosen:**
 - Encapsulates all information View needs to render
@@ -133,7 +133,7 @@ This document explains the data structure choices made in the UNO card game impl
 
 **Why this design:**
 - Single source of truth for GUI rendering
-- View only needs GameState, not entire Game object
+- View only needs GameStateEvent, not entire Game object
 - Easy to serialize for future save/load features
 - Clear contract between Model and View
 - Supports stateless View rendering
@@ -204,7 +204,7 @@ The transition from Milestone 1 to Milestone 2 required significant data structu
 
 Key structural changes:
 - Added PropertyChangeSupport for observer pattern
-- Created GameState for controlled data transfer
+- Created GameStateEvent for controlled data transfer
 - Added pendingSkips for GUI-friendly game flow
 - Removed Scanner in favor of event handling
 

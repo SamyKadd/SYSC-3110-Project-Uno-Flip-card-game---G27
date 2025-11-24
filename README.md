@@ -13,7 +13,7 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - `Hand.java` - Manages player's hand of cards  
 - `Player.java` - Player with name, score, and hand
 - `Game.java` - Game logic and state management (Model)
-- `GameState.java` - Encapsulates game state for MVC communication
+- `GameStateEvent.java` - Encapsulates game state for MVC communication
 
 ### Source Code - View
 - `GameView.java` - Graphical user interface using Java Swing
