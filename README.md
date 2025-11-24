@@ -12,12 +12,16 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - `Card.java` - Card representation with color and value
 - `Hand.java` - Manages player's hand of cards  
 - `Player.java` - Player with name, score, and hand
+- `AIPlayer.java` - AI player extending Player with automated decision-making
 - `Game.java` - Game logic and state management (Model)
 - `GameStateEvent.java` - Encapsulates game state for MVC communication
+- `Side.java` - Enum for tracking LIGHT/DARK game state
 
 ### Source Code - View
 - `GameView.java` - Graphical user interface using Java Swing
+- `GameViewInterface.java` - Interface for View components
 - `PlayerSelectionDialog.java` - Dialog for selecting number of players
+- `AIPlayerSelectionDialog.java` - Dialog for selecting number of AI players
 
 ### Source Code - Controller
 - `GameController.java` - Controller managing Model-View interaction
@@ -33,7 +37,7 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 
 ### Documentation
 - `README.md` - This file
-- `Data_Structures.md` - Data structure changes from Milestone 1 to 2
+- `Data_Structures.md` - Data structure changes from Milestone 1 to 2 to 3
 - JavaDoc comments in all source files
 - UML Class Diagram (`diagrams/UML_diagram`)
 - Sequence Diagrams (`diagrams/sequence_DIAGRAM`)
@@ -149,16 +153,25 @@ Run test files through your IDE or JUnit test runner.
 
 
 ### Starting the Game
-1. Select number of players (2-4) from the dialog
-2. Click OK to start the game
-3. Each player is dealt 7 cards automatically
+1. Select number of human players (2-4) from the first dialog
+2. Select number of AI players (0-3) from the second dialog (if space allows)
+3. Total players must be between 2-4
+4. Click OK to start the game
+5. Each player is dealt 7 cards automatically
 
 ### During Your Turn
+
+**Human Players:**
 1. **Play a Card**: Click on a card in your hand to play it
    - Card must match color OR value of top card
    - Wild cards can always be played
 2. **Draw a Card**: Click "DRAW CARD" button to draw one card and end your turn
 3. **Next Player**: Click "NEXT PLAYER" after playing/drawing to advance turn
+
+**AI Players:**
+- AI players take their turn automatically
+- AI will play a legal card or draw if none available
+- Click "NEXT PLAYER" after AI is done playing/drawing to advance turn
 
 ### Special Cards
 - **SKIP**: Next player loses their turn (automatically handled)
@@ -167,17 +180,24 @@ Run test files through your IDE or JUnit test runner.
 - **WILD**: Choose a color from dialog, then click Next Player
 - **WILD DRAW TWO**: Next player draws 2 cards and loses their turn, then choose a color
 
+### Dark Side Action Cards
+- **DRAW FIVE**: Next player draws 5 cards and loses their turn
+- **SKIP EVERYONE**: All other players are skipped, current player plays again
+- **WILD DRAW COLOUR**: Choose a dark color (Teal, Purple, Pink, Orange), next player draws until they get that color and loses their turn
+
 ---
 
 ### Model (Game.java)
 - Manages game state, deck, players, and turn logic
 - Validates card plays and handles action cards
+- Manages light/dark side switching and deck management
 - Fires PropertyChangeEvents when state changes
 - No knowledge of View or Controller
 
 ### View (GameView.java)
 - Displays game state using Swing components
 - Renders cards, top card, player info, status messages
+- Handles color selection dialogs for wild cards
 - Captures user input (button clicks, card selection)
 - No direct access to Model
 
@@ -187,6 +207,7 @@ Run test files through your IDE or JUnit test runner.
 - Observes Model changes via PropertyChangeListener
 - Updates View when Model state changes
 - Manages turn locking to prevent multiple actions per turn
+- Handles AI player turns automatically
 
 ---
 
@@ -194,13 +215,24 @@ Run test files through your IDE or JUnit test runner.
 
 1. **No Multi-Round Support**: Game ends after one round. Winner is declared but game cannot continue to next round.
 
-2. **No AI Players**: All players must be human.
+2. **No UNO Call**: Players are not required to call "UNO" when down to one card.
 
-3. **No UNO Call**: Players are not required to call "UNO" when down to one card.
+3. **Card Hand Visibility**: All players see the current player's hand (designed for same-device play).
 
-4. **Card Hand Visibility**: All players see the current player's hand (designed for same-device play).
+4. **No Save/Load**: Game state cannot be saved and resumed.
 
-5. **No Save/Load**: Game state cannot be saved and resumed.
+5. **AI Difficulty**: AI uses a simple strategy. No advanced or variable difficulty levels.
+
+6. **Limited AI Strategy**: AI doesn't track other players' card counts or optimize for specific winning strategies.
+
+---
+
+## Future Enhancements
+
+1. Add multi-round gameplay with cumulative scoring
+2. Option to Undo/Redo a move.
+3. Implement save/load functionality
+4. Improve AI strategy with card counting and probabilistic play
 
 ---
 
