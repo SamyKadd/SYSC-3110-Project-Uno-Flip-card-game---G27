@@ -57,6 +57,22 @@ public class Game {
     }
 
     /**
+     *
+     */
+    public void addView(GameViewInterface view) {
+        if (!views.contains(view)) {
+            views.add(view);
+        }
+    }
+
+    /**
+     *
+     */
+    public void removeView(GameViewInterface view) {
+        views.remove(view);
+    }
+
+    /**
      * Creates all cards used on the light side of UNO Flip.
      * This includes:
      * - Number cards (0–9)
