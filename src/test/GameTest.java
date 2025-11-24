@@ -328,5 +328,34 @@ public class GameTest {
                 "After WILD_DRAW_COLOR, the targeted player should be skipped.");
     }
 
+    @Test
+    void testSkipEveryoneCardSkipsAllOtherPlayers() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+        game.startGame();
+
+        Player current = game.getCurrentPlayer();
+        Card top = game.getTopCard();
+
+        // Flip to dark side
+        Card flip = new Card(top.getColor(), Card.Value.FLIP);
+        current.getHand().addCard(flip);
+        game.playCardFromHand(current.getHand().getCardsList().indexOf(flip));
+
+        // Now dark side → play SKIP_EVERYONE
+        game.advanceTurn();  // go to next player
+        Player attacker = game.getCurrentPlayer();
+        Card skipEveryone = new Card(null, Card.Value.SKIP_EVERYONE);
+        attacker.getHand().addCard(skipEveryone);
+
+        game.playCardFromHand(attacker.getHand().getCardsList().indexOf(skipEveryone));
+
+        game.advanceTurn();
+        assertSame(attacker, game.getCurrentPlayer(),
+                "Player should get another turn after SKIP_EVERYONE");
+    }
+
+
 
 }
