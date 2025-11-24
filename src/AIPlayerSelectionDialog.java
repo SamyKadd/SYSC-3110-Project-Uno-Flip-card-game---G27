@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 
-// Have to integrate this within MVC structure later
 /**
  * Dialog for selecting the number of AI players at game start.
  * Allows selection of 1-3 AI players.

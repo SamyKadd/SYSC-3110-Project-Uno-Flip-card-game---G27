@@ -2,6 +2,17 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
+/**
+ * Encapsulates the state of the game at a specific moment in time.
+ * This class is used to transfer state information from the Model (Game)
+ * to the View (GameView) in the MVC architecture.
+ * 
+ * Contains all information necessary for the View to render the game state,
+ * including current player, their hand, top card, and various game flags.
+ * 
+ * @author G27
+ * @version 3.0
+ */
 public class GameStateEvent extends EventObject {
     private String curPlayerName;
     private List<Card> curHand = new ArrayList<>();

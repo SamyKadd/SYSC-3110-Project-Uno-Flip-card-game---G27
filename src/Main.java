@@ -1,5 +1,16 @@
 import javax.swing.*;
 
+/**
+ * Main entry point for the UNO Flip card game application.
+ * This class initializes the MVC components (Model, View, Controller)
+ * and handles player selection dialogs for both human and AI players.
+ * 
+ * The application supports 2-4 total players in any combination of
+ * human and AI players.
+ * 
+ * @author G27
+ * @version 3.0
+ */
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

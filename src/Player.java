@@ -39,8 +39,6 @@ public class Player {
         this.score = score;
     }
 
-    // We'll need this later to sum up scores at the end of rounds, but game class will 
-    // have to call this function when a player wins. Sort of like: winningplayer.addScore(5);
     /**
      * Adds points to the player's current score.
      * This method is used at the end of rounds to accumulate points. 

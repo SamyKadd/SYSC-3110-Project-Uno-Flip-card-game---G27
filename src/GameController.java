@@ -72,11 +72,6 @@ public class GameController implements GameUIListener, ActionListener {
             }
         });
 
-// Have to implement a function here to handle the AI turn, haven't figured out
-// 100% how yet
-
-
-
     }
 
     /**
