@@ -604,9 +604,9 @@ public class Game {
         s.setWildColor(topWild);
         s.setDarkWildColor(this.darkWildColor); // send chosen dark color to UI
 
-        // Wild colors
-        s.wildColor = topWild;
-        s.darkWildColor = this.darkWildColor; // send chosen dark color to UI
+        s.setCanDraw(true);
+        s.setCanPlay(true);
+        s.setCanNext(true);
 
         // UI flags
         s.canDraw = true;
