@@ -39,4 +39,28 @@ public class GameStateEvent extends EventObject {
 
     public String getStatusMessage() { return statusMessage; }
     public void setStatusMessage(String msg) { this.statusMessage = msg; }
+
+    public boolean isCanPlay() { return canPlay; }
+    public void setCanPlay(boolean canPlay) { this.canPlay = canPlay; }
+
+    public boolean isCanDraw() { return canDraw; }
+    public void setCanDraw(boolean canDraw) { this.canDraw = canDraw; }
+
+    public boolean isCanNext() { return canNext; }
+    public void setCanNext(boolean canNext) { this.canNext = canNext; }
+
+    public boolean isNeedsWildColor() { return needsWildColor; }
+    public void setNeedsWildColor(boolean needsWildColor) { this.needsWildColor = needsWildColor; }
+
+    public Card.Color getWildColor() { return wildColor; }
+    public void setWildColor(Card.Color wildColor) { this.wildColor = wildColor; }
+
+    public boolean isNeedsDarkWildColor() { return needsDarkWildColor; }
+    public void setNeedsDarkWildColor(boolean needsDarkWildColor) { this.needsDarkWildColor = needsDarkWildColor; }
+
+    public Card.Color getDarkWildColor() { return darkWildColor; }
+    public void setDarkWildColor(Card.Color darkWildColor) { this.darkWildColor = darkWildColor; }
+
+    public boolean isGameOver() { return gameOver; }
+    public void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
 }
