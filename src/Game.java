@@ -522,14 +522,62 @@ public class Game {
         notifyStateChanged();
     }
 
+    /**
+     * Returns the value of the card and what its worth in points. (Based of online uno rule book)
+     * - Number cards: face value (0-9 points)
+     * - Action cards: 10 - 30 points each
+     * - Wild cards: 40-60 points each depending on type of wild card
+     *
+     * @param card the card in which we are finding point value for
+     */
+    private int getCardScore(Card card) {
+        Card.Value v = card.getValue();
 
+        switch (v) {
+            //numbered cards
+            case ZERO:  return 0;
+            case ONE:   return 1;
+            case TWO:   return 2;
+            case THREE: return 3;
+            case FOUR:  return 4;
+            case FIVE:  return 5;
+            case SIX:   return 6;
+            case SEVEN: return 7;
+            case EIGHT: return 8;
+            case NINE:  return 9;
+
+            //light-side action
+            case DRAW_ONE:
+                return 10;
+
+            //20-point cards
+            case DRAW_FIVE:
+            case SKIP:
+            case REVERSE:
+            case FLIP:
+                return 20;
+
+            //special dark actions
+            case SKIP_EVERYONE:
+                return 30;
+
+            //wild cards
+            case WILD:
+                return 40;
+            case WILD_DRAW_TWO:
+                return 50;
+            case WILD_DRAW_COLOR:
+                return 60;
+
+            default:
+                return 0;
+        }
+    }
 
     /**
      * Calculates and awards points to the winning player.
      * Points are calculated based on cards remaining in other players' hands:
-     * - Number cards: face value (0-9 points)
-     * - Action cards: 20 points each
-     * - Wild cards: 50 points each
+     * Points can be assigned via helper method getCardScore
      *
      * @param winner the player who won the round
      */
@@ -539,24 +587,13 @@ public class Game {
         for (Player player : players) {
             if (player != winner) {
                 for (Card card : player.getHand().getCardsList()) {
-                    if (card.getValue() == Card.Value.WILD ||
-                            card.getValue() == Card.Value.WILD_DRAW_TWO) {
-                        totalScore += 50;
-                    } else if (card.getValue() == Card.Value.SKIP_EVERYONE) {
-                        totalScore += 30;
-                    } else if (card.isActionCard()) {
-                        totalScore += 20;
-                    } else {
-                        // Number cards - use their face value
-                        totalScore += card.getValue().ordinal();
-                    }
+                    totalScore += getCardScore(card);
                 }
             }
         }
 
         winner.addScore(totalScore);
 
-        // Update the state to show scores
         GameStateEvent s = exportState();
         s.statusMessage = winner.getName() + " wins and scores " + totalScore + " points!";
         pcs.firePropertyChange("state", null, s);
