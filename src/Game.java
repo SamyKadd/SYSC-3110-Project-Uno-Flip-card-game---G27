@@ -539,8 +539,8 @@ public class Game {
         for (Player player : players) {
             if (player != winner) {
                 for (Card card : player.getHand().getCardsList()) {
-                    if (card.getValue() == Card.Value.WILD ||
-                            card.getValue() == Card.Value.WILD_DRAW_TWO) {
+                    if (card.getValue() == Card.Value.WILD || card.getValue() == Card.Value.WILD_DRAW_TWO ||
+                            card.getValue() == Card.Value.WILD_DRAW_COLOR) {
                         totalScore += 50;
                     } else if (card.getValue() == Card.Value.SKIP_EVERYONE) {
                         totalScore += 30;
