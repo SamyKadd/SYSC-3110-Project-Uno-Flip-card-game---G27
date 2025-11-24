@@ -395,15 +395,15 @@ public class GameView extends JFrame implements GameViewInterface {
     public void render(GameStateEvent s) {
 
         // --- TOP CARD + PLAYER NAME ---
-        if (s.topCard != null) {
-            updateTopCard(s.topCard);
+        if (s.getTopCard() != null) {
+            updateTopCard(s.getTopCard());
         }
-        if (s.curPlayerName != null) {
-            updateCurrentPlayer(s.curPlayerName);
+        if (s.getCurPlayerName() != null) {
+            updateCurrentPlayer(s.getCurPlayerName());
         }
 
         // --- DARK WILD COLOR PROMPT FIRST ---
-        if (s.needsDarkWildColor) {
+        if (s.needsDarkWildColor()) {
             Card.Color chosen = promptForDarkWildColor();
             if (uiListener != null && chosen != null) {
                 uiListener.onChooseDarkWildColor(chosen);
@@ -412,7 +412,7 @@ public class GameView extends JFrame implements GameViewInterface {
         }
 
         // --- LIGHT WILD COLOR PROMPT SECOND ---
-        if (s.needsWildColor) {
+        if (s.needsWildColor()) {
             Card.Color chosen = promptForWildColor();
             if (uiListener != null && chosen != null) {
                 uiListener.onChooseWildCardCol(chosen);
@@ -421,31 +421,31 @@ public class GameView extends JFrame implements GameViewInterface {
         }
 
         // --- UPDATE WILD COLOR ON TOP CARD ---
-        if (s.topCard != null &&
-                (s.topCard.getValue() == Card.Value.WILD ||
-                        s.topCard.getValue() == Card.Value.WILD_DRAW_TWO ||
-                        s.topCard.getValue() == Card.Value.WILD_DRAW_COLOR)) {
+        if (s.getTopCard() != null &&
+                (s.getTopCard().getValue() == Card.Value.WILD ||
+                        s.getTopCard().getValue() == Card.Value.WILD_DRAW_TWO ||
+                        s.getTopCard().getValue() == Card.Value.WILD_DRAW_COLOR)) {
 
-            if (s.wildColor != null) {
-                topCardPanel.setBackground(getColorForCardColor(s.wildColor));
+            if (s.getWildColor() != null) {
+                topCardPanel.setBackground(getColorForCardColor(s.getWildColor()));
                 topCardLabel.setText(
-                        s.topCard.getValue().toString().replace("_", " ") +
-                                " - " + s.wildColor
+                        s.getTopCard().getValue().toString().replace("_", " ") +
+                                " - " + s.getWildColor()
                 );
             }
         }
 
         // --- STATUS MESSAGE ---
-        updateStatusMessage(s.statusMessage == null ? "" : s.statusMessage);
+        updateStatusMessage(s.getStatusMessage() == null ? "" : s.getStatusMessage());
 
         // --- BUTTON STATES ---
-        drawCardButton.setEnabled(s.canDraw);
-        nextPlayerButton.setEnabled(s.canNext);
+        drawCardButton.setEnabled(s.canDraw());
+        nextPlayerButton.setEnabled(s.canNext());
 
         // --- REDRAW PLAYER HAND ---
         handPanel.removeAll();
         cardButtons.clear();
-        List<Card> hand = s.curHand == null ? Collections.emptyList() : s.curHand;
+        List<Card> hand = s.getCurHand() == null ? Collections.emptyList() : s.getCurHand();
 
         for (int i = 0; i < hand.size(); i++) {
             JButton cardBtn = createCardButton(hand.get(i), i);
