@@ -317,8 +317,8 @@ public class Game {
                     pendingSkips += 1;
 
                     GameStateEvent s = exportState();
-                    s.statusMessage = "SKIP played. Next player will be skipped when you click Next Player.";
-                    s.turnComplete = true; // current player’s action is done; must click Next
+                    s.setStatusMessage("SKIP played. Next player will be skipped when you click Next Player.");
+                    s.setTurnComplete(true); // current player’s action is done; must click Next
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -331,11 +331,11 @@ public class Game {
                     if (players.size() == 2) {
                         // In 2-player, Reverse acts like a Skip → same player goes again after Next
                         pendingSkips += 1;
-                        s.statusMessage = "REVERSE played. (2 players) Acts like SKIP — same player after Next Player.";
+                        s.setStatusMessage("REVERSE played. (2 players) Acts like SKIP — same player after Next Player.");
                     } else {
-                        s.statusMessage = "REVERSE played. Direction changed. Click Next Player to continue.";
+                        s.setStatusMessage("REVERSE played. Direction changed. Click Next Player to continue.");
                     }
-                    s.turnComplete = true;
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -345,9 +345,9 @@ public class Game {
                     topWild = null;
 
                     GameStateEvent s = exportState();
-                    s.needsWildColor = true;
-                    s.statusMessage = "WILD played. Choose a color, then click Next Player.";
-                    s.turnComplete = true;
+                    s.setNeedsWildColor(true);
+                    s.setStatusMessage("WILD played. Choose a color, then click Next Player.");
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -369,9 +369,9 @@ public class Game {
                     pendingSkips += 1;
 
                     GameStateEvent s = exportState();
-                    s.needsWildColor = true;
-                    s.statusMessage = players.get(target).getName() + " draws 2. Click Next Player to continue (they will be skipped).";
-                    s.turnComplete = true;
+                    s.setNeedsWildColor(true);
+                    s.setStatusMessage(players.get(target).getName() + " draws 2. Click Next Player to continue (they will be skipped).");
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -388,8 +388,8 @@ public class Game {
                     pendingSkips += 1;
 
                     GameStateEvent s = exportState();
-                    s.statusMessage = players.get(target).getName() + " draws 1. Click Next Player to continue (they will be skipped).";
-                    s.turnComplete = true;
+                    s.setStatusMessage(players.get(target).getName() + " draws 1. Click Next Player to continue (they will be skipped).");
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -399,8 +399,8 @@ public class Game {
                     flipTopCard();
 
                     GameStateEvent s = exportState();
-                    s.statusMessage = "Flipped to " + getCurrentSide();
-                    s.turnComplete = true;
+                    s.setStatusMessage("Flipped to " + getCurrentSide());
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -419,8 +419,8 @@ public class Game {
                     pendingSkips += 1;
 
                     GameStateEvent s = exportState();
-                    s.statusMessage = players.get(target).getName() + " draws 5. Click Next Player to continue (they will be skipped).";
-                    s.turnComplete = true;
+                    s.setStatusMessage(players.get(target).getName() + " draws 5. Click Next Player to continue (they will be skipped).");
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -430,8 +430,8 @@ public class Game {
                     pendingSkips = players.size() - 1;
 
                     GameStateEvent s = exportState();
-                    s.statusMessage = "SKIP EVERYONE played! " + getCurrentPlayer().getName() + " plays again!";
-                    s.turnComplete = true;
+                    s.setStatusMessage("SKIP EVERYONE played! " + getCurrentPlayer().getName() + " plays again!");
+                    s.setTurnComplete(true);
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
@@ -440,9 +440,9 @@ public class Game {
                     darkWildColor = null; // IMPORTANT: reset any previous color
 
                     GameStateEvent s = exportState();
-                    s.needsDarkWildColor = true;  // tells GameView to open dark color dialog
-                    s.statusMessage = "WILD DRAW COLOUR played! Choose a DARK color.";
-                    s.turnComplete = true;
+                    s.setNeedsDarkWildColor(true);  // tells GameView to open dark color dialog
+                    s.setStatusMessage("WILD DRAW COLOUR played! Choose a DARK color.");
+                    s.setTurnComplete(true);
 
                     pcs.firePropertyChange("state", null, s);
                     return;
@@ -558,7 +558,7 @@ public class Game {
 
         // Update the state to show scores
         GameStateEvent s = exportState();
-        s.statusMessage = winner.getName() + " wins and scores " + totalScore + " points!";
+        s.setStatusMessage(winner.getName() + " wins and scores " + totalScore + " points!");
         pcs.firePropertyChange("state", null, s);
     }
 
@@ -647,7 +647,7 @@ public class Game {
         }
 
         GameStateEvent s = exportState();
-        s.statusMessage = getCurrentPlayer().getName() + "'s turn!";
+        s.setStatusMessage(getCurrentPlayer().getName() + "'s turn!");
         // turnComplete is false here; it's a fresh turn
         pcs.firePropertyChange("state", null, s);
     }
@@ -656,8 +656,8 @@ public class Game {
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
         GameStateEvent s = exportState();
-        s.statusMessage = "Wild color set to " + color + ". Click Next Player to continue.";
-        s.needsWildColor = false; // Without this, playing a wildcard will lock the color to "wildcard" permanently
+        s.setStatusMessage("Wild color set to " + color + ". Click Next Player to continue.");
+        s.setNeedsWildColor(false); // Without this, playing a wildcard will lock the color to "wildcard" permanently
         pcs.firePropertyChange("state", null, s);
     }
 
@@ -690,10 +690,10 @@ public class Game {
         pendingSkips += 1;
 
         GameStateEvent s = exportState();
-        s.statusMessage = players.get(target).getName()
-                + " draws until they get " + darkWildColor + "! Click Next Player.";
-        s.needsDarkWildColor = false;
-        s.turnComplete = true;
+        s.setStatusMessage(players.get(target).getName()
+                + " draws until they get " + darkWildColor + "! Click Next Player.");
+        s.setNeedsDarkWildColor(false);
+        s.setTurnComplete(true);
 
         pcs.firePropertyChange("state", null, s);
     }
@@ -718,7 +718,7 @@ public class Game {
         }
 
         GameStateEvent s = exportState();
-        s.turnComplete = true; // player finished their turn
+        s.setTurnComplete(true); // player finished their turn
         pcs.firePropertyChange("state", null, s);
 
         if (cur.getHand().getSize() == 0) {
@@ -727,13 +727,12 @@ public class Game {
 
             // Update scoreboard in the view
             s = exportState();
-            s.statusMessage = cur.getName() + " wins! Final Score: " + cur.getScore();
+            s.setStatusMessage(cur.getName() + " wins! Final Score: " + cur.getScore());
             pcs.firePropertyChange("state", null, s);
             return;
         }
 
         handleActionCard(played);
     }
-
 
 }
