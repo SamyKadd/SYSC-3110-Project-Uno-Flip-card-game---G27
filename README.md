@@ -123,6 +123,9 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Rebuilt GameStateEvent: correct naming, extends EventObject, private fields, full getters/setters
 - Fixed controller–model separation by moving validation logic back into the model
 - Completed GameController methods
+- Updated calculateAndAwardScore() to correctly compute and assign the winners points
+- Updated GameView’s render() method to use the new getters and correctly display all state changes
+- Updated GameController’s onPlayCard() and onDraw() methods to rely on the model’s validity checks instead of making decisions in the controller
 
 ---
 
