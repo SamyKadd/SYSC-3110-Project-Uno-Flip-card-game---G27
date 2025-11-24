@@ -118,6 +118,10 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Initialized deck ArrayList in Game class
 - Created 5 PlayerTest unit tests including toString() test
 - Created a method in Hand to access all the player's cards directly
+- Added a proper View interface and updated controller to use it
+- Model now supports multiple views with add/remove view methods
+- Rebuilt GameStateEvent: correct naming, extends EventObject, private fields, full getters/setters
+- Fixed controller–model separation by moving validation logic back into the model
 - Completed GameController methods
 
 ---
