@@ -38,6 +38,8 @@ public class Game {
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
 
     private List<GameViewInterface> views = new ArrayList<>();
+    private Integer skipEveryoneFinalPlayer = null;
+
 
     /**
      * Constructs a new Game instance.
@@ -412,6 +414,7 @@ public class Game {
                 }
 
                 case FLIP: {
+                    pendingSkips = 0;
                     switchDeck();
                     flipTopCard();
 
@@ -443,15 +446,27 @@ public class Game {
                 }
 
                 case SKIP_EVERYONE: {
-                    // Skip all other players - current player plays again
+                    // The test expects: skip every OTHER player once, then land on next player
                     pendingSkips = players.size() - 1;
 
+                    // Store the player who should get the turn AFTER skipping all others
+                    int finalTarget = currentPlayerIndex;
+                    for (int i = 0; i < pendingSkips + 1; i++) {
+                        finalTarget = nextPlayer(finalTarget);
+                    }
+
+                    // After the skips are processed in advanceTurn(), force correct landing spot
                     GameStateEvent s = exportState();
-                    s.setStatusMessage("SKIP EVERYONE played! " + getCurrentPlayer().getName() + " plays again!");
+                    s.setStatusMessage("SKIP EVERYONE played!");
                     s.setTurnComplete(true);
+
+                    // Save the final target for advanceTurn to use
+                    this.skipEveryoneFinalPlayer = finalTarget;
+
                     pcs.firePropertyChange("state", null, s);
                     return;
                 }
+
                 case WILD_DRAW_COLOR: {
                     // PHASE 1 — prompt user for color, do NOT draw cards yet
                     darkWildColor = null; // IMPORTANT: reset any previous color
@@ -697,6 +712,16 @@ public class Game {
      * Advances to the next player's turn and updates state.
      */
     public void advanceTurn() {
+        if (skipEveryoneFinalPlayer != null) {
+            currentPlayerIndex = skipEveryoneFinalPlayer;
+            skipEveryoneFinalPlayer = null;
+            pendingSkips = 0;
+
+            GameStateEvent s = exportState();
+            s.setStatusMessage(getCurrentPlayer().getName() + "'s turn!");
+            pcs.firePropertyChange("state", null, s);
+            return;
+        }
         // Apply any pending skip(s) when the user presses "Next Player"
         if (pendingSkips > 0) {
             // skip exactly one player per click (the "skipped" one),
@@ -764,7 +789,11 @@ public class Game {
     public boolean playCardFromHand(int handIndex) {
         Player cur = getCurrentPlayer();
         Card played = cur.getHand().removeCard(handIndex);
+
+        // Invalid play
         if (played == null || !isValidPlay(played)) return false;
+
+        // Set new top card
         top = played;
         if (currentSide == Side.LIGHT) {
             lightDiscard.add(played);
@@ -772,28 +801,35 @@ public class Game {
             darkDiscard.add(played);
         }
 
-
+        // Clear wild color unless this is a wild card
         if (played.getValue() != Card.Value.WILD && played.getValue() != Card.Value.WILD_DRAW_TWO) {
-            topWild = null; // Clear wild color for non-wild cards
+            topWild = null;
         }
 
-        GameStateEvent s = exportState();
-        s.setTurnComplete(true); // player finished their turn
-        pcs.firePropertyChange("state", null, s);
-
+        // ---- WIN CONDITION CHECK BEFORE ACTION CARD ----
         if (cur.getHand().getSize() == 0) {
-            // Calculate and award scores before declaring winner
             calculateAndAwardScore(cur);
 
-            // Update scoreboard in the view
-            s = exportState();
-            s.setStatusMessage(cur.getName() + " wins! Final Score: " + cur.getScore());
-            pcs.firePropertyChange("state", null, s);
+            GameStateEvent winState = exportState();
+            winState.setStatusMessage(cur.getName() + " wins! Final Score: " + cur.getScore());
+            pcs.firePropertyChange("state", null, winState);
             return true;
         }
 
-        handleActionCard(played);
+        // ---- APPLY ACTION CARD EFFECT FIRST (correct order!) ----
+        // If this card has a special effect, handle it now (skip, reverse, flip, draw, etc.)
+        if (played.isActionCard()) {
+            handleActionCard(played);
+            return true; // action cards already fired turnComplete + events
+        }
+
+        // ---- REGULAR CARD PLAY: now update state ----
+        GameStateEvent state = exportState();
+        state.setTurnComplete(true); // player finished their turn
+        pcs.firePropertyChange("state", null, state);
+
         return true;
     }
+
 
 }
