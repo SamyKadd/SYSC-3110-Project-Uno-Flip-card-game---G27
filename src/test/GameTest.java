@@ -235,4 +235,98 @@ public class GameTest {
         assertTrue(game.isValidPlay(blueCard));
         assertFalse(game.isValidPlay(redCard));
     }
+
+    @Test
+    void testDarkSideCardsNotValidOnLightSide() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+
+        assertEquals(Side.LIGHT, game.getCurrentSide());
+
+        Card drawFive = new Card(Card.Color.TEAL, Card.Value.DRAW_FIVE);
+        Card wildDrawColor = new Card(null, Card.Value.WILD_DRAW_COLOR);
+
+        assertFalse(game.isValidPlay(drawFive));
+        assertFalse(game.isValidPlay(wildDrawColor));
+    }
+
+    @Test
+    void testFlipCardSwitchesSideToDark() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+
+        assertEquals(Side.LIGHT, game.getCurrentSide());
+
+        Player current = game.getCurrentPlayer();
+        Card top = game.getTopCard();
+
+        Card flipCard = new Card(top.getColor(), Card.Value.FLIP);
+        current.getHand().addCard(flipCard);
+        int flipIndex = current.getHand().getCardsList().indexOf(flipCard);
+
+        game.playCardFromHand(flipIndex);
+
+        assertEquals(Side.DARK, game.getCurrentSide(),
+                "Side should be DARK after playing a FLIP card.");
+    }
+
+    @Test
+    void testDrawFiveMakesNextPlayerDrawFiveAndSkip() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+        game.startGame();
+
+        Player first = game.getCurrentPlayer();
+        Card lightTop = game.getTopCard();
+        Card flipCard = new Card(lightTop.getColor(), Card.Value.FLIP);
+        first.getHand().addCard(flipCard);
+        int flipIndex = first.getHand().getCardsList().indexOf(flipCard);
+        game.playCardFromHand(flipIndex);
+        assertEquals(Side.DARK, game.getCurrentSide());
+
+        game.advanceTurn();
+        assertSame(p2, game.getCurrentPlayer());
+
+        Player attacker = game.getCurrentPlayer();
+        Card darkTop = game.getTopCard();
+        Card drawFive = new Card(darkTop.getColor(), Card.Value.DRAW_FIVE);
+        attacker.getHand().addCard(drawFive);
+        int dfIndex = attacker.getHand().getCardsList().indexOf(drawFive);
+
+        int before = p3.getHand().getSize();
+
+        game.playCardFromHand(dfIndex);
+
+        int after = p3.getHand().getSize();
+        assertEquals(before + 5, after,
+                "Next player should draw exactly 5 cards after DRAW_FIVE.");
+
+        game.advanceTurn();
+        assertSame(p1, game.getCurrentPlayer(),
+                "After DRAW_FIVE, the drawn player should be skipped on the next turn.");
+    }
+
+    @Test
+    void testWildDrawColorDrawsUntilMatchAndSkipsNextPlayer() {
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.startGame();
+
+        int before = p2.getHand().getSize();
+
+        game.setDarkWildColor(Card.Color.PURPLE);
+
+        int after = p2.getHand().getSize();
+        assertTrue(after > before,
+                "Next player should draw at least one card after WILD_DRAW_COLOR.");
+
+        game.advanceTurn();
+        assertSame(p1, game.getCurrentPlayer(),
+                "After WILD_DRAW_COLOR, the targeted player should be skipped.");
+    }
+
+
 }
