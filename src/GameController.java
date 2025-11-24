@@ -137,7 +137,8 @@ public class GameController implements GameUIListener {
      * Creates a GameState snapshot and sends it to the view for rendering.
      */
     private void push() {
-        view.render(model.exportState());
+        GameStateEvent s = model.exportState();
+        view.render(s);
     }
     /**
      * Attempts to play a card from the player's hand
