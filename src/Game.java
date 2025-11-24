@@ -635,7 +635,12 @@ public class Game {
     }
 
     private void notifyStateChanged() {
-        pcs.firePropertyChange("state", null, exportState());
+        GameStateEvent state = exportState();
+        pcs.firePropertyChange("state", null, state);
+
+        for (GameViewInterface view : views) {
+            view.render(state);
+        }
     }
     /**
      * Makes the current player draw one card and updates state.
