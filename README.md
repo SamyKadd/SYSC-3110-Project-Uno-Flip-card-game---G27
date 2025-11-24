@@ -44,6 +44,42 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 
 ---
 
+## New Features in Milestone 3
+
+### AI Player System
+
+**AI Player Selection**
+- Users can select 1-3 AI players (maximum 4 total players)
+- AI players are clearly labeled with "(AI)" suffix in their names
+- Dialog appears after human player selection if space allows
+
+**AI Strategy Implementation**
+
+The AI player uses a simple strategy implemented in `GameController.chooseAIPlayIndex()`:
+
+1. **Legal Move Detection**: AI scans its hand to identify all playable cards based on current game state
+2. **Color Preference**: If possible, AI prefers non-wild cards that match the current active color
+3. **Fallback Strategy**: If no color match exists, AI plays the first available legal card
+4. **Draw When Stuck**: If no cards are playable, AI draws from the deck
+
+**Strategy Rationale:**
+- Prioritizes color matching to maintain control and reduce wild card waste
+- Simple enough to execute quickly without game lag
+- Provides reasonable gameplay that feels natural to human players
+- Avoids complex lookahead that would slow down the game
+
+**AI Turn Flow:**
+1. Controller detects AI player's turn via `propertyChange()` listener
+2. Disables UI buttons to prevent human interference
+3. Calls `handleAITurn()` which:
+   - Locks out extra actions with `hasPlayedThisTurn` flag
+   - Calls `chooseAIPlayIndex()` to select best card
+   - Plays selected card or draws if none available
+   - Re-enables buttons for next player
+4. Next player's turn begins (human or AI)
+
+---
+
 ## Team Contributions
 
 **Joodi Al-Asaad**
