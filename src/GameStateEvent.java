@@ -10,7 +10,6 @@ public class GameStateEvent extends EventObject {
     private boolean turnComplete = false;
     private String statusMessage = "";
 
-    // Using these to enable or disable controls in the view
     private boolean canPlay;
     private boolean canDraw;
     private boolean canNext;
@@ -30,6 +29,7 @@ public class GameStateEvent extends EventObject {
         this.topCard = topCard;
     }
 
+    //Getters and Setters
     public String getCurPlayerName() { return curPlayerName; }
     public List<Card> getCurHand() { return new ArrayList<>(curHand); }
     public Card getTopCard() { return topCard; }
