@@ -608,13 +608,10 @@ public class Game {
         s.setCanPlay(true);
         s.setCanNext(true);
 
-        // UI flags
-        s.canDraw = true;
-        s.canPlay = true;
-        s.canNext = true;
+        s.setNeedsWildColor(false);
+        s.setNeedsDarkWildColor(false);
 
-        s.needsWildColor = false;
-        s.needsDarkWildColor = false;
+        s.setStatusMessage("");
 
         return s;
     }
