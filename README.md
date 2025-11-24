@@ -61,6 +61,12 @@ A graphical implementation of UNO card game in Java using Swing GUI and MVC arch
 - Improved turn logic to prevent multiple plays per turn and reset properly after each turn.
 - Fixed and refined action card behavior (Skip, Reverse, Draw One, Wild Draw Two).
 - Completed UML class diagrams
+- Implemented full light/dark side system with side tracking and colors.
+- Implemented FLIP card behavior with deck switching and top-card flipping.
+- Implemented WILD_DRAW_COLOR logic, including dark-color selection flow.
+- Added light/dark decks with separate discard piles.
+- Updated play validation and reshuffle logic for light/dark side compatibility.
+  
 
 **Mahdi Bouakline**
 - Implemented initial Card.java and Hand.java skeleton code
