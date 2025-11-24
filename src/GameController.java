@@ -33,18 +33,18 @@ public class GameController implements GameUIListener {
                 GameStateEvent newState = (GameStateEvent) evt.getNewValue();
 
                 // Unlock only when the player changes or a 2-player reverse replay occurs
-                boolean turnChanged = newState.curPlayerName != null &&
-                        !newState.curPlayerName.equals(lastPlayer);
-                boolean twoPlayerReverseReplay = newState.statusMessage != null &&
-                        newState.statusMessage.contains("Same player goes again!");
+                boolean turnChanged = newState.getCurPlayerName() != null &&
+                        !newState.getCurPlayerName().equals(lastPlayer);
+                boolean twoPlayerReverseReplay = newState.getStatusMessage() != null &&
+                        newState.getStatusMessage().contains("Same player goes again!");
                 if (turnChanged || twoPlayerReverseReplay) {
                     hasPlayedThisTurn = false;
                 }
-                lastPlayer = newState.curPlayerName;
+                lastPlayer = newState.getCurPlayerName();
 
                 // Always show the model’s status message
-                if (newState.statusMessage != null && !newState.statusMessage.isEmpty()) {
-                    view.updateStatusMessage(newState.statusMessage);
+                if (newState.getStatusMessage() != null && !newState.getStatusMessage().isEmpty()) {
+                    view.updateStatusMessage(newState.getStatusMessage());
                 }
 
                 view.render(newState);
