@@ -5,7 +5,6 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             Game model = new Game();
             GameView view = new GameView();
-            new GameController(model, view);
 
             // Show player selection dialog
             int numPlayers = PlayerSelectionDialog.showDialog(view);
@@ -38,7 +37,7 @@ public class Main {
             for (int i = 1; i <= numAIPlayers; i++) {
                 model.addPlayer(new AIPlayer("AI Player " + i));
             }
-
+            new GameController(model, view);
             // Start the game
             model.startGame();
         });
