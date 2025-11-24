@@ -28,6 +28,7 @@ public class GameStateEvent extends EventObject {
         this.topCard = topCard;
     }
 
+    //Getters
     public String getCurPlayerName() { return curPlayerName; }
     public List<Card> getCurHand() { return new ArrayList<>(curHand); }
     public Card getTopCard() { return topCard; }
