@@ -4,14 +4,21 @@
  * Observes model state changes and refreshes the view accordingly.
  */
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class GameController implements GameUIListener {
+public class GameController implements GameUIListener, ActionListener {
     private final Game model;
     private final GameViewInterface view;
     private boolean hasPlayedThisTurn = false;
 
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // unused or route events here if desired
+    }
     /**
      * Constructs a new GameController and connects the model and view
      *
@@ -68,6 +75,8 @@ public class GameController implements GameUIListener {
 
 
     }
+
+
 
     /**
      * Handles the action when a player clicks on a card in their hand
