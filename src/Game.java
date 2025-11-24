@@ -38,6 +38,8 @@ public class Game {
     private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
 
+    private List<GameViewInterface> views = new ArrayList<>();
+
     /**
      * Constructs a new Game instance.
      * Initializes an empty player list, creates and shuffles the deck,
