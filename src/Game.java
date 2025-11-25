@@ -115,6 +115,17 @@ public class Game {
             lightDeck.add(new Card(color, Card.Value.REVERSE));
             lightDeck.add(new Card(color, Card.Value.REVERSE));
 
+            // Draw Five (two per color)
+            lightDeck.add(new Card(color, Card.Value.DRAW_FIVE));
+            lightDeck.add(new Card(color, Card.Value.DRAW_FIVE));
+            
+            // Skip Everyone (two per color)
+            lightDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            lightDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            
+            // FLIP card (one per color)
+            lightDeck.add(new Card(color, Card.Value.FLIP));
+
         }
         // Light-Side Wild cards (4 of each type, no color)
         for (int i = 0; i < 4; i++) {
@@ -134,13 +145,42 @@ public class Game {
      */
     private void buildDarkDeck() {
         for  (Card.Color color : DARK_COLORS) {
-            // Dark side special cards
+            // Dark side has numbers 1-9 (no zero)
+            // Two of each number per color
+            darkDeck.add(new Card(color, Card.Value.ONE));
+            darkDeck.add(new Card(color, Card.Value.ONE));
+            darkDeck.add(new Card(color, Card.Value.TWO));
+            darkDeck.add(new Card(color, Card.Value.TWO));
+            darkDeck.add(new Card(color, Card.Value.THREE));
+            darkDeck.add(new Card(color, Card.Value.THREE));
+            darkDeck.add(new Card(color, Card.Value.FOUR));
+            darkDeck.add(new Card(color, Card.Value.FOUR));
+            darkDeck.add(new Card(color, Card.Value.FIVE));
+            darkDeck.add(new Card(color, Card.Value.FIVE));
+            darkDeck.add(new Card(color, Card.Value.SIX));
+            darkDeck.add(new Card(color, Card.Value.SIX));
+            darkDeck.add(new Card(color, Card.Value.SEVEN));
+            darkDeck.add(new Card(color, Card.Value.SEVEN));
+            darkDeck.add(new Card(color, Card.Value.EIGHT));
+            darkDeck.add(new Card(color, Card.Value.EIGHT));
+            darkDeck.add(new Card(color, Card.Value.NINE));
+            darkDeck.add(new Card(color, Card.Value.NINE));
+            
+            // Dark side action cards (two of each per color)
             darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
             darkDeck.add(new Card(color, Card.Value.DRAW_FIVE));
-
+            
             darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
             darkDeck.add(new Card(color, Card.Value.SKIP_EVERYONE));
+            
+            // REVERSE exists on both light and dark sides
+            darkDeck.add(new Card(color, Card.Value.REVERSE));
+            darkDeck.add(new Card(color, Card.Value.REVERSE));
+            
+            // FLIP card (one per color)
+            darkDeck.add(new Card(color, Card.Value.FLIP));
         }
+        
         // Dark-side Wild Draw Color (4 copies)
         for (int i = 0; i < 4; i++) {
             darkDeck.add(new Card(null, Card.Value.WILD_DRAW_COLOR));
@@ -248,22 +288,53 @@ public class Game {
     public boolean isValidPlay(Card cardToPlay) {
         if (cardToPlay == null) return false;
 
-        if (getCurrentSide() == Side.LIGHT && (cardToPlay.getValue() == Card.Value.SKIP_EVERYONE || cardToPlay.getValue() == Card.Value.DRAW_FIVE || cardToPlay.getValue() == Card.Value.WILD_DRAW_COLOR)) {
-            return false;
+        // Side-specific restrictions
+        if (getCurrentSide() == Side.LIGHT) {
+            // WILD_DRAW_COLOR is dark-side only
+            if (cardToPlay.getValue() == Card.Value.WILD_DRAW_COLOR) {
+                return false;
+            }
+            // Dark colors not allowed on light side
+            if (cardToPlay.getColor() == Card.Color.TEAL || 
+                cardToPlay.getColor() == Card.Color.PURPLE ||
+                cardToPlay.getColor() == Card.Color.PINK || 
+                cardToPlay.getColor() == Card.Color.ORANGE) {
+                return false;
+            }
+        } else { // DARK side
+            // WILD and WILD_DRAW_TWO are light-side only
+            if (cardToPlay.getValue() == Card.Value.WILD || 
+                cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
+                return false;
+            }
+            // Light colors not allowed on dark side
+            if (cardToPlay.getColor() == Card.Color.RED || 
+                cardToPlay.getColor() == Card.Color.BLUE ||
+                cardToPlay.getColor() == Card.Color.GREEN || 
+                cardToPlay.getColor() == Card.Color.YELLOW) {
+                return false;
+            }
         }
-        // Wilds can always be played
-        if (cardToPlay.getValue() == Card.Value.WILD || cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO) {
+        
+        // Wild cards (appropriate for current side) can always be played
+        if ((getCurrentSide() == Side.LIGHT && 
+            (cardToPlay.getValue() == Card.Value.WILD || 
+            cardToPlay.getValue() == Card.Value.WILD_DRAW_TWO)) ||
+            (getCurrentSide() == Side.DARK && 
+            cardToPlay.getValue() == Card.Value.WILD_DRAW_COLOR)) {
             return true;
         }
+        
         // If a wild color is active (a color chosen from a previous wild)
         if (topWild != null) {
             return cardToPlay.getColor() == topWild;
         }
+        
         // If there is a top card on the discard pile
         if (top != null) {
             // Allow match by color OR value
             return (cardToPlay.getColor() == top.getColor()) ||
-                    (cardToPlay.getValue() == top.getValue());
+                (cardToPlay.getValue() == top.getValue());
         }
 
         // Default true if no top card yet
@@ -415,6 +486,11 @@ public class Game {
 
                 case FLIP: {
                     pendingSkips = 0;
+
+                    // FLIP BEFORE SWITCHING DECK
+                    // (because flipCard() uses currentSide to know which direction to flip)
+                    flipAllPlayerHands();
+                    
                     switchDeck();
                     flipTopCard();
 
@@ -486,6 +562,96 @@ public class Game {
         notifyStateChanged();
     }
 
+    /**
+     * Returns the opposite-side equivalent of a card.
+     * Light cards convert to dark, dark cards convert to light.
+     * 
+     * @param card the card to flip
+     * @return the flipped version of the card
+     */
+    private Card flipCard(Card card) {
+        if (card == null) return null;
+        
+        Card.Value v = card.getValue();
+        Card.Color c = card.getColor();
+        
+        // If currently on DARK side, we're flipping FROM light TO dark
+        if (currentSide == Side.DARK) {
+            // Convert light colors to dark colors
+            Card.Color newColor = null;
+            if (c != null) {
+                switch (c) {
+                    case RED:    newColor = Card.Color.PINK; break;
+                    case BLUE:   newColor = Card.Color.PURPLE; break;
+                    case GREEN:  newColor = Card.Color.TEAL; break;
+                    case YELLOW: newColor = Card.Color.ORANGE; break;
+                    default:     newColor = c; // Already dark
+                }
+            }
+            
+            // Convert light action cards to dark action cards
+            Card.Value newValue = v;
+            switch (v) {
+                case SKIP:          newValue = Card.Value.SKIP_EVERYONE; break;
+                case DRAW_ONE:      newValue = Card.Value.DRAW_FIVE; break;
+                case WILD:          newValue = Card.Value.WILD_DRAW_COLOR; break;
+                case WILD_DRAW_TWO: newValue = Card.Value.WILD_DRAW_COLOR; break;
+                case REVERSE:       newValue = Card.Value.REVERSE; break; // Same on both
+                case FLIP:          newValue = Card.Value.FLIP; break; // Same on both
+                default:            newValue = v; // Numbers stay same
+            }
+            
+            return new Card(newColor, newValue);
+        }
+        
+        // If currently on LIGHT side, we're flipping FROM dark TO light
+        else {
+            // Convert dark colors to light colors
+            Card.Color newColor = null;
+            if (c != null) {
+                switch (c) {
+                    case PINK:   newColor = Card.Color.RED; break;
+                    case PURPLE: newColor = Card.Color.BLUE; break;
+                    case TEAL:   newColor = Card.Color.GREEN; break;
+                    case ORANGE: newColor = Card.Color.YELLOW; break;
+                    default:     newColor = c; // Already light
+                }
+            }
+            
+            // Convert dark action cards to light action cards
+            Card.Value newValue = v;
+            switch (v) {
+                case SKIP_EVERYONE:   newValue = Card.Value.SKIP; break;
+                case DRAW_FIVE:       newValue = Card.Value.DRAW_ONE; break;
+                case WILD_DRAW_COLOR: newValue = Card.Value.WILD; break;
+                case REVERSE:         newValue = Card.Value.REVERSE; break; // Same
+                case FLIP:            newValue = Card.Value.FLIP; break; // Same
+                default:              newValue = v; // Numbers stay same
+            }
+            
+            return new Card(newColor, newValue);
+        }
+    }
+
+    /**
+     * Flips all cards in all players' hands to their opposite-side versions.
+     * Called when a FLIP card is played.
+     */
+    private void flipAllPlayerHands() {
+        for (Player player : players) {
+            Hand hand = player.getHand();
+            List<Card> oldCards = new ArrayList<>(hand.getCardsList());
+            
+            // Clear the hand
+            hand.getCardsList().clear();
+            
+            // Add flipped versions of each card
+            for (Card oldCard : oldCards) {
+                Card flippedCard = flipCard(oldCard);
+                hand.addCard(flippedCard);
+            }
+        }
+    }
 
     //This class is desgined to return the next player
     /**
