@@ -33,6 +33,7 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - `HandTest.java` - 5 unit tests for Hand class
 - `PlayerTest.java` - 6 unit tests for Player class
 - `GameTest.java` - 18 unit tests for Game class
+- `AIPlayerIntegrationTest.java` - 12 unit tests for AIPlayer logic
 - `GameViewManualTest.java` - Manual GUI testing (not JUnit)
 
 ### Documentation
