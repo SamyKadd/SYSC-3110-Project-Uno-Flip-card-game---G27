@@ -487,11 +487,10 @@ public class Game {
                 case FLIP: {
                     pendingSkips = 0;
 
-                    // FLIP BEFORE SWITCHING DECK
-                    // (because flipCard() uses currentSide to know which direction to flip)
+                    switchDeck();
+                    
                     flipAllPlayerHands();
                     
-                    switchDeck();
                     flipTopCard();
 
                     GameStateEvent s = exportState();
