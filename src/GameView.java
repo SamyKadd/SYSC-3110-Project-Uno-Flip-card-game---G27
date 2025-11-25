@@ -415,7 +415,7 @@ public class GameView extends JFrame implements GameViewInterface {
         }
 
         // --- LIGHT WILD COLOR PROMPT SECOND ---
-        if (s.isNeedsWildColor()) {
+        if (s.isNeedsWildColor() && !isAIPlayer) {
             Card.Color chosen = promptForWildColor();
             if (uiListener != null && chosen != null) {
                 uiListener.onChooseWildCardCol(chosen);
