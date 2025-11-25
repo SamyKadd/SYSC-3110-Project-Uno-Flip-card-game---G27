@@ -402,8 +402,11 @@ public class GameView extends JFrame implements GameViewInterface {
             updateCurrentPlayer(s.getCurPlayerName());
         }
 
+        // Check if current player is human
+        boolean isAIPlayer = s.getCurPlayerName() != null && s.getCurPlayerName().contains("(AI)");
+
         // --- DARK WILD COLOR PROMPT FIRST ---
-        if (s.isNeedsDarkWildColor()) {
+        if (s.isNeedsDarkWildColor() && !isAIPlayer) {
             Card.Color chosen = promptForDarkWildColor();
             if (uiListener != null && chosen != null) {
                 uiListener.onChooseDarkWildColor(chosen);

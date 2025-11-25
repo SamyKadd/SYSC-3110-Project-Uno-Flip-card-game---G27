@@ -93,20 +93,37 @@ public class GameController implements GameUIListener, ActionListener {
             return;
         }
 
-        //choose what card to play, if any
+        // Choose what card to play, if any
         Hand hand = currentPlayer.getHand();
         int chosenIndex = chooseAIPlayIndex(hand);
 
         if (chosenIndex >= 0) {
+            // Get the card before playing it to check if it's a wild
+            Card chosenCard = hand.getCard(chosenIndex);
+            boolean isLightWild = (chosenCard.getValue() == Card.Value.WILD || 
+                                   chosenCard.getValue() == Card.Value.WILD_DRAW_TWO);
+            boolean isDarkWild = (chosenCard.getValue() == Card.Value.WILD_DRAW_COLOR);
+            
             // Try to play the chosen card
             boolean success = model.playCardFromHand(chosenIndex);
-            if (!success) {
+            
+            if (success && (isLightWild || isDarkWild)) {
+                // AI needs to choose a color for the wild card
+                Card.Color chosenColor;
+                
+                if (isDarkWild) {
+                    chosenColor = chooseAIDarkWildColor(hand);
+                    model.setDarkWildColor(chosenColor);
+                } else {
+                    chosenColor = chooseAIWildColor(hand);
+                    model.setTopWildColor(chosenColor);
+                }
+            } else if (!success) {
                 // If somehow invalid, just draw instead
                 model.drawCardForCurrentPlayer();
             }
-        }
-        else{
-            // No playable card → draw one
+        } else {
+            // No playable card, draw one
             model.drawCardForCurrentPlayer();
         }
 
@@ -119,6 +136,7 @@ public class GameController implements GameUIListener, ActionListener {
 
         // New player's turn starts fresh
         hasPlayedThisTurn = false;
+
     }
 
     /**
@@ -158,6 +176,72 @@ public class GameController implements GameUIListener, ActionListener {
 
         // 2) Otherwise just play the first playable card
         return playable.get(0);
+    }
+
+    /**
+     * AI strategy for choosing a light-side wild card color.
+     * Selects the color that appears most frequently in the AI's remaining hand.
+     * This maximizes the chance of playing more cards on the next turn.
+     * 
+     * @param hand the AI player's hand
+     * @return the chosen light color (RED, BLUE, GREEN, or YELLOW)
+     */
+    private Card.Color chooseAIWildColor(Hand hand) {
+        // Count occurrences of each light color in AI's hand
+        int red = 0, blue = 0, green = 0, yellow = 0;
+        
+        for (int i = 0; i < hand.getSize(); i++) {
+            Card c = hand.getCard(i);
+            if (c.getColor() == null) continue; // Skip wild cards
+            
+            switch (c.getColor()) {
+                case RED: red++; break;
+                case BLUE: blue++; break;
+                case GREEN: green++; break;
+                case YELLOW: yellow++; break;
+            }
+        }
+        
+        // Choose the color with most cards
+        int max = Math.max(Math.max(red, blue), Math.max(green, yellow));
+        
+        if (red == max) return Card.Color.RED;
+        if (blue == max) return Card.Color.BLUE;
+        if (green == max) return Card.Color.GREEN;
+        return Card.Color.YELLOW;
+    }
+
+    /**
+     * AI strategy for choosing a dark-side wild card color.
+     * Selects the color that appears most frequently in the AI's remaining hand.
+     * This maximizes the chance of playing more cards on the next turn.
+     * 
+     * @param hand the AI player's hand
+     * @return the chosen dark color (TEAL, PURPLE, PINK, or ORANGE)
+     */
+    private Card.Color chooseAIDarkWildColor(Hand hand) {
+        // Count occurrences of each dark color in AI's hand
+        int teal = 0, purple = 0, pink = 0, orange = 0;
+        
+        for (int i = 0; i < hand.getSize(); i++) {
+            Card c = hand.getCard(i);
+            if (c.getColor() == null) continue; // Skip wild cards
+            
+            switch (c.getColor()) {
+                case TEAL: teal++; break;
+                case PURPLE: purple++; break;
+                case PINK: pink++; break;
+                case ORANGE: orange++; break;
+            }
+        }
+        
+        // Choose the color with most cards
+        int max = Math.max(Math.max(teal, purple), Math.max(pink, orange));
+        
+        if (teal == max) return Card.Color.TEAL;
+        if (purple == max) return Card.Color.PURPLE;
+        if (pink == max) return Card.Color.PINK;
+        return Card.Color.ORANGE;
     }
 
     /**
@@ -208,6 +292,19 @@ public class GameController implements GameUIListener, ActionListener {
      */
     @Override
     public void onNext(){
+        // AI players can always advance (they handle their own logic in handleAITurn)
+        if (model.getCurrentPlayer() instanceof AIPlayer) {
+            model.advanceTurn();
+            return;
+        }
+        
+        // Human players MUST have played or drawn before advancing
+        if (!hasPlayedThisTurn) {
+            view.showError("You must play a card or draw before ending your turn!");
+            return;
+        }
+        
+        // Human has played/drawn, allow turn advance
         model.advanceTurn();
     }
 
