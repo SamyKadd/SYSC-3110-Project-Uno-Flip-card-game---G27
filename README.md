@@ -107,6 +107,7 @@ The AI player uses a simple strategy implemented in `GameController.chooseAIPlay
 - Implemented WILD_DRAW_COLOR logic, including dark-color selection flow.
 - Added light/dark decks with separate discard piles.
 - Updated play validation and reshuffle logic for light/dark side compatibility.
+- Completed UML class diagram
   
 
 **Mahdi Bouakline**
