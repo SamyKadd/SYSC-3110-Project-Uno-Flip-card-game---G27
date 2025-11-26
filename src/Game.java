@@ -40,6 +40,9 @@ public class Game {
     private List<GameViewInterface> views = new ArrayList<>();
     private Integer skipEveryoneFinalPlayer = null;
 
+    private int currentRound = 1;
+    private static final int WINNING_SCORE = 500;
+
 
     /**
      * Constructs a new Game instance.
@@ -272,6 +275,15 @@ public class Game {
      */
     public Side getCurrentSide() {
         return currentSide;
+    }
+
+    // Need to return and add JavaDcos later 
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    public int getWinningScore() {
+        return WINNING_SCORE;
     }
 
 
@@ -904,6 +916,115 @@ public class Game {
         pcs.firePropertyChange("state", null, s);
     }
 
+    /**
+     * Starts a new round while keeping player scores and order.
+     * Called after a player wins a round but hasn't reached 500 points yet.
+     */
+    public void startNewRound() {
+        currentRound++;
+        
+        // Clear all hands
+        for (Player p : players) {
+            p.getHand().getCardsList().clear();
+        }
+        
+        // Reset game state
+        currentSide = Side.LIGHT;
+        deck = lightDeck;
+        lightDiscard.clear();
+        darkDiscard.clear();
+        pendingSkips = 0;
+        skipEveryoneFinalPlayer = null;
+        topWild = null;
+        darkWildColor = null;
+        clockwise = true;
+        currentPlayerIndex = 0;
+        
+        // Rebuild and shuffle decks
+        lightDeck.clear();
+        darkDeck.clear();
+        buildLightDeck();
+        buildDarkDeck();
+        deck = lightDeck;
+        Collections.shuffle(deck);
+        
+        // Deal new hands
+        for (Player player : players) {
+            player.getHand().startCards(deck);
+        }
+        
+        // Pick new top card (not an action card)
+        do {
+            top = deck.remove(0);
+            if (top.isActionCard()) {
+                deck.add(top);
+            }
+        } while (top.isActionCard());
+        
+        lightDiscard.add(top);
+        
+        // Notify observers
+        GameStateEvent s = exportState();
+        s.setStatusMessage("Round " + currentRound + " begins! " + 
+            getCurrentPlayer().getName() + "'s turn.");
+        pcs.firePropertyChange("state", null, s);
+    }
+
+    /**
+     * Starts a completely new game, resetting all scores and round count.
+     * Called after a player reaches 500 points.
+     */
+    public void startNewGame() {
+        currentRound = 1;
+        
+        // Reset ALL scores
+        for (Player p : players) {
+            p.setScore(0);
+            p.getHand().getCardsList().clear();
+        }
+        
+        // Reset game state (same as startNewRound)
+        currentSide = Side.LIGHT;
+        deck = lightDeck;
+        lightDiscard.clear();
+        darkDiscard.clear();
+        pendingSkips = 0;
+        skipEveryoneFinalPlayer = null;
+        topWild = null;
+        darkWildColor = null;
+        clockwise = true;
+        currentPlayerIndex = 0;
+        
+        // Rebuild and shuffle decks
+        lightDeck.clear();
+        darkDeck.clear();
+        buildLightDeck();
+        buildDarkDeck();
+        deck = lightDeck;
+        Collections.shuffle(deck);
+        
+        // Deal new hands
+        for (Player player : players) {
+            player.getHand().startCards(deck);
+        }
+        
+        // Pick new top card
+        do {
+            top = deck.remove(0);
+            if (top.isActionCard()) {
+                deck.add(top);
+            }
+        } while (top.isActionCard());
+        
+        lightDiscard.add(top);
+        
+        // Notify observers
+        GameStateEvent s = exportState();
+        s.setStatusMessage("NEW GAME! Round 1 begins! " + 
+            getCurrentPlayer().getName() + "'s turn.");
+        pcs.firePropertyChange("state", null, s);
+    }
+
 
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
@@ -974,10 +1095,31 @@ public class Game {
         // ---- WIN CONDITION CHECK BEFORE ACTION CARD ----
         if (cur.getHand().getSize() == 0) {
             calculateAndAwardScore(cur);
-
-            GameStateEvent winState = exportState();
-            winState.setStatusMessage(cur.getName() + " wins! Final Score: " + cur.getScore());
-            pcs.firePropertyChange("state", null, winState);
+            
+            // Check if anyone reached 500 points (game over)
+            Player gameWinner = null;
+            for (Player p : players) {
+                if (p.getScore() >= WINNING_SCORE) {
+                    gameWinner = p;
+                    break;
+                }
+            }
+            
+            if (gameWinner != null) {
+                // GAME OVER - someone reached 500 points
+                GameStateEvent winState = exportState();
+                winState.setGameOver(true);
+                winState.setStatusMessage(gameWinner.getName() + " WINS THE GAME with " + 
+                    gameWinner.getScore() + " points! Click 'New Game' to play again.");
+                pcs.firePropertyChange("state", null, winState);
+            } else {
+                // ROUND OVER - start new round
+                GameStateEvent roundState = exportState();
+                roundState.setStatusMessage(cur.getName() + " wins round " + currentRound + 
+                    " and scores " + cur.getScore() + " points! Click 'New Round' to continue.");
+                pcs.firePropertyChange("state", null, roundState);
+            }
+            
             return true;
         }
 

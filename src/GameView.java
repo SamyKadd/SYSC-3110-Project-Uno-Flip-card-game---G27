@@ -31,6 +31,9 @@ public class GameView extends JFrame implements GameViewInterface {
     // Bottom panel components
     private JButton nextPlayerButton;
     private JButton drawCardButton;
+
+    private JButton newRoundButton;
+    private JButton newGameButton;
     
     // Scoreboard
     private JLabel scoreboardLabel;
@@ -165,11 +168,29 @@ public class GameView extends JFrame implements GameViewInterface {
         drawCardButton.setFont(new Font("Arial", Font.BOLD, 12));
         drawCardButton.setPreferredSize(new Dimension(150, 40));
 
+        // NEW ROUND BUTTON
+        newRoundButton = new JButton("NEW ROUND");
+        newRoundButton.setFont(new Font("Arial", Font.BOLD, 12));
+        newRoundButton.setPreferredSize(new Dimension(150, 40));
+        newRoundButton.setEnabled(false); // Disabled by default
+        newRoundButton.setBackground(new Color(100, 200, 100));
+        
+        // NEW GAME BUTTON
+        newGameButton = new JButton("NEW GAME");
+        newGameButton.setFont(new Font("Arial", Font.BOLD, 12));
+        newGameButton.setPreferredSize(new Dimension(150, 40));
+        newGameButton.setEnabled(false); // Disabled by default
+        newGameButton.setBackground(new Color(50, 150, 255));
+
         nextPlayerButton.addActionListener(e-> {if (uiListener !=null) uiListener.onNext();});
         drawCardButton.addActionListener(e->{if (uiListener !=null ) uiListener.onDraw();});
+        newRoundButton.addActionListener(e->{if (uiListener !=null) uiListener.onNewRound();});
+        newGameButton.addActionListener(e->{if (uiListener !=null) uiListener.onNewGame();});
 
         controlPanel.add(nextPlayerButton);
         controlPanel.add(drawCardButton);
+        controlPanel.add(newRoundButton);
+        controlPanel.add(newGameButton);
         
         panel.add(controlPanel, BorderLayout.WEST);
         
@@ -438,6 +459,27 @@ public class GameView extends JFrame implements GameViewInterface {
             }
         }
 
+        // Show New Round / New Game buttons when appropriate
+        if (s.getStatusMessage() != null && s.getStatusMessage().contains("wins round")) {
+            // Round over - show New Round button
+            nextPlayerButton.setEnabled(false);
+            drawCardButton.setEnabled(false);
+            newRoundButton.setEnabled(true);
+            newGameButton.setEnabled(false);
+        } else if (s.isGameOver()) {
+            // Game over - show New Game button
+            nextPlayerButton.setEnabled(false);
+            drawCardButton.setEnabled(false);
+            newRoundButton.setEnabled(false);
+            newGameButton.setEnabled(true);
+        } else {
+            // Normal gameplay
+            newRoundButton.setEnabled(false);
+            newGameButton.setEnabled(false);
+            drawCardButton.setEnabled(s.isCanDraw());
+            nextPlayerButton.setEnabled(s.isCanNext());
+        }
+
         // --- STATUS MESSAGE ---
         updateStatusMessage(s.getStatusMessage() == null ? "" : s.getStatusMessage());
 
@@ -486,6 +528,14 @@ public class GameView extends JFrame implements GameViewInterface {
      */
     public ArrayList<JButton> getCardButtons() {
         return cardButtons;
+    }
+
+    public JButton getNewRoundButton() {
+        return newRoundButton;
+    }
+
+    public JButton getNewGameButton() {
+        return newGameButton;
     }
 
     /**

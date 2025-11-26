@@ -308,6 +308,16 @@ public class GameController implements GameUIListener, ActionListener {
         model.advanceTurn();
     }
 
+    @Override
+    public void onNewRound() {
+        model.startNewRound();
+    }
+
+    @Override
+    public void onNewGame() {
+        model.startNewGame();
+    }
+
     /**
      * Handles the action when a wild card is played and a color is chosen
      * Updates the model with the selected color and refreshes the view

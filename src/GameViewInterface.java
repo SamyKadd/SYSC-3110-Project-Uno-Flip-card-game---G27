@@ -17,5 +17,7 @@ public interface GameViewInterface {
     void render(GameStateEvent state);
     JButton getDrawCardButton();
     JButton getNextPlayerButton();
+    JButton getNewRoundButton(); 
+    JButton getNewGameButton();
     void showError(String message);
 }
