@@ -27,7 +27,7 @@ public class Game {
     private List<Card> lightDiscard = new ArrayList<>();
     private List<Card> darkDiscard = new ArrayList<>();
 
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private transient final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
 
@@ -37,7 +37,7 @@ public class Game {
     private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
 
-    private List<GameViewInterface> views = new ArrayList<>();
+    private transient List<GameViewInterface> views = new ArrayList<>();
     private Integer skipEveryoneFinalPlayer = null;
 
     private int currentRound = 1;
@@ -1136,6 +1136,106 @@ public class Game {
         pcs.firePropertyChange("state", null, state);
 
         return true;
+    }
+
+    /**
+     * Saves the current game state to a file using Java serialization.
+     * 
+     * @param filename the file to save to
+     * @return true if save successful, false otherwise
+     */
+    public boolean saveGame(String filename) {
+        FileOutputStream ostream = null;
+        ObjectOutputStream p = null;
+        
+        try {
+            // Create output streams
+            ostream = new FileOutputStream(filename);
+            p = new ObjectOutputStream(ostream);
+            
+            // Write the entire game object
+            p.writeObject(this);
+            
+            System.out.println("Game saved successfully to " + filename);
+            return true;
+            
+        } catch (IOException e) {
+            System.err.println("Error saving game: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+            
+        } finally {
+            // Always close streams 
+            try {
+                if (p != null) p.close();
+                if (ostream != null) ostream.close();
+            } catch (IOException e) {
+                System.err.println("Error closing streams: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Loads a game state from a file using Java deserialization.
+     * 
+     * @param filename the file to load from
+     * @return the loaded Game object, or null if loading failed
+     */
+    public static Game loadGame(String filename) {
+        FileInputStream istream = null;
+        ObjectInputStream p = null;
+        
+        try {
+            // Create input streams
+            istream = new FileInputStream(filename);
+            p = new ObjectInputStream(istream);
+            
+            // Read the game object
+            Game game = (Game) p.readObject();
+            
+            // Re-initialize transient fields (they weren't serialized)
+            game.pcs = new PropertyChangeSupport(game);
+            game.views = new ArrayList<>();
+            
+            System.out.println("Game loaded successfully from " + filename);
+            return game;
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Save file not found: " + filename);
+            return null;
+            
+        } catch (IOException e) {
+            System.err.println("Error loading game: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+            
+        } catch (ClassNotFoundException e) {
+            System.err.println("Invalid save file format: " + e.getMessage());
+            return null;
+            
+        } finally {
+            // Always close streams
+            try {
+                if (p != null) p.close();
+                if (istream != null) istream.close();
+            } catch (IOException e) {
+                System.err.println("Error closing streams: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Re-initializes transient fields after deserialization.
+     * Called automatically by Java during deserialization.
+     * 
+     * @param in the ObjectInputStream
+     * @throws IOException if I/O error occurs
+     * @throws ClassNotFoundException if class not found
+     */
+    private void readObject(ObjectInputStream in) 
+            throws IOException, ClassNotFoundException {
+        // Perform default deserialization first
+        in.defaultReadObject();
     }
 
 

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Represents a player's hand in the UNO game.
@@ -8,7 +9,9 @@ import java.util.List;
  * @author G27
  * @version 1.0
  */
-public class Hand {
+public class Hand implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private List<Card> cards;
 
     /**

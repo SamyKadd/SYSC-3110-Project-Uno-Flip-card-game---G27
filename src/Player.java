@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * Represents a player in the UNO game.
  * Each player has a name, score, and hand of cards.
@@ -5,7 +7,9 @@
  * @author G27
  * @version 1.0
  */
-public class Player {
+public class Player implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private int score;
     private Hand hand;

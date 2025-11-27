@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * Represents a card in the UNO game.
  * Each card has a color and a value, which can be either a number or an action.
@@ -6,7 +8,9 @@
  * @version 1.0
  */
 
-public class Card {
+public class Card implements Serializable {
+private static final long serialVersionUID = 1L;
+
     public enum Color {RED, BLUE, YELLOW, GREEN, TEAL, PURPLE, PINK, ORANGE};
     public enum Value {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, DRAW_ONE, REVERSE, WILD, WILD_DRAW_TWO, DRAW_FIVE, SKIP_EVERYONE, WILD_DRAW_COLOR, FLIP};
     private Color color;
