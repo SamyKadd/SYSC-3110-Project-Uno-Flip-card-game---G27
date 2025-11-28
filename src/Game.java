@@ -43,6 +43,11 @@ public class Game {
     private int currentRound = 1;
     private static final int WINNING_SCORE = 500;
 
+    // --- Undo/Redo Stacks ---
+    private transient ArrayList<GameMemento> undoStack = new ArrayList<>(); //stores past game states
+    private transient ArrayList<GameMemento> redoStack = new ArrayList<>(); //rewinds state to a saved snapshot
+
+
 
     /**
      * Constructs a new Game instance.
