@@ -34,6 +34,9 @@ public class GameView extends JFrame implements GameViewInterface {
 
     private JButton newRoundButton;
     private JButton newGameButton;
+
+    private JButton undoButton;
+    private JButton redoButton;
     
     // Scoreboard
     private JLabel scoreboardLabel;
@@ -187,12 +190,34 @@ public class GameView extends JFrame implements GameViewInterface {
         newRoundButton.addActionListener(e->{if (uiListener !=null) uiListener.onNewRound();});
         newGameButton.addActionListener(e->{if (uiListener !=null) uiListener.onNewGame();});
 
+        // UNDO/REDO BUTTONS
+        undoButton = new JButton("UNDO");
+        undoButton.setFont(new Font("Arial", Font.BOLD, 12));
+        undoButton.setPreferredSize(new Dimension(150, 40));
+        undoButton.setEnabled(false);
+        undoButton.setBackground(new Color(50, 150, 255));
+        undoButton.addActionListener(e -> {if (uiListener != null) uiListener.onUndo(); });
+
+        redoButton = new JButton("REDO");
+        redoButton.setFont(new Font("Arial", Font.BOLD, 12));
+        redoButton.setPreferredSize(new Dimension(150, 40));
+        redoButton.setEnabled(false);
+        redoButton.setBackground(new Color(50, 150, 255));
+        redoButton.addActionListener(e -> { if (uiListener != null) uiListener.onRedo();});
+
+
         controlPanel.add(nextPlayerButton);
         controlPanel.add(drawCardButton);
+        controlPanel.add(undoButton);
+        controlPanel.add(redoButton);
         controlPanel.add(newRoundButton);
         controlPanel.add(newGameButton);
         
         panel.add(controlPanel, BorderLayout.WEST);
+
+
+
+
         
         // Right side - scoreboard
         scoreboardLabel = new JLabel("Scoreboard: ");
@@ -537,6 +562,10 @@ public class GameView extends JFrame implements GameViewInterface {
     public JButton getNewGameButton() {
         return newGameButton;
     }
+
+    public JButton getUndoButton() { return undoButton; }
+    public JButton getRedoButton() { return redoButton; }
+
 
     /**
      * Setting the listener
