@@ -17,5 +17,8 @@ public interface GameUIListener {
     void onNewGame(); 
     void onChooseWildCardCol(Card.Color color);
     void onChooseDarkWildColor(Card.Color color);
+    void onUndo();
+    void onRedo();
+
 
 }
