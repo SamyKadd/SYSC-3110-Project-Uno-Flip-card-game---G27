@@ -19,5 +19,7 @@ public interface GameViewInterface {
     JButton getNextPlayerButton();
     JButton getNewRoundButton(); 
     JButton getNewGameButton();
+    JButton getUndoButton();
+    JButton getRedoButton();
     void showError(String message);
 }

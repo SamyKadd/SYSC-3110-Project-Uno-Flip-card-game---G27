@@ -47,6 +47,128 @@ public class Game {
     private transient ArrayList<GameMemento> undoStack = new ArrayList<>(); //stores past game states
     private transient ArrayList<GameMemento> redoStack = new ArrayList<>(); //rewinds state to a saved snapshot
 
+    /**
+     * making sure stack is not null
+     */
+    private void checkStack(){
+        if (undoStack ==null){
+            undoStack = new ArrayList<>();
+        }
+        if (redoStack ==null){
+            redoStack = new ArrayList<>();
+        }
+    }
+
+    /**
+     * capturing the current state
+     * allows us to go back for undo
+     */
+    public void saveState(){
+        checkStack();;
+        GameMemento snapshot = createMemento();
+        undoStack.add(snapshot);
+        redoStack.clear();
+    }
+
+    /**
+     * Checks to see if we can undo
+     * If we can, true is return
+     */
+    public boolean canUndo(){
+        checkStack();
+        return !undoStack.isEmpty();
+    }
+
+    /**
+     * Checks to see if we can redo
+     * If we can, true is return
+     */
+    public boolean canRedo(){
+        checkStack();
+        return !undoStack.isEmpty();
+    }
+
+    /**
+     * We save state to undo
+     * Restore to last state
+     * Notify a change
+     */
+    public void undo(){
+       checkStack();
+        if (!canUndo()){
+            return;
+        }
+
+        GameMemento current = createMemento();
+        redoStack.add(current);
+        GameMemento previous = undoStack.remove(undoStack.size() - 1);
+        restoreFromMemento(previous);
+        notifyStateChanged();
+    }
+
+    /**
+     * We save state to redo
+     * Restore to last state
+     * Notify a change
+     */
+    public void redo(){
+        checkStack();
+        if (!canRedo()){
+            return;
+        }
+
+        GameMemento current = createMemento();
+        redoStack.add(current);
+        GameMemento previous = redoStack.remove(undoStack.size() - 1);
+        restoreFromMemento(previous);
+        notifyStateChanged();
+    }
+
+    /**
+     * Build a new Memento
+     */
+    private GameMemento createMemento(){
+        List<Card> activeDiscard = (currentSide == Side.LIGHT) ? lightDiscard : darkDiscard;
+        boolean reverseDirection = !clockwise;
+        return new GameMemento(players, currentPlayerIndex, new ArrayList<>(deck), new ArrayList<>(activeDiscard), topWild, darkWildColor, reverseDirection);
+    }
+
+    /**
+     * Putting the game back into the state thats stored
+     * Get players, then direction, the restore the draw pile, update discard pile card, restore wild cards
+     */
+    private void restoreFromMemento(GameMemento m){
+        this.players = new ArrayList<>(m.getPlayersSnapshot());
+        this.currentPlayerIndex = m.getCurrentPlayerIndex();
+
+        this.clockwise = !m.isReverseDirection();
+
+        List<Card> snapshotDeck = m.getDrawPileSnapshot();
+        if (currentSide == Side.LIGHT) {
+            lightDeck.clear();
+            lightDeck.addAll(snapshotDeck);
+            deck = lightDeck;
+        } else {
+            darkDeck.clear();
+            darkDeck.addAll(snapshotDeck);
+            deck = darkDeck;
+        }
+
+        List<Card> snapshotDiscard = m.getDiscardPileSnapshot();
+        List<Card> activeDiscard = (currentSide == Side.LIGHT) ? lightDiscard : darkDiscard;
+        activeDiscard.clear();
+        activeDiscard.addAll(snapshotDiscard);
+
+        if (!activeDiscard.isEmpty()) {
+            top = activeDiscard.get(activeDiscard.size() - 1);
+        } else {
+            top = null;
+        }
+
+        this.topWild = m.getWildColor();
+        this.darkWildColor = m.getDarkWildColor();
+    }
+
 
 
     /**
