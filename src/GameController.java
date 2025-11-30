@@ -259,10 +259,11 @@ public class GameController implements GameUIListener, ActionListener {
             return;
         }
 
+        model.saveState();
         boolean valid = model.playCardFromHand(handIndex);
-        if (valid) {
+        if (valid){
             hasPlayedThisTurn = true;
-        } else {
+        } else{
             view.showError("Invalid card play! Try again.");
         }
     }
@@ -280,6 +281,7 @@ public class GameController implements GameUIListener, ActionListener {
             return;
         }
 
+        model.saveState();
         boolean valid = model.drawCardForCurrentPlayer();
         if (valid) hasPlayedThisTurn = true;
         else view.showError("Cannot draw a card right now.");
@@ -303,18 +305,21 @@ public class GameController implements GameUIListener, ActionListener {
             view.showError("You must play a card or draw before ending your turn!");
             return;
         }
-        
+
+        model.saveState();
         // Human has played/drawn, allow turn advance
         model.advanceTurn();
     }
 
     @Override
     public void onNewRound() {
+        model.saveState();
         model.startNewRound();
     }
 
     @Override
     public void onNewGame() {
+        model.saveState();
         model.startNewGame();
     }
 
@@ -344,6 +349,17 @@ public class GameController implements GameUIListener, ActionListener {
         model.setDarkWildColor(color);
     }
 
+    @Override
+    public void onUndo() {
+        model.undo();
+        hasPlayedThisTurn = false;
+    }
+
+    @Override
+    public void onRedo() {
+        model.redo();
+        hasPlayedThisTurn = false;
+    }
 
 
     /**
