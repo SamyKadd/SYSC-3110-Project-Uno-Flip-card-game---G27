@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.beans.PropertyChangeListener;
@@ -27,7 +28,7 @@ public class Game {
     private List<Card> lightDiscard = new ArrayList<>();
     private List<Card> darkDiscard = new ArrayList<>();
 
-    private transient final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
 
@@ -1359,7 +1360,7 @@ public class Game {
      * @throws IOException if I/O error occurs
      * @throws ClassNotFoundException if class not found
      */
-    private void readObject(ObjectInputStream in) 
+    private void readObject(ObjectInputStream in)
             throws IOException, ClassNotFoundException {
         // Perform default deserialization first
         in.defaultReadObject();
