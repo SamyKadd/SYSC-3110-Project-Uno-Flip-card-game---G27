@@ -86,7 +86,7 @@ public class Game {
      */
     public boolean canRedo(){
         checkStack();
-        return !undoStack.isEmpty();
+        return !redoStack.isEmpty();
     }
 
     /**
@@ -120,7 +120,7 @@ public class Game {
 
         GameMemento current = createMemento();
         redoStack.add(current);
-        GameMemento previous = redoStack.remove(undoStack.size() - 1);
+        GameMemento previous = redoStack.remove(redoStack.size() - 1);
         restoreFromMemento(previous);
         notifyStateChanged();
     }

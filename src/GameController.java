@@ -59,6 +59,9 @@ public class GameController implements GameUIListener, ActionListener {
 
                 view.render(newState);
 
+                view.getUndoButton().setEnabled((model.canUndo()));
+                view.getRedoButton().setEnabled((model.canRedo()));
+
                 // --- SHOW ROUND COMPLETE POPUP ---
                 if (newState.getStatusMessage() != null && newState.getStatusMessage().contains("wins round")) {
                     JOptionPane.showMessageDialog(null,
