@@ -334,12 +334,14 @@ public class GameController implements GameUIListener, ActionListener {
     public void onNewRound() {
         model.saveState();
         model.startNewRound();
+        view.updateStatusMessage("Starting Round " + model.getCurrentRound() + "!");
     }
 
     @Override
     public void onNewGame() {
         model.saveState();
         model.startNewGame();
+        view.updateStatusMessage("New Game Started — Round 1!");
     }
 
     /**
