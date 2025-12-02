@@ -484,6 +484,14 @@ public class GameView extends JFrame implements GameViewInterface {
             }
         }
 
+        //Highlight the new round visually
+        if (s.getStatusMessage() != null && s.getStatusMessage().contains("Round")) {
+            handPanel.setBackground(new Color(180, 220, 255));
+        } else {
+            handPanel.setBackground(new Color(200, 220, 240));
+        }
+
+
         // Show New Round / New Game buttons when appropriate
         if (s.getStatusMessage() != null && s.getStatusMessage().contains("wins round")) {
             // Round over - show New Round button
@@ -491,16 +499,20 @@ public class GameView extends JFrame implements GameViewInterface {
             drawCardButton.setEnabled(false);
             newRoundButton.setEnabled(true);
             newGameButton.setEnabled(false);
+            newRoundButton.setBackground(new Color(0, 200, 0));
         } else if (s.isGameOver()) {
             // Game over - show New Game button
             nextPlayerButton.setEnabled(false);
             drawCardButton.setEnabled(false);
             newRoundButton.setEnabled(false);
             newGameButton.setEnabled(true);
+            newGameButton.setBackground(new Color(0, 150, 255));
         } else {
             // Normal gameplay
             newRoundButton.setEnabled(false);
             newGameButton.setEnabled(false);
+            newRoundButton.setBackground(null);
+            newGameButton.setBackground(null);
             drawCardButton.setEnabled(s.isCanDraw());
             nextPlayerButton.setEnabled(s.isCanNext());
         }
