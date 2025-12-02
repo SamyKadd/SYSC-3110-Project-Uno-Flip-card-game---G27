@@ -236,6 +236,11 @@ public class GameView extends JFrame implements GameViewInterface {
         if (card != null) {
             topCardLabel.setText(formatCardText(card));
             topCardPanel.setBackground(getColorForCard(card));
+
+            topCardPanel.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 4));
+            SwingUtilities.invokeLater(() -> {
+                topCardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            });
         }
     }
     
