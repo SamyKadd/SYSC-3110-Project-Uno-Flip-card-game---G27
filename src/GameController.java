@@ -4,6 +4,7 @@
  * Observes model state changes and refreshes the view accordingly.
  */
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -57,6 +58,24 @@ public class GameController implements GameUIListener, ActionListener {
                 }
 
                 view.render(newState);
+
+                // --- SHOW ROUND COMPLETE POPUP ---
+                if (newState.getStatusMessage() != null && newState.getStatusMessage().contains("wins round")) {
+                    JOptionPane.showMessageDialog(null,
+                            newState.getStatusMessage() + "\nClick NEW ROUND to continue.",
+                            "Round Complete",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                // --- SHOW GAME OVER POPUP ---
+                if (newState.isGameOver()) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            newState.getStatusMessage() + "\nClick NEW GAME to restart.",
+                            "Game Over",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
 
                 // Check if current player is AI and handle their turn
                 Player currentPlayer = model.getCurrentPlayer();
