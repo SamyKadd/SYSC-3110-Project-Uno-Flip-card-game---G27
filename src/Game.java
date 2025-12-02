@@ -119,7 +119,7 @@ public class Game {
         }
 
         GameMemento current = createMemento();
-        redoStack.add(current);
+        undoStack.add(current);
         GameMemento previous = redoStack.remove(redoStack.size() - 1);
         restoreFromMemento(previous);
         notifyStateChanged();
