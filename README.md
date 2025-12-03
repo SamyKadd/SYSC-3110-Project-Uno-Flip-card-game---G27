@@ -1,8 +1,8 @@
-# UNO Card Game - Milestone 3
+# UNO Card Game - Milestone 4
 
 
 ## Project Overview
-A graphical implementation of the UNO Flip card game in Java using Swing GUI and MVC architecture, supporting 2-4 players (human or AI) with all standard and Flip action cards.
+A graphical implementation of the UNO Flip card game in Java using Swing GUI and MVC architecture, supporting 2-4 players (human or AI) with all standard and Flip action cards. Features include save/load functionality, undo/redo system, and multi-round/multi-game replay.
 
 ---
 
@@ -15,7 +15,9 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - `AIPlayer.java` - AI player extending Player with automated decision-making
 - `Game.java` - Game logic and state management (Model)
 - `GameStateEvent.java` - Encapsulates game state for MVC communication
-- `Side.java` - Enum for tracking LIGHT/DARK game state
+- `Side.java` - Enum for tracking LIGHT/DARK game 
+- `GameMemento.java` - Memento pattern for undo/redo functionality (Serializable)
+- `SerializationUtils.java` - Utility for deep copying serializable objects
 
 ### Source Code - View
 - `GameView.java` - Graphical user interface using Java Swing
@@ -38,46 +40,89 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 
 ### Documentation
 - `README.md` - This file
-- `Data_Structures.md` - Data structure changes from Milestone 1 to 2 to 3
+- `Data_Structures.md` - Data structure changes from Milestone 1 to 2 to 3 to 4
+- `USER_MANUAL.md` - Comprehensive user guide for all features
 - JavaDoc comments in all source files
 - UML Class Diagram (`diagrams/UML_diagram`)
 - Sequence Diagrams (`diagrams/sequence_DIAGRAM`)
 
 ---
 
-## New Features in Milestone 3
+## New Features in Milestone 4
 
-### AI Player System
+### 1. Replay Functionality
 
-**AI Player Selection**
-- Users can select 1-3 AI players (maximum 4 total players)
-- AI players are clearly labeled with "(AI)" suffix in their names
-- Dialog appears after human player selection if space allows
+**Multi-Round Play**
+- Game continues after a player wins a round
+- Scores are preserved between rounds
+- Round counter increments (displayed in status)
+- New hands are dealt for each round
+- First player to 500 points wins the game
 
-**AI Strategy Implementation**
+**Multi-Game Play**
+- After reaching 500 points, players can start a new game
+- All scores reset to 0
+- Round counter resets to 1
+- Same players continue with fresh start
 
-The AI player uses a simple strategy implemented in `GameController.chooseAIPlayIndex()`:
+**GUI Implementation**
+- `NEW ROUND` button appears when a round ends 
+- `NEW GAME` button appears when game ends at 500 points 
+- Visual feedback with popup dialogs
 
-1. **Legal Move Detection**: AI scans its hand to identify all playable cards based on current game state
-2. **Color Preference**: If possible, AI prefers non-wild cards that match the current active color
-3. **Fallback Strategy**: If no color match exists, AI plays the first available legal card
-4. **Draw When Stuck**: If no cards are playable, AI draws from the deck
+---
 
-**Strategy Rationale:**
-- Prioritizes color matching to maintain control and reduce wild card waste
-- Simple enough to execute quickly without game lag
-- Provides reasonable gameplay that feels natural to human players
-- Avoids complex lookahead that would slow down the game
+### 2. Undo/Redo Functionality (30 marks)
 
-**AI Turn Flow:**
-1. Controller detects AI player's turn via `propertyChange()` listener
-2. Disables UI buttons to prevent human interference
-3. Calls `handleAITurn()` which:
-   - Locks out extra actions with `hasPlayedThisTurn` flag
-   - Calls `chooseAIPlayIndex()` to select best card
-   - Plays selected card or draws if none available
-   - Re-enables buttons for next player
-4. Next player's turn begins (human or AI)
+**Undo System**
+- Click `UNDO` button to reverse your last action
+- Supports undoing card plays, draws, and turn advances
+- Multi-level undo (can undo multiple actions in sequence)
+- Undo button automatically enables/disables based on availability
+
+**Redo System**
+- Click `REDO` button after undoing to restore action
+- Multi-level redo support
+- Redo stack clears when new action is taken
+- Redo button automatically enables/disables
+
+**Implementation Details**
+- Uses Memento design pattern (`GameMemento.java`)
+- Deep copying via `SerializationUtils.java`
+- Undo/redo stacks maintain complete game state snapshots
+- Preserves player hands, deck state, scores, and turn order
+
+---
+
+### 3. Serialization/Deserialization (30 marks)
+
+**Save Game**
+- Click `File → Save Game` from menu bar
+- Choose location and filename
+- Saves with `.uno` extension
+- Preserves complete game state
+
+**Load Game**
+- Click `File → Load Game` from menu bar
+- Select `.uno` file
+- Game resumes exactly where it was saved
+- Confirmation dialog prevents accidental overwrites
+
+**What Gets Saved:**
+- All player information (names, scores, hands)
+- Current game state (side, round number, top card)
+- Deck and discard pile contents
+- Turn order and current player
+- Wild card color selections
+- Pending skips and special states
+
+**Implementation Details**
+- All model classes implement `Serializable`
+- `transient` keyword for non-serializable fields
+- Custom `readObject()` re-initializes transient fields
+- Static `loadGame()` returns new Game instance
+- Controller's `reconnectModel()` switches to loaded game
+- Error handling for corrupted/missing files
 
 ---
 
@@ -223,57 +268,28 @@ Run test files through your IDE or JUnit test runner.
 - **SKIP EVERYONE**: All other players are skipped, current player plays again
 - **WILD DRAW COLOUR**: Choose a dark color (Teal, Purple, Pink, Orange), next player draws until they get that color and loses their turn
 
----
-
-### Model (Game.java)
-- Manages game state, deck, players, and turn logic
-- Validates card plays and handles action cards
-- Manages light/dark side switching and deck management
-- Fires PropertyChangeEvents when state changes
-- No knowledge of View or Controller
-
-### View (GameView.java)
-- Displays game state using Swing components
-- Renders cards, top card, player info, status messages
-- Handles color selection dialogs for wild cards
-- Captures user input (button clicks, card selection)
-- No direct access to Model
-
-### Controller (GameController.java)
-- Listens for View events via GameUIListener interface
-- Validates and forwards actions to Model
-- Observes Model changes via PropertyChangeListener
-- Updates View when Model state changes
-- Manages turn locking to prevent multiple actions per turn
-- Handles AI player turns automatically
+### Features
+- **Save**: File → Save Game
+- **Load**: File → Load Game
+- **Undo**: Click UNDO
+- **Redo**: Click REDO
+- **New Round**: Auto-appears when round ends
+- **New Game**: Auto-appears at 500 points
 
 ---
 
 ## Known Issues
 
-1. **No Multi-Round Support**: Game ends after one round. Winner is declared but game cannot continue to next round.
+1. **No UNO Call**: Players are not required to call "UNO" when down to one card.
 
-2. **No UNO Call**: Players are not required to call "UNO" when down to one card.
+2. **Card Hand Visibility**: All players see the current player's hand (designed for same-device play).
 
-3. **Card Hand Visibility**: All players see the current player's hand (designed for same-device play).
+3. **AI Difficulty**: AI uses a simple strategy. No advanced or variable difficulty levels.
 
-4. **No Save/Load**: Game state cannot be saved and resumed.
-
-5. **AI Difficulty**: AI uses a simple strategy. No advanced or variable difficulty levels.
-
-6. **Limited AI Strategy**: AI doesn't track other players' card counts or optimize for specific winning strategies.
-
----
-
-## Future Enhancements
-
-1. Add multi-round gameplay with cumulative scoring
-2. Option to Undo/Redo a move.
-3. Implement save/load functionality
-4. Improve AI strategy with card counting and probabilistic play
+4. **Limited AI Strategy**: AI doesn't track other players' card counts or optimize for specific winning strategies.
 
 ---
 
 **Course**: SYSC 3110  
-**Milestone**: 3  
-**Date**: 2025-11-24
+**Milestone**: 4  
+**Date**: 2025-12-05
