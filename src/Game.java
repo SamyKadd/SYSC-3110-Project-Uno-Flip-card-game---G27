@@ -284,7 +284,6 @@ public class Game implements Serializable {
         }
     }
 
-
     /**
      * Creates all cards used on the dark side of UNO Flip.
      * This includes:

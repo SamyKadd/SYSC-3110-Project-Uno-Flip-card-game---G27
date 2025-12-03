@@ -100,7 +100,6 @@ public class Hand implements Serializable {
         return sb.toString();
     }
 
-
     /**
      * Returns a string representation of this hand.
      *
