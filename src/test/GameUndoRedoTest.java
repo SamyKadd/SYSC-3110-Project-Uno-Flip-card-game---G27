@@ -4,6 +4,9 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for verifying the undo and redo functionality.
+ */
 public class GameUndoRedoTest {
     private Game game;
 
