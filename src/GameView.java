@@ -42,6 +42,11 @@ public class GameView extends JFrame implements GameViewInterface {
     private JLabel scoreboardLabel;
 
     private GameUIListener uiListener;
+
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenuItem saveMenuItem;
+    private JMenuItem loadMenuItem;
     
     /**
      * Constructs the GameView window.
@@ -55,6 +60,7 @@ public class GameView extends JFrame implements GameViewInterface {
         
         cardButtons = new ArrayList<>();
         
+        createMenuBar();
         initializeComponents();
         
         setVisible(true);
@@ -225,6 +231,39 @@ public class GameView extends JFrame implements GameViewInterface {
         panel.add(scoreboardLabel, BorderLayout.EAST);
         
         return panel;
+    }
+
+    /**
+     * Creates and configures the menu bar with File menu options.
+     * Provides Save Game and Load Game functionality.
+     */
+    private void createMenuBar() {
+        menuBar = new JMenuBar();
+        
+        fileMenu = new JMenu("File");
+        fileMenu.setFont(new Font("Arial", Font.PLAIN, 14));
+        
+        saveMenuItem = new JMenuItem("Save Game");
+        saveMenuItem.setFont(new Font("Arial", Font.PLAIN, 12));
+        saveMenuItem.addActionListener(e -> {
+            if (uiListener != null) {
+                uiListener.onSaveGame();
+            }
+        });
+        
+        loadMenuItem = new JMenuItem("Load Game");
+        loadMenuItem.setFont(new Font("Arial", Font.PLAIN, 12));
+        loadMenuItem.addActionListener(e -> {
+            if (uiListener != null) {
+                uiListener.onLoadGame();
+            }
+        });
+        
+        fileMenu.add(saveMenuItem);
+        fileMenu.add(loadMenuItem);
+        menuBar.add(fileMenu);
+        
+        setJMenuBar(menuBar);
     }
 
     /**

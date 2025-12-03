@@ -11,9 +11,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class GameController implements GameUIListener, ActionListener {
-    private final Game model;
+    private Game model;
     private final GameViewInterface view;
     private boolean hasPlayedThisTurn = false;
 
@@ -383,6 +385,157 @@ public class GameController implements GameUIListener, ActionListener {
     public void onRedo() {
         model.redo();
         hasPlayedThisTurn = false;
+    }
+
+    /**
+     * Handles save game request from user.
+     * Opens a file chooser dialog and saves the game state to the selected file.
+     */
+    @Override
+    public void onSaveGame() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Game");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+            "UNO Save Files (*.uno)", "uno"));
+        
+        int result = fileChooser.showSaveDialog(null);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().getAbsolutePath();
+            
+            // Add .uno extension if not present
+            if (!filename.toLowerCase().endsWith(".uno")) {
+                filename += ".uno";
+            }
+            
+            boolean success = model.saveGame(filename);
+            
+            if (success) {
+                JOptionPane.showMessageDialog(null, 
+                    "Game saved successfully!", 
+                    "Save Complete", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null,
+                    "Failed to save game. Please try again.",
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Handles load game request from user.
+     * Opens a file chooser dialog and loads a previously saved game.
+     */
+    @Override
+    public void onLoadGame() {
+        // Confirm with user
+        int confirm = JOptionPane.showConfirmDialog(
+            null,
+            "Loading a game will replace the current game. Continue?",
+            "Confirm Load",
+            JOptionPane.YES_NO_OPTION
+        );
+        
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Load Game");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+            "UNO Save Files (*.uno)", "uno"));
+        
+        int result = fileChooser.showOpenDialog(null);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().getAbsolutePath();
+            
+            // Load the game (returns new Game object)
+            Game loadedGame = Game.loadGame(filename);
+            
+            if (loadedGame != null) {
+                // Reconnect controller to the loaded game
+                reconnectModel(loadedGame);
+                
+                JOptionPane.showMessageDialog(null,
+                    "Game loaded successfully!",
+                    "Load Complete",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null,
+                    "Failed to load game. File may be corrupted.",
+                    "Load Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Reconnects this controller to a different Game model.
+     * Used when loading a saved game to switch to the loaded game state.
+     * 
+     * @param newModel the newly loaded Game object
+     */
+    private void reconnectModel(Game newModel) {
+        this.model = newModel;
+        model.addView(view);
+        
+        this.model.addPropertyChangeListener(new PropertyChangeListener() {
+            private String lastPlayer = null;
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (!"state".equals(evt.getPropertyName())) return;
+
+                GameStateEvent newState = (GameStateEvent) evt.getNewValue();
+
+                boolean turnChanged = newState.getCurPlayerName() != null &&
+                        !newState.getCurPlayerName().equals(lastPlayer);
+                boolean twoPlayerReverseReplay = newState.getStatusMessage() != null &&
+                        newState.getStatusMessage().contains("Same player goes again!");
+                if (turnChanged || twoPlayerReverseReplay) {
+                    hasPlayedThisTurn = false;
+                }
+                lastPlayer = newState.getCurPlayerName();
+
+                if (newState.getStatusMessage() != null && !newState.getStatusMessage().isEmpty()) {
+                    view.updateStatusMessage(newState.getStatusMessage());
+                }
+
+                view.render(newState);
+
+                view.getUndoButton().setEnabled((model.canUndo()));
+                view.getRedoButton().setEnabled((model.canRedo()));
+
+                if (newState.getStatusMessage() != null && newState.getStatusMessage().contains("wins round")) {
+                    JOptionPane.showMessageDialog(null,
+                            newState.getStatusMessage() + "\nClick NEW ROUND to continue.",
+                            "Round Complete",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                if (newState.isGameOver()) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            newState.getStatusMessage() + "\nClick NEW GAME to restart.",
+                            "Game Over",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+
+                Player currentPlayer = model.getCurrentPlayer();
+                if (currentPlayer instanceof AIPlayer && !hasPlayedThisTurn) {
+                    view.getDrawCardButton().setEnabled(false);
+                    view.getNextPlayerButton().setEnabled(false);
+                    handleAITurn();
+                }
+            }
+        });
+        
+        GameStateEvent loadedState = model.exportState();
+        view.render(loadedState);
     }
 
 

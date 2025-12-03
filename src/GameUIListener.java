@@ -19,6 +19,7 @@ public interface GameUIListener {
     void onChooseDarkWildColor(Card.Color color);
     void onUndo();
     void onRedo();
-
+    void onSaveGame();
+    void onLoadGame();
 
 }

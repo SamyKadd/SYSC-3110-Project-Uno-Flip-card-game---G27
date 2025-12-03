@@ -12,7 +12,9 @@ import java.beans.PropertyChangeSupport;
  * @author G27
  * @version 1.0
  */
-public class Game {
+public class Game implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private List<Player> players;
 
     private ArrayList<Card>deck;
@@ -28,7 +30,7 @@ public class Game {
     private List<Card> lightDiscard = new ArrayList<>();
     private List<Card> darkDiscard = new ArrayList<>();
 
-    private transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private transient PropertyChangeSupport pcs;
 
     private int pendingSkips = 0; // number of upcoming players to skip on the next "Next Player" click
 
@@ -38,7 +40,7 @@ public class Game {
     private static final Card.Color[] LIGHT_COLORS = {Card.Color.RED, Card.Color.BLUE, Card.Color.GREEN, Card.Color.YELLOW };
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
 
-    private transient List<GameViewInterface> views = new ArrayList<>();
+    private transient List<GameViewInterface> views;
     private Integer skipEveryoneFinalPlayer = null;
 
     private int currentRound = 1;
@@ -185,13 +187,30 @@ public class Game {
         currentPlayerIndex = 0;
         clockwise = true;
 //        input = new Scanner(System.in);
+
+        // Initialize transient fields
+        initializeTransientFields();
+
         initializeDeck();
+    }
+
+    /**
+     * Initializes transient fields. Called from constructor and after deserialization.
+     */
+    private void initializeTransientFields() {
+        this.pcs = new PropertyChangeSupport(this);
+        this.views = new ArrayList<>();
+        this.undoStack = new ArrayList<>();
+        this.redoStack = new ArrayList<>();
     }
 
     /**
      *
      */
     public void addView(GameViewInterface view) {
+        if (views == null) {
+            views = new ArrayList<>();
+        }
         if (!views.contains(view)) {
             views.add(view);
         }
@@ -1364,6 +1383,9 @@ public class Game {
             throws IOException, ClassNotFoundException {
         // Perform default deserialization first
         in.defaultReadObject();
+
+        // Re-initialize transient fields
+        initializeTransientFields();
     }
 
 
