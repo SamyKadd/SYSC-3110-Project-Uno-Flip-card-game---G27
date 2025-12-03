@@ -1,230 +1,173 @@
 # Data Structures Explanation - UNO Card Game
-## Changes from Milestone 1 to Milestone 2 to Milestone 3
+## Changes from Milestone 1 to Milestone 2 to Milestone 3 to Milestone 4
 
-This document explains the data structure choices made in the UNO Flip card game implementation and how they evolved from Milestone 2 to Milestone 3 to support AI players and dark-side Flip cards.
-
----
-
-### New Data Structures Added in Milestone 3:
-
-1. **Side currentSide** (in Game class)
-2. **ArrayList<Card> lightDeck** (in Game class)
-3. **ArrayList<Card> darkDeck** (in Game class)
-4. **List<Card> lightDiscard** (in Game class)
-5. **List<Card> darkDiscard** (in Game class)
-6. **Card.Color darkWildColor** (in Game class)
-7. **Integer skipEveryoneFinalPlayer** (in Game class)
-8. **static final Card.Color[] LIGHT_COLORS** (in Game class)
-9. **static final Card.Color[] DARK_COLORS** (in Game class)
-10. **boolean hasPlayedThisTurn** (in GameController class)
-
-### Modified Structures:
-1. **Card.Color enum** - Extended to include dark-side colors (TEAL, PURPLE, PINK, ORANGE)
-2. **Card.Value enum** - Extended to include Flip cards (FLIP, DRAW_FIVE, SKIP_EVERYONE, WILD_DRAW_COLOR)
-3. **ArrayList<Card> deck** - Now switches between lightDeck and darkDeck based on game side
-4. **pendingSkips** - Enhanced logic to handle SKIP_EVERYONE card
+This document explains the data structure choices made in the UNO Flip card game implementation and how they evolved from Milestone 2 to Milestone 3 to Milestone 4 to support serialization, undo/redo, and replay functionality.
 
 ---
 
-## Milestone 2 Data Structures (Retained)
+### New Data Structures Added in Milestone 4:
 
-All core data structures from Milestone 2 were retained with enhancements:
+### Undo/Redo System:
+1. **transient ArrayList<GameMemento> undoStack** (in Game)
+2. **transient ArrayList<GameMemento> redoStack** (in Game)
+3. **GameMemento class** (new class for state snapshots)
+4. **SerializationUtils class** (utility for deep cloning)
 
-- **ArrayList<Card> deck** - Now dynamically switches between light/dark
-- **List<Player> players** - Now supports AIPlayer subclass
-- **List<Card> cards (in Hand)** - Unchanged
-- **PropertyChangeSupport pcs** - Unchanged, still drives MVC pattern
-- **GameStateEvent** - Enhanced with dark wild color fields
-- **int pendingSkips** - Enhanced for SKIP_EVERYONE logic
+### Serialization Support:
+5. **serialVersionUID fields** (in all Serializable classes)
+6. **transient modifiers** (on non-serializable fields)
 
----
+### Replay System:
+7. **int currentRound** (in Game)
+8. **static final int WINNING_SCORE = 500** (in Game)
 
-## New Data Structures in Milestone 3 - Detailed Explanation
-
-### 1. Side currentSide (in Game class)
-
-**Why chosen:**
-- Simple enum (LIGHT or DARK) to track which side of cards is active
-- Determines which deck is being used for drawing
-- Affects card validation (can't play dark cards on light side)
-- Affects which discard pile cards go into
-
-**Operations used:**
-- Direct assignment: `currentSide = Side.DARK`
-- Ternary operations: `currentSide == Side.LIGHT ? lightDeck : darkDeck`
-- Equality checks: `if (currentSide == Side.DARK)`
+### Modified:
+- All model classes now implement `Serializable`
+- Game.pcs and Game.views marked `transient`
+- GameUIListener added save/load methods
 
 ---
 
-### 2. ArrayList<Card> lightDeck and ArrayList<Card> darkDeck (in Game class)
-
-**Why chosen:**
-- UNO Flip has two complete sets of cards (light and dark)
-- Need to maintain separate decks that don't mix
-- Both decks need same operations (shuffle, draw, reshuffle)
-- Must preserve cards when switching sides
-
-**Operations used:**
-- `add()` - Building decks during initialization
-- `remove(0)` - Drawing cards from active deck
-- `Collections.shuffle()` - Shuffling on side switch
-- `addAll()` - Adding discard pile back when reshuffling
-- `clear()` - Clearing deck when transferring to discard
+## New Data Structures in Milestone 4 - Detailed Explanation
 
 ---
 
-### 3. List<Card> lightDiscard and List<Card> darkDiscard (in Game class)
+### 1. Undo/Redo Data Structures
 
-**Why chosen:**
-- Each side needs its own discard pile
-- Prevents light cards from being reshuffled into dark deck
-- Maintains card integrity when switching sides
-- Supports proper reshuffling for each side
+### transient ArrayList<GameMemento> undoStack
 
-**Operations used:**
-- `add()` - Adding played cards to appropriate discard
-- `size()` - Checking if enough cards to reshuffle
-- `remove()` - Removing cards for reshuffling
-- `clear()` - Clearing after reshuffle back to deck
+**Purpose:** Stores previous game states for multi-level undo
 
----
+**Why ArrayList:**
+- Need indexed access to remove last element
+- Dynamic sizing for unlimited undo depth
+- Efficient add/remove at end
 
-### 4. Card.Color darkWildColor (in Game class)
+**Why transient:**
+- Prevents infinite recursion during serialization
+- Undo history doesn't persist across save/load
+- Re-initialized to empty after loading
 
-**Why chosen:**
-- WILD_DRAW_COLOR card requires remembering chosen dark color
-- Separate from `topWild` which handles light wild cards
-- Must persist between game state updates
-- Used in two-phase WILD_DRAW_COLOR logic
+**Operations:**
+- `add(snapshot)` 
+- `remove(size()-1)` 
+- `isEmpty()` 
+- `clear()` 
 
-**Operations used:**
-- Assignment: `darkWildColor = color`
-- Null checks: `if (darkWildColor != null)`
-- Equality comparison: `drawn.getColor() == darkWildColor`
-- Reset to null after use
+### GameMemento Class
 
----
+**Purpose:** Immutable snapshot of complete game state
 
-### 5. Integer skipEveryoneFinalPlayer (in Game class)
-
-**Why chosen:**
-- SKIP_EVERYONE requires complex turn calculation
-- Must skip all other players and land on specific player
-- Integer wrapper class allows null when not active
-- Stores the calculated final landing position
-
-**Operations used:**
-- Assignment: `skipEveryoneFinalPlayer = finalTarget`
-- Null checks: `if (skipEveryoneFinalPlayer != null)`
-- Reading: `currentPlayerIndex = skipEveryoneFinalPlayer`
-- Reset: `skipEveryoneFinalPlayer = null`
+**Why this structure:**
+- Memento pattern for encapsulation
+- All fields final (immutable after creation)
+- Deep copies prevent reference issues
+- Serializable for deep cloning
 
 ---
 
-### 6. static final Card.Color[] LIGHT_COLORS and DARK_COLORS (in Game class)
+### 2. Serialization Implementation
 
-**Why chosen:**
-- Need to iterate over all colors when building decks
-- Static and final = constants that never change
-- Arrays allow easy iteration in for-each loops
-- Clearly separates light and dark color sets
+### Why Serializable Interface:
 
-**Operations used:**
-- For-each iteration: `for (Card.Color color : LIGHT_COLORS)`
-- Array access (implicit in enhanced for loops)
+**Classes implementing:**
+- Card, Hand, Player, AIPlayer, Game, GameMemento, Side
 
----
+**Benefits:**
+- Java's built-in serialization
+- Automatic object graph traversal
+- Version control via serialVersionUID
+- Error handling built-in
 
-### 7. boolean hasPlayedThisTurn (in GameController class)
-
-**Why chosen:**
-- Prevents human players from playing multiple cards per turn
-- Works with GUI event system (multiple clicks possible)
-- Must be controller-side (not model) for UI locking
-- Simple boolean flag for binary state
-
-**Operations used:**
-- Check: `if (hasPlayedThisTurn)`
-- Set true: `hasPlayedThisTurn = true`
-- Reset false: `hasPlayedThisTurn = false`
+**Limitations:**
+- Cannot serialize UI components
+- Cannot serialize listeners
+- Solution: mark as transient
 
 ---
 
-## Enhanced Structures from Milestone 2
+### 3. Transient Fields in Game:
 
-### Card.Color enum - Extended
-
-**New values added:**
-
-**Why extended:**
-- Dark side cards require four new colors
-- Maintains same enum structure for consistency
-- No changes needed to existing light card code
-- Type-safe color handling for both sides
-
-**Impact:**
-- `getColorForCardColor()` in GameView needed new cases
-- Wild color dialogs now support both light and dark
-- Card validation logic unchanged (color matching still works)
+**Why transient:**
+1. **pcs** - Not Serializable, contains listener references
+2. **views** - UI components, not Serializable
+3. **undoStack/redoStack** - Session-specific, prevents recursion
 
 ---
 
-### Card.Value enum - Extended
+### 4. Replay System Structures
 
-**New values added:**
+### int currentRound
 
-**Why extended:**
-- Flip cards need distinct value identifiers
-- Maintains same enum structure for consistency
-- Action card detection automatically includes new cards
-- Scoring system can distinguish all card types
+**Purpose:** Track current round number
 
-**Impact:**
-- `handleActionCard()` added cases for new values
-- `getCardScore()` added point values for new cards
-- `checkIfActionCard()` automatically handles new action cards
+**Serialized:** Yes (persists across save/load)
+
+**Operations:**
+- Increment in startNewRound()
+- Reset in startNewGame()
+- Display in UI
 
 ---
 
-## AI Player Implementation - Data Structure Choices
+### 5. static final int WINNING_SCORE
 
-### AIPlayer extends Player
+**Purpose:** Define win condition (500 points)
 
-**Why chosen:**
-- IS-A relationship: AI player is a type of Player
-- Inherits all Player functionality (hand, score, name)
-- No additional data structures needed in AIPlayer class
-- Differentiated by class type, not internal data
+**Why static final:**
+- Constant value (never changes)
+- Class-level (shared by all instances)
+- Compile-time constant
 
-**Why no AI-specific data:**
-- AI doesn't need to remember past decisions
-- Strategy is stateless (based on current game state only)
-- Keeps Model simple and focused
+**Value:** 500 (official UNO rules)
+
+---
+
+## Error Handling
+
+### Serialization:
+1. **NotSerializableException**  All models implement Serializable
+2. **FileNotFoundException**  User dialog, graceful failure
+3. **IOException**  Caught, logged, user notified
+4. **ClassNotFoundException**  Corrupted file detection
+
+### Undo/Redo:
+1. **Empty Stack** Buttons disabled via canUndo/canRedo
+2. **State Inconsistency**  Deep copying prevents issues
+
+---
+
+## M3 vs M4 Comparison
+
+### Retained from M3:
+- Deck system (light/dark)
+- Side tracking
+- Action card state
+- MVC architecture
+
+### Added in M4:
+- Serialization support
+- Undo/redo system
+- Replay functionality
+- Error handling
+
+### Changed in M4:
+- All models now Serializable
+- Transient fields for UI/listeners
+- Custom readObject() method
 
 ---
 
 ## Conclusion
 
-The transition from Milestone 2 to Milestone 3 required significant data structure additions to support:
+Milestone 4 adds:
+1. **Serialization** - Java built-in, lecture-based
+2. **Undo/Redo** - Memento pattern, deep cloning
+3. **Replay** - Simple counters, minimal overhead
 
-**Key structural additions:**
-1. Dual deck system (light/dark)
-2. Dual discard system (light/dark)
-3. Side tracking enum
-4. Dark wild color tracking
-5. Complex skip mechanics (SKIP_EVERYONE)
-6. AI player identification
-7. Turn locking flag
-
-**Design philosophy:**
-- Minimal changes to existing structures
-- New structures for new features only
-- Maintain MVC separation
-- Keep Model logic-focused, Controller UI-focused
-
-All changes maintain or improve the efficiency and maintainability of the original M2 design while enabling full UNO Flip gameplay with AI opponents.
+All while maintaining M3's clean MVC separation.
 
 ---
 
 **Course**: SYSC 3110  
-**Milestone**: 3
+**Milestone**: 4

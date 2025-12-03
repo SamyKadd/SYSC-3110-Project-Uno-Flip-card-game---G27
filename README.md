@@ -182,6 +182,8 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - Implemented SKIP_EVERYONE action card logic and DRAW_FIVE card logic and integrated into model action-card handling
 - Created test cases for the AIPlayer class
 - Fixed issue where human players could play more than one card per turn
+- Implemented complete save/load system (serialization + deserialization) and performed initial testing
+- Implemented full replay functionality allowing a new round or new game
 
 **Samy Kaddour**
 - Implemented WILD card functionality with color selection
