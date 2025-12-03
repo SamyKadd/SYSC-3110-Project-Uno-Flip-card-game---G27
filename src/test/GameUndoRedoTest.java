@@ -58,7 +58,6 @@ public class GameUndoRedoTest {
      * Tests that the undo operation correctly restores the turn order.
      */
 
-
     @Test
     void testUndoRestoresTopCard() {
         Card originalTop = game.getTopCard();
