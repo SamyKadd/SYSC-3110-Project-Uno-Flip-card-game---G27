@@ -41,7 +41,7 @@ public class Game implements Serializable {
     private static final Card.Color[] DARK_COLORS = {Card.Color.PINK, Card.Color.PURPLE, Card.Color.TEAL, Card.Color.ORANGE };
 
     private transient List<GameViewInterface> views;
-    private Integer skipEveryoneFinalPlayer = null;
+    private transient Integer skipEveryoneFinalPlayer = null;
 
     private int currentRound = 1;
     private static final int WINNING_SCORE = 500;
@@ -1342,7 +1342,28 @@ public class Game implements Serializable {
             // Re-initialize transient fields (they weren't serialized)
             game.pcs = new PropertyChangeSupport(game);
             game.views = new ArrayList<>();
-            
+
+            // RECREATE UNDO/REDO STACKS
+            game.undoStack = new ArrayList<>();
+            game.redoStack = new ArrayList<>();
+
+            // DECK POINTER MUST BE REASSIGNED
+            game.deck = (game.currentSide == Side.LIGHT) ? game.lightDeck : game.darkDeck;
+
+            // RESTORE DISCARD PILES CORRECTLY
+            game.lightDiscard = new ArrayList<>(game.lightDiscard);
+            game.darkDiscard  = new ArrayList<>(game.darkDiscard);
+
+            // FIX TOP CARD (recalculate after restoring discard piles)
+            if (game.currentSide == Side.LIGHT && !game.lightDiscard.isEmpty()) {
+                game.top = game.lightDiscard.get(game.lightDiscard.size() - 1);
+            }
+            else if (game.currentSide == Side.DARK && !game.darkDiscard.isEmpty()) {
+                game.top = game.darkDiscard.get(game.darkDiscard.size() - 1);
+            }
+
+
+
             System.out.println("Game loaded successfully from " + filename);
             return game;
             
@@ -1350,6 +1371,13 @@ public class Game implements Serializable {
             System.err.println("Save file not found: " + filename);
             return null;
             
+        } catch (InvalidClassException e) {
+            System.err.println("Save file is incompatible with this version of the game.");
+            return null;
+        }
+        catch (StreamCorruptedException e) {
+            System.err.println("Save file is corrupted or incomplete.");
+            return null;
         } catch (IOException e) {
             System.err.println("Error loading game: " + e.getMessage());
             e.printStackTrace();
