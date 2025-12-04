@@ -203,6 +203,8 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - Implemented tests
 - Created Sequence diagram for flipcard
 - Created Sequence diagram for ai turn
+- Implemented Undo and Redo
+- Implemented Sequence Diagrams 
 
 **Seham Khalifa**
 - Implemented startCards() method in Hand class (deal 7 cards)
