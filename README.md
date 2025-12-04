@@ -225,6 +225,7 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - Updated calculateAndAwardScore() to correctly compute and assign the winners points
 - Updated GameView’s render() method to use the new getters and correctly display all state changes
 - Updated GameController’s onPlayCard() and onDraw() methods to rely on the model’s validity checks instead of making decisions in the controller
+- Created GameUndoRedoTest unit tests to test Undo and Redo functionalities
 
 ---
 
