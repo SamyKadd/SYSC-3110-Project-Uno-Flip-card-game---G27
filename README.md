@@ -153,6 +153,8 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - Added light/dark decks with separate discard piles.
 - Updated play validation and reshuffle logic for light/dark side compatibility.
 - Completed UML class diagram
+- Implemented GameMemento snapshot structure.
+- Completed UML diagram
   
 
 **Mahdi Bouakline**
