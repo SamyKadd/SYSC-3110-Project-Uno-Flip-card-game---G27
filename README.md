@@ -31,11 +31,12 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 - `Main.java` - Entry point and application initialization
 
 ### Test Files
-- `CardTest.java` - 6 unit tests for Card class
-- `HandTest.java` - 5 unit tests for Hand class
-- `PlayerTest.java` - 6 unit tests for Player class
-- `GameTest.java` - 18 unit tests for Game class
+- `CardTest.java` - 5 unit tests for Card class
+- `HandTest.java` - 6 unit tests for Hand class
+- `PlayerTest.java` - 5 unit tests for Player class
+- `GameTest.java` - 23 unit tests for Game class
 - `AIPlayerIntegrationTest.java` - 12 unit tests for AIPlayer logic
+- `SerializationTest.java` - 9 unit tests for Serialization/Deserialization
 - `GameViewManualTest.java` - Manual GUI testing (not JUnit)
 
 ### Documentation
@@ -72,7 +73,7 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 
 ---
 
-### 2. Undo/Redo Functionality (30 marks)
+### 2. Undo/Redo Functionality 
 
 **Undo System**
 - Click `UNDO` button to reverse your last action
@@ -94,7 +95,7 @@ A graphical implementation of the UNO Flip card game in Java using Swing GUI and
 
 ---
 
-### 3. Serialization/Deserialization (30 marks)
+### 3. Serialization/Deserialization 
 
 **Save Game**
 - Click `File → Save Game` from menu bar
