@@ -478,9 +478,11 @@ public class GameView extends JFrame implements GameViewInterface {
     }
 
     /**
-     * Render the view
+     * Renders the game state on the screen by updating all UI components.
+     * This includes the top card display, player's hand, button states,
+     * status messages, scoreboard, and wild card color prompts.
      *
-     * @param s is the current games state
+     * @param s the current GameStateEvent containing all visible game data
      */
     public void render(GameStateEvent s) {
 

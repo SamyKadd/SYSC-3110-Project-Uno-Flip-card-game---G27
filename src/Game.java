@@ -51,7 +51,8 @@ public class Game implements Serializable {
     private transient ArrayList<GameMemento> redoStack = new ArrayList<>(); //rewinds state to a saved snapshot
 
     /**
-     * making sure stack is not null
+     * Ensures the undo and redo stacks are initialized.
+     * This prevents null pointer errors after loading or deserialization.
      */
     private void checkStack(){
         if (undoStack ==null){
@@ -63,8 +64,8 @@ public class Game implements Serializable {
     }
 
     /**
-     * capturing the current state
-     * allows us to go back for undo
+     * Saves the current game state by creating a memento
+     * and pushing it onto the undo stack. Clears the redo stack.
      */
     public void saveState(){
         checkStack();;
@@ -74,8 +75,9 @@ public class Game implements Serializable {
     }
 
     /**
-     * Checks to see if we can undo
-     * If we can, true is return
+     * Checks whether an undo operation is possible.
+     *
+     * @return true if the undo stack contains at least one saved state
      */
     public boolean canUndo(){
         checkStack();
@@ -83,8 +85,9 @@ public class Game implements Serializable {
     }
 
     /**
-     * Checks to see if we can redo
-     * If we can, true is return
+     * Checks whether a redo operation is possible.
+     *
+     * @return true if the redo stack contains at least one saved state
      */
     public boolean canRedo(){
         checkStack();
@@ -92,9 +95,9 @@ public class Game implements Serializable {
     }
 
     /**
-     * We save state to undo
-     * Restore to last state
-     * Notify a change
+     * Restores the previous game state from the undo stack.
+     * The current state is pushed to the redo stack before restoring.
+     * Triggers a state update for all listeners.
      */
     public void undo(){
        checkStack();
@@ -110,9 +113,9 @@ public class Game implements Serializable {
     }
 
     /**
-     * We save state to redo
-     * Restore to last state
-     * Notify a change
+     * Restores the next game state from the redo stack.
+     * The current state is pushed to the undo stack before restoring.
+     * Triggers a state update for all listeners.
      */
     public void redo(){
         checkStack();
@@ -128,7 +131,10 @@ public class Game implements Serializable {
     }
 
     /**
-     * Build a new Memento
+     * Builds a new GameMemento capturing the current game state,
+     * including players, draw pile, discard pile, wild colors, and direction.
+     *
+     * @return a snapshot of the current game state
      */
     private GameMemento createMemento(){
         List<Card> activeDiscard = (currentSide == Side.LIGHT) ? lightDiscard : darkDiscard;
@@ -137,8 +143,11 @@ public class Game implements Serializable {
     }
 
     /**
-     * Putting the game back into the state thats stored
-     * Get players, then direction, the restore the draw pile, update discard pile card, restore wild cards
+     * Restores the game state from the provided memento.
+     * Rebuilds the players list, draw pile, discard pile, direction,
+     * and wild colors based on the saved snapshot.
+     *
+     * @param m the memento containing a previously saved game state
      */
     private void restoreFromMemento(GameMemento m){
         this.players = new ArrayList<>(m.getPlayersSnapshot());
@@ -205,7 +214,10 @@ public class Game implements Serializable {
     }
 
     /**
+     * Registers a GameViewInterface observer to receive updates
+     * whenever the game state changes.
      *
+     * @param view the view to add as a listener
      */
     public void addView(GameViewInterface view) {
         if (views == null) {
@@ -217,7 +229,9 @@ public class Game implements Serializable {
     }
 
     /**
+     * Removes a previously registered game view observer.
      *
+     * @param view the view to unregister
      */
     public void removeView(GameViewInterface view) {
         views.remove(view);
@@ -423,11 +437,20 @@ public class Game implements Serializable {
         return currentSide;
     }
 
-    // Need to return and add JavaDcos later 
+    /**
+     * Gets the current round number of the game.
+     *
+     * @return the round index starting from 1
+     */
     public int getCurrentRound() {
         return currentRound;
     }
 
+    /**
+     * Gets the target winning score used to end the game.
+     *
+     * @return the score threshold required to win
+     */
     public int getWinningScore() {
         return WINNING_SCORE;
     }
@@ -827,6 +850,10 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Refills and shuffles the draw deck from the current side's discard pile
+     * when the deck runs out, while keeping the top discard card in place.
+     */
     private void reshuffleFromDiscard() {
 
         List<Card> discard = (currentSide == Side.LIGHT) ? lightDiscard : darkDiscard;
@@ -977,19 +1004,48 @@ public class Game implements Serializable {
 //                }
 //            }
 //        }
-    //need to add javadocs later
+    /**
+     * Retrieves the player whose turn it is.
+     *
+     * @return the active Player object
+     */
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
+
+    /**
+     * Gets the card currently on top of the discard pile.
+     *
+     * @return the top card in play
+     */
     public Card getTopCard() {
         return top;
     }
+
+    /**
+     * Adds a PropertyChangeListener to receive game state events.
+     *
+     * @param listener the listener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
+
+    /**
+     * Removes a previously registered PropertyChangeListener.
+     *
+     * @param listener the listener to remove
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
+
+    /**
+     * Creates a GameStateEvent representing the current visible
+     * game state, including player hand, top card, and wild settings.
+     *
+     * @return a GameStateEvent snapshot of the game state
+     */
     public GameStateEvent exportState() {
         Player cur = getCurrentPlayer();
         GameStateEvent s = new GameStateEvent(this, cur.getName(), cur.getHand().getCardsList(), getTopCard());
@@ -1009,6 +1065,10 @@ public class Game implements Serializable {
         return s;
     }
 
+    /**
+     * Notifies all registered listeners and views that the game state
+     * has changed by exporting the current state and dispatching it.
+     */
     private void notifyStateChanged() {
         GameStateEvent state = exportState();
         pcs.firePropertyChange("state", null, state);
@@ -1017,10 +1077,11 @@ public class Game implements Serializable {
             view.render(state);
         }
     }
+
     /**
-     * Makes the current player draw one card and updates state.
+     * Draws one card for the current player and updates observers.
      *
-     * @return
+     * @return true if a card was drawn, false if the deck was empty
      */
     public boolean drawCardForCurrentPlayer() {
         Player cur = getCurrentPlayer();
@@ -1172,6 +1233,12 @@ public class Game implements Serializable {
     }
 
 
+    /**
+     * Sets the chosen color for a wild card played on the light side.
+     * Updates the game state and notifies listeners.
+     *
+     * @param color the color selected by the player
+     */
     public void setTopWildColor(Card.Color color) {
         this.topWild = color;
         GameStateEvent s = exportState();
@@ -1217,7 +1284,14 @@ public class Game implements Serializable {
         pcs.firePropertyChange("state", null, s);
     }
 
-
+    /**
+     * Attempts to play a card from the current player's hand at the given index.
+     * Validates the play, updates the discard pile, checks for win conditions,
+     * and applies any action card effects if applicable.
+     *
+     * @param handIndex the index of the card in the current player's hand
+     * @return true if the card was successfully played, false if the move was invalid
+     */
     public boolean playCardFromHand(int handIndex) {
         Player cur = getCurrentPlayer();
         Card played = cur.getHand().removeCard(handIndex);

@@ -59,7 +59,11 @@ public class Hand implements Serializable {
         return null;
     }
 
-    /** Returns the list of Card objects in this hand */
+    /**
+     * Gets the list of all cards currently in this hand.
+     *
+     * @return the list of Card objects contained in the hand
+     */
     public List<Card> getCardsList() {
         return cards;
     }

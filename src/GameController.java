@@ -99,11 +99,11 @@ public class GameController implements GameUIListener, ActionListener {
     }
 
     /**
-     * Handles the AI player's entire turn:
-     * - Chooses a legal card with a simple strategy, or draws if none
-     * - Plays the card (or draws)
-     * - Advances to the next player
-     * - Re-enables buttons for human players
+     * Executes the entire turn logic for an AI-controlled player.
+     * The AI selects a playable card using a basic strategy, or draws if none are valid.
+     * After playing or drawing, the AI chooses wild colors when required and then
+     * advances the turn to the next player. Button states are updated to prevent
+     * human interaction during the AI's turn.
      */
     private void handleAITurn() {
         hasPlayedThisTurn = true; // lock out extra actions this turn
