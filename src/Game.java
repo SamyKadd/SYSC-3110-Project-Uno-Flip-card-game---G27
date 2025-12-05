@@ -684,14 +684,14 @@ public class Game implements Serializable {
 
                     // Store the player who should get the turn AFTER skipping all others
                     int finalTarget = currentPlayerIndex;
-                    for (int i = 0; i < pendingSkips + 1; i++) {
+                    for (int i = 0; i < pendingSkips; i++) {
                         finalTarget = nextPlayer(finalTarget);
                     }
 
                     // After the skips are processed in advanceTurn(), force correct landing spot
                     GameStateEvent s = exportState();
                     s.setStatusMessage("SKIP EVERYONE played!");
-                    s.setTurnComplete(true);
+                    s.setTurnComplete(false);
 
                     // Save the final target for advanceTurn to use
                     this.skipEveryoneFinalPlayer = finalTarget;
